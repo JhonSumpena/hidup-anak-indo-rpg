@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hidup Anak Indo RPG</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #dc2626;
+            --secondary-color: #fbbf24;
+            --success-color: #059669;
+            --warning-color: #d97706;
+            --info-color: #2563eb;
+            --bg-dark: rgba(0,0,0,0.9);
+            --bg-card: rgba(255,255,255,0.1);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255,255,255,0.8);
+            --border-color: rgba(255,255,255,0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #7c3aed 100%);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .game-container {
+            max-width: 400px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: var(--bg-dark);
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        .screen {
+            display: none;
+            padding: 20px 20px 100px 20px;
+            min-height: 100vh;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            background: var(--bg-card);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--secondary-color), var(--warning-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            border: 2px solid var(--border-color);
+        }
+
+        .user-details h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .user-details p {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .currency {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            background: rgba(34, 197, 94, 0.2);
+            padding: 8px 12px;
+            border-radius: 20px;
+            border: 1px solid #059669;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 16px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary-color), var(--warning-color));
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .story-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+        }
+
+        .story-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .story-text {
+            line-height: 1.7;
+            margin-bottom: 25px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .choices-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .choice-btn {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 15px;
+            padding: 18px;
+            color: var(--text-primary);
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-family: inherit;
+            backdrop-filter: blur(10px);
+        }
+
+        .choice-btn:hover {
+            background: rgba(251, 191, 36, 0.1);
+            border-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(251, 191, 36, 0.2);
+        }
+
+        .choice-impact {
+            font-size: 11px;
+            color: var(--secondary-color);
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 400px;
+            background: var(--bg-dark);
+            padding: 15px;
+            display: flex;
+            justify-content: space-around;
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 12px 8px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            min-width: 60px;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: rgba(251, 191, 36, 0.1);
+            color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .nav-icon {
+            font-size: 20px;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 500;
+        }
+
+        .skills-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .skill-item {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s ease;
+        }
+
+        .skill-item:hover {
+            transform: translateY(-2px);
+        }
+
+        .skill-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .skill-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        .skill-level {
+            background: rgba(251, 191, 36, 0.2);
+            color: var(--secondary-color);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            border: 1px solid var(--secondary-color);
+        }
+
+        .character-creation {
+            text-align: center;
+        }
+
+        .background-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .background-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .background-card:hover {
+            border-color: var(--secondary-color);
+            background: rgba(251, 191, 36, 0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(251, 191, 36, 0.2);
+        }
+
+        .background-card.selected {
+            border-color: var(--secondary-color);
+            background: rgba(251, 191, 36, 0.15);
+            box-shadow: 0 8px 25px rgba(251, 191, 36, 0.3);
+        }
+
+        .background-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .background-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--secondary-color);
+        }
+
+        .background-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .screen-title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: var(--secondary-color);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--success-color);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            animation: slideDown 0.3s ease;
+            box-shadow: 0 8px 25px rgba(5, 150, 105, 0.3);
+            display: none;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateX(-50%) translateY(-100%); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+
+        .start-btn {
+            background: linear-gradient(45deg, var(--secondary-color), var(--warning-color));
+            border: none;
+            color: white;
+            padding: 18px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            box-shadow: 0 8px 25px rgba(251, 191, 36, 0.3);
+        }
+
+        .start-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(251, 191, 36, 0.4);
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-dark);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(251, 191, 36, 0.3);
+            border-top: 4px solid var(--secondary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: var(--secondary-color);
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .save-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--info-color);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            z-index: 1000;
+            display: none;
+        }
+
+        .intro-text {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    
+    <!-- Loading Screen -->
+    <div class="loading-overlay" id="loading">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading Game...</div>
+    </div>
+
+    <!-- Save Indicator -->
+    <div class="save-indicator" id="saveIndicator">
+        💾 Progress Tersimpan
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+
+    <!-- Character Creation Screen -->
+    <div class="screen active" id="characterCreation">
+        <div class="character-creation">
+            <div class="screen-title">Hidup Anak Indo</div>
+            <div class="intro-text">
+                Pilih latar belakang hidup lu. Setiap pilihan punya challenge dan keuntungan masing-masing. 
+                Siap-siap menghadapi realita kehidupan Indonesia! 🇮🇩
+            </div>
+            
+            <div class="background-cards">
+                <div class="background-card" data-background="sultan">
+                    <div class="background-icon">👑</div>
+                    <div class="background-title">Anak Sultan</div>
+                    <div class="background-desc">
+                        Lahir dari keluarga tajir. iPhone terbaru, mobil sendiri, sekolah internasional. 
+                        Tapi ekspektasi tinggi dan susah buktiin kemampuan asli. Progress cepat di awal, 
+                        challenge berat di akhir.
+                    </div>
+                </div>
+                
+                <div class="background-card" data-background="sandwich">
+                    <div class="background-icon">😅</div>
+                    <div class="background-title">Anak Sandwich Generation</div>
+                    <div class="background-desc">
+                        Generasi terjepit antara ngurus ortu dan masa depan sendiri. Hidup serba nanggung, 
+                        budget pas-pasan, tapi mental kuat. Progress seimbang sepanjang game.
+                    </div>
+                </div>
+                
+                <div class="background-card" data-background="kampung">
+                    <div class="background-icon">💪</div>
+                    <div class="background-title">Anak Kampung</div>
+                    <div class="background-desc">
+                        Dari keluarga sederhana, terbiasa nguli dari kecil. Modal nekat dan semangat pantang 
+                        menyerah. Lambat di awal tapi explosive growth di akhir. True underdog story!
+                    </div>
+                </div>
+            </div>
+
+            <button class="start-btn" id="startGame" disabled>
+                Mulai Petualangan! 🚀
+            </button>
+        </div>
+    </div>
+
+    <!-- Home/Dashboard Screen -->
+    <div class="screen" id="home">
+        <div class="header">
+            <div class="user-info">
+                <div class="avatar" id="playerAvatar">🤵</div>
+                <div class="user-details">
+                    <h3 id="playerName">Jhon Sumpena</h3>
+                    <p id="playerBackground">Pilih background dulu</p>
+                </div>
+            </div>
+            <div class="currency">
+                💰 <span id="playerMoney">1,250,000</span>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">💼</div>
+                <div class="stat-label">Karir</div>
+                <div class="stat-value" id="careerLevel">Pengangguran</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="careerProgress" style="width: 0%;"></div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">❤️</div>
+                <div class="stat-label">Kebahagiaan</div>
+                <div class="stat-value" id="happinessLevel">50%</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="happinessProgress" style="width: 50%;"></div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-label">Networking</div>
+                <div class="stat-value" id="networkLevel">Lv. 1</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="networkProgress" style="width: 10%;"></div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🏠</div>
+                <div class="stat-label">Status</div>
+                <div class="stat-value" id="statusLevel">Rumah Ortu</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="statusProgress" style="width: 5%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="story-card">
+            <div class="story-title" id="currentEventTitle">
+                📱 Selamat Datang!
+            </div>
+            <div class="story-text" id="currentEventText">
+                Hidup lu baru dimulai! Pilih langkah pertama dengan bijak. 
+                Setiap keputusan akan mempengaruhi masa depan lu.
+            </div>
+            <div class="choices-container" id="choicesContainer">
+                <button class="choice-btn" onclick="startFirstEvent()">
+                    🚀 Mulai Petualangan Hidup!
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Skills Screen -->
+    <div class="screen" id="skills">
+        <div class="screen-title">Skill Development</div>
+        
+        <div class="skills-list" id="skillsList">
+            <!-- Skills will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Story Screen -->
+    <div class="screen" id="story">
+        <div class="story-card">
+            <div class="story-title" id="storyTitle">
+                📖 Loading...
+            </div>
+            <div class="story-text" id="storyText">
+                Loading story content...
+            </div>
+            <div class="choices-container" id="storyChoices">
+                <!-- Choices will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Bottom Navigation -->
+<div class="bottom-nav">
+    <button class="nav-btn active" onclick="showScreen('home')" id="nav-home">
+        <div class="nav-icon">🏠</div>
+        <div class="nav-label">Home</div>
+    </button>
+    <button class="nav-btn" onclick="showScreen('story')" id="nav-story">
+        <div class="nav-icon">📖</div>
+        <div class="nav-label">Story</div>
+    </button>
+    <button class="nav-btn" onclick="showScreen('skills')" id="nav-skills">
+        <div class="nav-icon">⚡</div>
+        <div class="nav-label">Skills</div>
+    </button>
+    <button class="nav-btn" onclick="showProfile()" id="nav-profile">
+        <div class="nav-icon">👤</div>
+        <div class="nav-label">Profile</div>
+    </button>
+</div>
+
+<script>
+// Game State Management
+class GameState {
+    constructor() {
+        this.player = {
+            name: "Jhon Sumpena",
+            background: null,
+            money: 1250000,
+            age: 18,
+            happiness: 50,
+            skills: {
+                coding: 0,
+                basabasi: 0,
+                financial: 0,
+                hustle: 0,
+                networking: 1,
+                leadership: 0,
+                adaptability: 0,
+                emotional: 0
+            },
+            career: {
+                level: 0,
+                title: "Pengangguran",
+                experience: 0
+            },
+            status: {
+                level: 0,
+                title: "Rumah Ortu",
+                progress: 5
+            },
+            currentChapter: 1,
+            currentEvent: 0,
+            achievements: [],
+            inventory: []
+        };
+        
+        this.events = [];
+        this.loadEvents();
+    }
+
+    loadEvents() {
+        this.events = [
+            {
+                id: 1,
+                title: "🎓 Lulus SMA",
+                text: "Akhirnya lulus SMA! Ortu bangga, tapi sekarang bingung mau ngapain. Temen-temen ada yang langsung kerja, ada yang kuliah, ada yang gap year. Lu sendiri gimana?",
+                choices: [
+                    {
+                        text: "📚 Langsung kuliah aja",
+                        impact: "+2 Education, +1 Future Potential, -1 Immediate Income",
+                        effects: { skills: { financial: -1 }, money: -500000, happiness: 5 }
+                    },
+                    {
+                        text: "💼 Cari kerja dulu",
+                        impact: "+2 Work Experience, +1 Independence, -1 Education",
+                        effects: { skills: { hustle: 2 }, money: 1000000, happiness: -5 }
+                    },
+                    {
+                        text: "🎯 Gap year sambil skill up",
+                        impact: "+1 Self Development, +1 Clarity, -1 Peer Pressure",
+                        effects: { skills: { adaptability: 1 }, happiness: 10 }
+                    }
+                ]
+            },
+            {
+                id: 2,
+                title: "📱 Temen Pamer di Social Media",
+                text: "Instagram story temen isinya vacation ke Bali, beli iPhone baru, foto di cafe mahal. Sementara lu masih pake HP jadul dan makan di warteg. Perasaan lu campur aduk...",
+                choices: [
+                    {
+                        text: "😤 Termotivasi jadi lebih sukses",
+                        impact: "+2 Ambition, +1 Work Ethic, +1 Stress",
+                        effects: { skills: { hustle: 1 }, happiness: -5 }
+                    },
+                    {
+                        text: "🤷 Cuek aja, hidup beda-beda",
+                        impact: "+2 Peace of Mind, +1 Self Acceptance",
+                        effects: { skills: { emotional: 2 }, happiness: 10 }
+                    },
+                    {
+                        text: "📱 Unfollow semua yang bikin insecure",
+                        impact: "+1 Mental Health, -1 Social Awareness",
+                        effects: { skills: { networking: -1 }, happiness: 15 }
+                    }
+                ]
+            }
+        ];
+    }
+
+    saveGame() {
+        localStorage.setItem('hidupAnakIndonesia', JSON.stringify(this.player));
+        showNotification('💾 Progress tersimpan!');
+        showSaveIndicator();
+    }
+
+    loadGame() {
+        const saved = localStorage.getItem('hidupAnakIndonesia');
+        if (saved) {
+            this.player = { ...this.player, ...JSON.parse(saved) };
+            return true;
+        }
+        return false;
+    }
+
+    setBackground(background) {
+        this.player.background = background;
+        
+        // Set initial stats based on background
+        switch(background) {
+            case 'sultan':
+                this.player.money = 50000000;
+                this.player.skills.networking = 3;
+                this.player.skills.financial = 2;
+                this.player.status = { level: 2, title: "Apartemen Ortu", progress: 40 };
+                break;
+            case 'sandwich':
+                this.player.money = 2500000;
+                this.player.skills.adaptability = 2;
+                this.player.skills.hustle = 1;
+                this.player.status = { level: 1, title: "Kamar di Rumah", progress: 15 };
+                break;
+            case 'kampung':
+                this.player.money = 500000;
+                this.player.skills.hustle = 3;
+                this.player.skills.adaptability = 2;
+                this.player.status = { level: 0, title: "Rumah Ortu", progress: 5 };
+                break;
+        }
+        
+        this.updateUI();
+        this.saveGame();
+    }
+
+    updateUI() {
+        // Update header
+        document.getElementById('playerName').textContent = this.player.name;
+        document.getElementById('playerMoney').textContent = this.player.money.toLocaleString('id-ID');
+        
+        // Update background display
+        const backgroundNames = {
+            sultan: "Anak Sultan",
+            sandwich: "Anak Sandwich Generation", 
+            kampung: "Anak Kampung"
+        };
+        document.getElementById('playerBackground').textContent = 
+            backgroundNames[this.player.background] || "Belum dipilih";
+
+        // Update avatar based on background
+        const avatars = {
+            sultan: "👑",
+            sandwich: "😅", 
+            kampung: "💪"
+        };
+        document.getElementById('playerAvatar').textContent = 
+            avatars[this.player.background] || "🤵";
+
+        // Update stats
+        document.getElementById('careerLevel').textContent = this.player.career.title;
+        document.getElementById('careerProgress').style.width = `${this.player.career.experience}%`;
+        
+        document.getElementById('happinessLevel').textContent = `${this.player.happiness}%`;
+        document.getElementById('happinessProgress').style.width = `${this.player.happiness}%`;
+        
+        document.getElementById('networkLevel').textContent = `Lv. ${this.player.skills.networking}`;
+        document.getElementById('networkProgress').style.width = `${this.player.skills.networking * 10}%`;
+        
+        document.getElementById('statusLevel').textContent = this.player.status.title;
+        document.getElementById('statusProgress').style.width = `${this.player.status.progress}%`;
+
+        this.updateSkillsList();
+    }
+
+    updateSkillsList() {
+        const skillsList = document.getElementById('skillsList');
+        const skillsData = [
+            { key: 'coding', name: 'Coding', icon: '💻', levels: ['Gagap IT', 'User Excel', 'Junior Dev', 'Senior Dev', 'Tech Lead'] },
+            { key: 'basabasi', name: 'Basa-basi', icon: '🗣️', levels: ['Kaku', 'Sopan', 'Tukang Gombal', 'Kameleon Sosial', 'Master Basa-basi'] },
+            { key: 'financial', name: 'Financial Literacy', icon: '💰', levels: ['Boros', 'Penabung', 'Investor', 'Trader', 'Wealth Builder'] },
+            { key: 'hustle', name: 'Hustle', icon: '🏃', levels: ['Pencari Kerja', 'Side Hustler', 'Multiple Income', 'Pemilik Bisnis', 'Serial Entrepreneur'] },
+            { key: 'networking', name: 'Networking', icon: '👥', levels: ['Introvert Akut', 'Tukang Kenal', 'Influencer', 'Industry Leader', 'Raja Networking'] },
+            { key: 'leadership', name: 'Leadership', icon: '👨‍💼', levels: ['Anak Buah', 'Team Player', 'Team Lead', 'Manager', 'Pemimpin Visioner'] }
+        ];
+
+        skillsList.innerHTML = skillsData.map(skill => {
+            const level = Math.min(this.player.skills[skill.key], skill.levels.length - 1);
+            const progress = (this.player.skills[skill.key] / (skill.levels.length - 1)) * 100;
+            
+            return `
+                <div class="skill-item">
+                    <div class="skill-header">
+                        <div class="skill-name">
+                            <span>${skill.icon}</span>
+                            <span>${skill.name}</span>
+                        </div>
+                        <div class="skill-level">${skill.levels[level]}</div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${progress}%;"></div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    processChoice(choiceIndex, eventId) {
+        const event = this.events.find(e => e.id === eventId);
+        if (!event || !event.choices[choiceIndex]) return;
+
+        const choice = event.choices[choiceIndex];
+        
+        // Apply effects
+        if (choice.effects) {
+            if (choice.effects.money) {
+                this.player.money = Math.max(0, this.player.money + choice.effects.money);
+            }
+            if (choice.effects.happiness) {
+                this.player.happiness = Math.max(0, Math.min(100, this.player.happiness + choice.effects.happiness));
+            }
+            if (choice.effects.skills) {
+                Object.keys(choice.effects.skills).forEach(skill => {
+                    if (this.player.skills[skill] !== undefined) {
+                        this.player.skills[skill] = Math.max(0, Math.min(10, this.player.skills[skill] + choice.effects.skills[skill]));
+                    }
+                });
+            }
+        }
+
+        // Show result notification
+        showNotification(`${choice.text} - ${choice.impact}`);
+
+        // Move to next event or update current event
+        this.player.currentEvent++;
+        
+        // Update UI
+        this.updateUI();
+        this.saveGame();
+
+        // Load next event after delay
+        setTimeout(() => {
+            this.loadCurrentEvent();
+        }, 2000);
+    }
+
+    loadCurrentEvent() {
+        const event = this.events[this.player.currentEvent % this.events.length];
+        
+        document.getElementById('currentEventTitle').innerHTML = event.title;
+        document.getElementById('currentEventText').textContent = event.text;
+        
+        const choicesContainer = document.getElementById('choicesContainer');
+        choicesContainer.innerHTML = event.choices.map((choice, index) => `
+            <button class="choice-btn" onclick="gameState.processChoice(${index}, ${event.id})">
+                ${choice.text}
+                <div class="choice-impact">${choice.impact}</div>
+            </button>
+        `).join('');
+    }
+}
+
+// Initialize game
+let gameState;
+
+// Utility Functions
+function showScreen(screenId) {
+    // Hide all screens
+    document.querySelectorAll('.screen').forEach(screen => {
+        screen.classList.remove('active');
+    });
+    
+    // Hide all nav buttons active state
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Show selected screen
+    document.getElementById(screenId).classList.add('active');
+    
+    // Activate corresponding nav button
+    document.getElementById(`nav-${screenId}`).classList.add('active');
+}
+
+function showNotification(message) {
+    const notification = document.getElementById('notification');
+    notification.textContent = message;
+    notification.style.display = 'block';
+    
+    setTimeout(() => {
+        notification.style.display = 'none';
+    }, 3000);
+}
+
+function showSaveIndicator() {
+    const indicator = document.getElementById('saveIndicator');
+    indicator.style.display = 'block';
+    
+    setTimeout(() => {
+        indicator.style.display = 'none';
+    }, 2000);
+}
+
+function showProfile() {
+    showNotification('Profile feature coming soon! 🚧');
+}
+
+function startFirstEvent() {
+    if (!gameState.player.background) {
+        showNotification('Pilih background dulu di character creation!');
+        showScreen('characterCreation');
+        return;
+    }
+    
+    gameState.loadCurrentEvent();
+}
+
+// Character Creation Logic
+document.addEventListener('DOMContentLoaded', function() {
+    // Hide loading screen
+    setTimeout(() => {
+        document.getElementById('loading').style.display = 'none';
+    }, 1500);
+
+    // Initialize game state
+    gameState = new GameState();
+    
+    // Check if there's saved game
+    if (gameState.loadGame()) {
+        showScreen('home');
+        gameState.updateUI();
+        showNotification('Game dimuat dari save terakhir!');
+    }
+
+    // Background selection
+    const backgroundCards = document.querySelectorAll('.background-card');
+    const startBtn = document.getElementById('startGame');
+    let selectedBackground = null;
+
+    backgroundCards.forEach(card => {
+        card.addEventListener('click', function() {
+            // Remove selection from all cards
+            backgroundCards.forEach(c => c.classList.remove('selected'));
+            
+            // Select current card
+            this.classList.add('selected');
+            selectedBackground = this.dataset.background;
+            
+            // Enable start button
+            startBtn.disabled = false;
+            startBtn.style.opacity = '1';
+            startBtn.style.cursor = 'pointer';
+        });
+    });
+
+    // Start game button
+    startBtn.addEventListener('click', function() {
+        if (!selectedBackground) {
+            showNotification('Pilih background dulu!');
+            return;
+        }
+
+        // Set background and initialize
+        gameState.setBackground(selectedBackground);
+        
+        // Show loading
+        document.getElementById('loading').style.display = 'flex';
+        document.querySelector('.loading-text').textContent = 'Memulai petualangan...';
+        
+        // Switch to home screen
+        setTimeout(() => {
+            document.getElementById('loading').style.display = 'none';
+            showScreen('home');
+            showNotification(`Selamat datang, ${gameState.player.name}! 🎉`);
+        }, 2000);
+    });
+
+    // Navigation event listeners
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            if (this.id === 'nav-profile') {
+                showProfile();
+                return;
+            }
+            
+            const screenId = this.id.replace('nav-', '');
+            showScreen(screenId);
+        });
+    });
+
+    // Choice button interactions
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('choice-btn')) {
+            e.target.style.background = 'rgba(34, 197, 94, 0.3)';
+            e.target.style.borderColor = '#059669';
+            
+            setTimeout(() => {
+                e.target.style.background = 'var(--bg-card)';
+                e.target.style.borderColor = 'var(--border-color)';
+            }, 500);
+        }
+    });
+
+    // Auto-save every 30 seconds
+    setInterval(() => {
+        if (gameState && gameState.player.background) {
+            gameState.saveGame();
+        }
+    }, 30000);
+
+    // Add some Easter eggs
+    let clickCount = 0;
+    document.getElementById('playerName').addEventListener('click', function() {
+        clickCount++;
+        if (clickCount >= 5) {
+            showNotification('🎉 Easter egg! +1000 uang bonus!');
+            gameState.player.money += 1000;
+            gameState.updateUI();
+            gameState.saveGame();
+            clickCount = 0;
+        }
+    });
+});
+
+// Story Screen Functions
+function loadStoryMode() {
+    showScreen('story');
+    
+    // Sample story for demo
+    document.getElementById('storyTitle').innerHTML = '🏢 Chapter 1: Dunia Kerja';
+    document.getElementById('storyText').textContent = `
+        Hari pertama kerja di startup yang katanya "unicorn" tapi ternyata masih tahap "kuda poni". 
+        
+        Bos bilang "We're family here!" sambil ngasih task dengan deadline kemarin. 
+        Laptop lemot, kursi goyang, tapi semangat masih tinggi.
+        
+        Rekan kerja sebelah bilang "Selamat datang di survival game real life!"
+        
+        Gimana strategi lu menghadapi hari pertama?
+    `;
+    
+    document.getElementById('storyChoices').innerHTML = `
+        <button class="choice-btn" onclick="processStoryChoice(1)">
+            🔥 All-in bekerja keras, show them who's boss!
+            <div class="choice-impact">+3 Etos Kerja, +2 Stress, -1 Work-Life Balance</div>
+        </button>
+        <button class="choice-btn" onclick="processStoryChoice(2)">
+            🤝 Fokus networking, kenalan sama semua orang
+            <div class="choice-impact">+2 Networking, +1 Basa-basi, -1 Focus</div>
+        </button>
+        <button class="choice-btn" onclick="processStoryChoice(3)">
+            🧠 Observe dulu, pelajari budaya kantor
+            <div class="choice-impact">+2 Wisdom, +1 Adaptasi, +1 Patience</div>
+        </button>
+        <button class="choice-btn" onclick="processStoryChoice(4)">
+            😴 Santai aja, yang penting gajian lancar
+            <div class="choice-impact">+1 Peace of Mind, -1 Ambisi, -1 Respect</div>
+        </button>
+    `;
+}
+
+function processStoryChoice(choice) {
+    const effects = {
+        1: { skills: { hustle: 2 }, happiness: -5, money: 0 },
+        2: { skills: { networking: 2, basabasi: 1 }, happiness: 5, money: 0 },
+        3: { skills: { adaptability: 1, emotional: 1 }, happiness: 10, money: 0 },
+        4: { skills: { hustle: -1 }, happiness: 5, money: 100000 }
+    };
+    
+    const messages = {
+        1: "Lu kerja keras banget sampai lembur! Bos notice tapi lu mulai stress.",
+        2: "Lu jadi populer di kantor! Semua orang kenal tapi kerjaan agak terbengkalai.",
+        3: "Lu jadi orang yang bijak di kantor. Semua datang minta saran.",
+        4: "Lu santai tapi reputasi agak menurun. Gak papa, mental health prioritas!"
+    };
+    
+    // Apply effects
+    if (effects[choice]) {
+        Object.keys(effects[choice].skills || {}).forEach(skill => {
+            gameState.player.skills[skill] = Math.max(0, Math.min(10, 
+                gameState.player.skills[skill] + effects[choice].skills[skill]));
+        });
+        
+        if (effects[choice].happiness) {
+            gameState.player.happiness = Math.max(0, Math.min(100, 
+                gameState.player.happiness + effects[choice].happiness));
+        }
+        
+        if (effects[choice].money) {
+            gameState.player.money += effects[choice].money;
+        }
+    }
+    
+    gameState.updateUI();
+    gameState.saveGame();
+    showNotification(messages[choice]);
+    
+    // Generate next story after delay
+    setTimeout(() => {
+        generateRandomStory();
+    }, 3000);
+}
+
+function generateRandomStory() {
+    const randomStories = [
+        {
+            title: "📱 Dilema Social Media",
+            text: "Temen posting gaji baru yang 2x lipat dari lu. Lu ngerasa gimana?",
+            choices: [
+                { text: "😤 Termotivasi upgrade skill", impact: "+2 Ambition, +1 Stress" },
+                { text: "🤷 Cuek, rezeki beda-beda", impact: "+2 Peace of Mind" },
+                { text: "📴 Mute social media", impact: "+1 Mental Health" }
+            ]
+        },
+        {
+            title: "💰 Unexpected Windfall",
+            text: "Dapet bonus THR yang lumayan. Mau diapain uangnya?",
+            choices: [
+                { text: "💎 Invest saham", impact: "+1 Financial Skill, Risk" },
+                { text: "🛍️ Belanja yang diinginkan", impact: "+2 Happiness, -Money" },
+                { text: "💰 Simpen di tabungan", impact: "+1 Security, +Money" }
+            ]
+        }
+    ];
+    
+    const story = randomStories[Math.floor(Math.random() * randomStories.length)];
+    
+    document.getElementById('storyTitle').innerHTML = story.title;
+    document.getElementById('storyText').textContent = story.text;
+    document.getElementById('storyChoices').innerHTML = story.choices.map((choice, index) => `
+        <button class="choice-btn" onclick="processRandomChoice(${index})">
+            ${choice.text}
+            <div class="choice-impact">${choice.impact}</div>
+        </button>
+    `).join('');
+}
+
+function processRandomChoice(index) {
+    showNotification("Pilihan lu bakal mempengaruhi masa depan!");
+    setTimeout(() => {
+        loadStoryMode(); // Reload story mode with new content
+    }, 2000);
+}
+
+// Add keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+    if (e.key === 's' && e.ctrlKey) {
+        e.preventDefault();
+        gameState.saveGame();
+    }
+});
+
+// Add PWA support
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js').then(function(registration) {
+            console.log('SW registered: ', registration);
+        }).catch(function(registrationError) {
+            console.log('SW registration failed: ', registrationError);
+        });
+    });
+}
+
+// Performance monitoring
+console.log('🎮 Hidup Anak Indo RPG loaded successfully!');
+console.log('📱 Mobile-optimized for Indonesian players');
+console.log('💾 Auto-save enabled every 30 seconds');
+</script>
+
+</body>
+</html>
+            
