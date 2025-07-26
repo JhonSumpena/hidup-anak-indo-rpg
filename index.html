@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hidup Anak Indo RPG</title>
+    <title>Hidup Anak Indonesia RPG</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -221,6 +221,12 @@
             box-shadow: 0 8px 25px rgba(251, 191, 36, 0.2);
         }
 
+        .choice-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .choice-impact {
             font-size: 11px;
             color: var(--secondary-color);
@@ -391,6 +397,8 @@
             animation: slideDown 0.3s ease;
             box-shadow: 0 8px 25px rgba(5, 150, 105, 0.3);
             display: none;
+            max-width: 350px;
+            text-align: center;
         }
 
         @keyframes slideDown {
@@ -415,6 +423,12 @@
         .start-btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 12px 35px rgba(251, 191, 36, 0.4);
+        }
+
+        .start-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
         }
 
         .loading-overlay {
@@ -452,24 +466,46 @@
             font-weight: 600;
         }
 
-        .save-indicator {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--info-color);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 12px;
-            z-index: 1000;
-            display: none;
-        }
-
         .intro-text {
             text-align: center;
             margin-bottom: 30px;
             color: var(--text-secondary);
             line-height: 1.6;
+        }
+
+        .event-category {
+            display: inline-block;
+            background: rgba(251, 191, 36, 0.2);
+            color: var(--secondary-color);
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .chapter-info {
+            background: rgba(59, 130, 246, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #3b82f6;
+            text-align: center;
+        }
+
+        .psychology-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .psychology-stat {
+            background: rgba(255,255,255,0.1);
+            padding: 8px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 12px;
         }
     </style>
 </head>
@@ -480,12 +516,7 @@
     <!-- Loading Screen -->
     <div class="loading-overlay" id="loading">
         <div class="loading-spinner"></div>
-        <div class="loading-text">Loading Game...</div>
-    </div>
-
-    <!-- Save Indicator -->
-    <div class="save-indicator" id="saveIndicator">
-        💾 Progress Tersimpan
+        <div class="loading-text">Memuat Game...</div>
     </div>
 
     <!-- Notification -->
@@ -494,9 +525,9 @@
     <!-- Character Creation Screen -->
     <div class="screen active" id="characterCreation">
         <div class="character-creation">
-            <div class="screen-title">Hidup Anak Indo</div>
+            <div class="screen-title">Hidup Anak Indonesia</div>
             <div class="intro-text">
-                Pilih latar belakang hidup lu. Setiap pilihan punya challenge dan keuntungan masing-masing. 
+                Pilih latar belakang hidup lu. Setiap pilihan punya tantangan dan keuntungan masing-masing. 
                 Siap-siap menghadapi realita kehidupan Indonesia! 🇮🇩
             </div>
             
@@ -507,7 +538,7 @@
                     <div class="background-desc">
                         Lahir dari keluarga tajir. iPhone terbaru, mobil sendiri, sekolah internasional. 
                         Tapi ekspektasi tinggi dan susah buktiin kemampuan asli. Progress cepat di awal, 
-                        challenge berat di akhir.
+                        tantangan berat di akhir.
                     </div>
                 </div>
                 
@@ -551,6 +582,11 @@
             </div>
         </div>
 
+        <div class="chapter-info">
+            <div>📖 <strong>Chapter 1: Hidup Dewasa Muda</strong></div>
+            <div style="font-size: 12px; margin-top: 5px;">Event <span id="currentEventNumber">1</span> dari 15</div>
+        </div>
+
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon">💼</div>
@@ -586,7 +622,27 @@
             </div>
         </div>
 
+        <div class="psychology-stats">
+            <div class="psychology-stat">
+                <div>🧠 Kepercayaan Diri</div>
+                <div id="confidenceLevel">50%</div>
+            </div>
+            <div class="psychology-stat">
+                <div>💯 Autentisitas</div>
+                <div id="authenticityLevel">50%</div>
+            </div>
+            <div class="psychology-stat">
+                <div>🤝 Kesadaran Sosial</div>
+                <div id="socialAwarenessLevel">50%</div>
+            </div>
+            <div class="psychology-stat">
+                <div>💪 Resiliensi</div>
+                <div id="resilienceLevel">50%</div>
+            </div>
+        </div>
+
         <div class="story-card">
+            <div class="event-category" id="eventCategory">📚 Kampus</div>
             <div class="story-title" id="currentEventTitle">
                 📱 Selamat Datang!
             </div>
@@ -604,7 +660,7 @@
 
     <!-- Skills Screen -->
     <div class="screen" id="skills">
-        <div class="screen-title">Skill Development</div>
+        <div class="screen-title">Perkembangan Skill</div>
         
         <div class="skills-list" id="skillsList">
             <!-- Skills will be populated by JavaScript -->
@@ -632,19 +688,19 @@
 <div class="bottom-nav">
     <button class="nav-btn active" onclick="showScreen('home')" id="nav-home">
         <div class="nav-icon">🏠</div>
-        <div class="nav-label">Home</div>
+        <div class="nav-label">Beranda</div>
     </button>
     <button class="nav-btn" onclick="showScreen('story')" id="nav-story">
         <div class="nav-icon">📖</div>
-        <div class="nav-label">Story</div>
+        <div class="nav-label">Cerita</div>
     </button>
     <button class="nav-btn" onclick="showScreen('skills')" id="nav-skills">
         <div class="nav-icon">⚡</div>
-        <div class="nav-label">Skills</div>
+        <div class="nav-label">Skill</div>
     </button>
     <button class="nav-btn" onclick="showProfile()" id="nav-profile">
         <div class="nav-icon">👤</div>
-        <div class="nav-label">Profile</div>
+        <div class="nav-label">Profil</div>
     </button>
 </div>
 
@@ -668,6 +724,14 @@ class GameState {
                 adaptability: 0,
                 emotional: 0
             },
+            psychology: {
+                confidence: 50,
+                authenticity: 50,
+                socialAwareness: 50,
+                resilience: 50,
+                empathy: 50,
+                financialWisdom: 50
+            },
             career: {
                 level: 0,
                 title: "Pengangguran",
@@ -680,113 +744,537 @@ class GameState {
             },
             currentChapter: 1,
             currentEvent: 0,
+            completedEvents: [],
             achievements: [],
-            inventory: []
+            eventHistory: []
         };
         
-        this.events = [];
+        this.eventQueue = [];
         this.loadEvents();
+        this.generateEventQueue();
     }
 
     loadEvents() {
-        this.events = [
+        this.allEvents = [
             {
-                id: 1,
-                title: "🎓 Lulus SMA",
-                text: "Akhirnya lulus SMA! Ortu bangga, tapi sekarang bingung mau ngapain. Temen-temen ada yang langsung kerja, ada yang kuliah, ada yang gap year. Lu sendiri gimana?",
-                choices: [
-                    {
-                        text: "📚 Langsung kuliah aja",
-                        impact: "+2 Education, +1 Future Potential, -1 Immediate Income",
-                        effects: { skills: { financial: -1 }, money: -500000, happiness: 5 }
-                    },
-                    {
-                        text: "💼 Cari kerja dulu",
-                        impact: "+2 Work Experience, +1 Independence, -1 Education",
-                        effects: { skills: { hustle: 2 }, money: 1000000, happiness: -5 }
-                    },
-                    {
-                        text: "🎯 Gap year sambil skill up",
-                        impact: "+1 Self Development, +1 Clarity, -1 Peer Pressure",
-                        effects: { skills: { adaptability: 1 }, happiness: 10 }
-                    }
-                ]
+                id: 'E1',
+                category: 'kampus',
+                title: '🎓 Orientasi Pertama',
+                text: 'Hari pertama orientasi kampus. Lu liat diversity yang gila - ada yang datang naik mobil mewah, ada yang naik motor, ada yang angkot. Giliran lu perkenalan, semua mata ngeliatin. Gimana lu introduce diri?',
+                choices: {
+                    sultan: [
+                        { 
+                            text: '😅 Bilang nama aja, hindari detail family background', 
+                            impact: '+1 Rendah Hati, +2 Diterima Sosial', 
+                            effects: { 
+                                psychology: { confidence: -1, authenticity: 1 }, 
+                                happiness: 5 
+                            } 
+                        },
+                        { 
+                            text: '💼 Casual mention international school experiences', 
+                            impact: '+2 Kesan Pertama, -1 Relatabilitas', 
+                            effects: { 
+                                psychology: { confidence: 2, socialAwareness: -1 }, 
+                                happiness: -2 
+                            } 
+                        },
+                        { 
+                            text: '🤝 Berusaha keras sound normal dan down-to-earth', 
+                            impact: '+1 Empati, -1 Autentisitas', 
+                            effects: { 
+                                psychology: { empathy: 1, authenticity: -1 }, 
+                                happiness: -5 
+                            } 
+                        }
+                    ],
+                    sandwich: [
+                        { 
+                            text: '⚖️ Balance antara humble dan proud, highlight achievements', 
+                            impact: '+2 Navigasi Sosial, +1 Respek', 
+                            effects: { 
+                                psychology: { confidence: 1, socialAwareness: 2 }, 
+                                skills: { networking: 1 }, 
+                                happiness: 5 
+                            } 
+                        },
+                        { 
+                            text: '😔 Merasa inferior, focus ke kekurangan diri', 
+                            impact: '-2 Percaya Diri, +1 Motivasi', 
+                            effects: { 
+                                psychology: { confidence: -2, resilience: 1 }, 
+                                happiness: -10 
+                            } 
+                        },
+                        { 
+                            text: '💪 Bangga cerita struggle dan sacrifice keluarga', 
+                            impact: '+2 Autentisitas, +1 Inspirasi', 
+                            effects: { 
+                                psychology: { authenticity: 2, confidence: 1 }, 
+                                skills: { leadership: 1 }, 
+                                happiness: 10 
+                            } 
+                        }
+                    ],
+                    kampung: [
+                        { 
+                            text: '🔥 Honest about background, zero shame', 
+                            impact: '+3 Percaya Diri, +2 Respek', 
+                            effects: { 
+                                psychology: { confidence: 3, authenticity: 2 }, 
+                                skills: { leadership: 1 }, 
+                                happiness: 15 
+                            } 
+                        },
+                        { 
+                            text: '🛡️ Siap defend background dari potential judgment', 
+                            impact: '+1 Resiliensi, -1 Keterbukaan', 
+                            effects: { 
+                                psychology: { resilience: 1, socialAwareness: -1 }, 
+                                happiness: 0 
+                            } 
+                        },
+                        { 
+                            text: '🎯 Highlight achievements yang earned, bukan background', 
+                            impact: '+2 Ambisi, +1 Etos Kerja', 
+                            effects: { 
+                                psychology: { confidence: 1, resilience: 1 }, 
+                                skills: { hustle: 1 }, 
+                                happiness: 5 
+                            } 
+                        }
+                    ]
+                }
             },
             {
-                id: 2,
-                title: "📱 Temen Pamer di Social Media",
-                text: "Instagram story temen isinya vacation ke Bali, beli iPhone baru, foto di cafe mahal. Sementara lu masih pake HP jadul dan makan di warteg. Perasaan lu campur aduk...",
-                choices: [
-                    {
-                        text: "😤 Termotivasi jadi lebih sukses",
-                        impact: "+2 Ambition, +1 Work Ethic, +1 Stress",
-                        effects: { skills: { hustle: 1 }, happiness: -5 }
-                    },
-                    {
-                        text: "🤷 Cuek aja, hidup beda-beda",
-                        impact: "+2 Peace of Mind, +1 Self Acceptance",
-                        effects: { skills: { emotional: 2 }, happiness: 10 }
-                    },
-                    {
-                        text: "📱 Unfollow semua yang bikin insecure",
-                        impact: "+1 Mental Health, -1 Social Awareness",
-                        effects: { skills: { networking: -1 }, happiness: 15 }
-                    }
-                ]
+                id: 'E2',
+                category: 'kampus',
+                title: '👥 Grup Project Dinamika',
+                text: 'Grup project pertama dengan deadline ketat. Tim lu mixed: ada yang suggest ketemu di cafe mahal, ada yang prefer perpustakaan. Diskusi jadi awkward soal budget. Gimana lu handle this?',
+                choices: {
+                    sultan: [
+                        { 
+                            text: '💳 Gue treat semua di tempat yang nyaman', 
+                            impact: '+1 Popularitas, -1 Kesetaraan Tim', 
+                            effects: { 
+                                money: -200000, 
+                                psychology: { socialAwareness: -1 }, 
+                                skills: { networking: 1 }, 
+                                happiness: -5 
+                            } 
+                        },
+                        { 
+                            text: '🏠 Rumah gue luas dan nyaman kok', 
+                            impact: '+1 Praktis, -1 Kesadaran Sosial', 
+                            effects: { 
+                                psychology: { socialAwareness: -2, confidence: 1 }, 
+                                happiness: -3 
+                            } 
+                        },
+                        { 
+                            text: '🤐 Ikut aja keputusan mayoritas', 
+                            impact: '+1 Harmoni, -1 Kepemimpinan', 
+                            effects: { 
+                                psychology: { confidence: -1, empathy: 1 }, 
+                                happiness: 2 
+                            } 
+                        }
+                    ],
+                    sandwich: [
+                        { 
+                            text: '💡 Cari middle ground yang affordable tapi productive', 
+                            impact: '+2 Kepemimpinan, +1 Problem Solving', 
+                            effects: { 
+                                psychology: { confidence: 1, socialAwareness: 1 }, 
+                                skills: { leadership: 2 }, 
+                                happiness: 8 
+                            } 
+                        },
+                        { 
+                            text: '😰 Agree sambil mental calculation budget', 
+                            impact: '-1 Autentisitas, +1 Tekanan Sosial', 
+                            effects: { 
+                                psychology: { authenticity: -1, resilience: -1 }, 
+                                happiness: -8 
+                            } 
+                        },
+                        { 
+                            text: '📋 Suggest online collab buat save money dan time', 
+                            impact: '+1 Inovasi, +1 Efisiensi', 
+                            effects: { 
+                                psychology: { confidence: 1 }, 
+                                skills: { adaptability: 1 }, 
+                                happiness: 3 
+                            } 
+                        }
+                    ],
+                    kampung: [
+                        { 
+                            text: '🏫 Perpustakaan gratis dan lengkap, kenapa bayar?', 
+                            impact: '+2 Praktis, +1 Kebijaksanaan Finansial', 
+                            effects: { 
+                                psychology: { financialWisdom: 2, confidence: 1 }, 
+                                skills: { leadership: 1 }, 
+                                happiness: 10 
+                            } 
+                        },
+                        { 
+                            text: '💪 Gue handle lebih banyak kerjaan kalo tempatnya murah', 
+                            impact: '+2 Etos Kerja, +1 Nilai Tim', 
+                            effects: { 
+                                psychology: { resilience: 1 }, 
+                                skills: { hustle: 2 }, 
+                                happiness: 5 
+                            } 
+                        },
+                        { 
+                            text: '💯 Budget gue terbatas, but commitment unlimited', 
+                            impact: '+2 Autentisitas, +1 Kepemimpinan', 
+                            effects: { 
+                                psychology: { authenticity: 2, confidence: 1 }, 
+                                skills: { leadership: 1 }, 
+                                happiness: 12 
+                            } 
+                        }
+                    ]
+                }
+            },
+            {
+                id: 'E3',
+                category: 'sosial',
+                title: '💸 Teman Ajak Nongkrong Mahal',
+                text: 'Weekend plans: temen ajak nongkrong ke tempat yang obviously expensive. Mereka casual bilang "Come on, treat yourself!" FOMO vs financial reality.',
+                choices: {
+                    sultan: [
+                        { 
+                            text: '💳 Sure, malah gue yang treat semua orang', 
+                            impact: '+2 Popularitas, -1 Authentic Friendship', 
+                            effects: { 
+                                money: -1500000, 
+                                psychology: { socialAwareness: -1 }, 
+                                skills: { networking: 1 }, 
+                                happiness: 5 
+                            } 
+                        },
+                        { 
+                            text: '🤔 Suggest tempat yang authentic dan cheaper', 
+                            impact: '+1 Cultural Exploration, +1 Humility', 
+                            effects: { 
+                                psychology: { authenticity: 1, socialAwareness: 1 }, 
+                                happiness: 3 
+                            } 
+                        },
+                        { 
+                            text: '😅 Sure, sounds fun! (gak sadar ini expensive)', 
+                            impact: '+1 Social Inclusion, -1 Social Awareness', 
+                            effects: { 
+                                money: -800000, 
+                                psychology: { socialAwareness: -2 }, 
+                                happiness: 8 
+                            } 
+                        }
+                    ],
+                    sandwich: [
+                        { 
+                            text: '💡 Gimana kalo tempat yang lebih reasonable?', 
+                            impact: '+2 Kepemimpinan, +1 Financial Wisdom', 
+                            effects: { 
+                                psychology: { socialAwareness: 2, financialWisdom: 1 }, 
+                                skills: { leadership: 1 }, 
+                                happiness: 8 
+                            } 
+                        },
+                        { 
+                            text: '😰 Smile and agree, panic about budget internally', 
+                            impact: '+1 Social Acceptance, -2 Financial Health', 
+                            effects: { 
+                                money: -600000, 
+                                psychology: { authenticity: -1, resilience: -1 }, 
+                                happiness: -5 
+                            } 
+                        },
+                        { 
+                            text: '📱 Lagi saving buat something important', 
+                            impact: '+2 Financial Discipline, -1 Social Inclusion', 
+                            effects: { 
+                                psychology: { authenticity: 2, financialWisdom: 1 }, 
+                                happiness: 5 
+                            } 
+                        }
+                    ],
+                    kampung: [
+                        { 
+                            text: '💯 Di luar budget gue, but kalian have fun!', 
+                            impact: '+2 Honesty, +1 Self-Respect', 
+                            effects: { 
+                                psychology: { authenticity: 2, confidence: 1 }, 
+                                happiness: 8 
+                            } 
+                        },
+                        { 
+                            text: '🎯 Gue tau tempat yang cheaper tapi lebih memorable', 
+                            impact: '+2 Kepemimpinan, +1 Kreativitas', 
+                            effects: { 
+                                psychology: { confidence: 2, socialAwareness: 1 }, 
+                                skills: { leadership: 1 }, 
+                                happiness: 12 
+                            } 
+                        },
+                        { 
+                            text: '⚡ Kalo gue bisa afford tanpa sacrifice basic needs', 
+                            impact: '+2 Financial Responsibility, +1 Integritas', 
+                            effects: { 
+                                psychology: { financialWisdom: 2, authenticity: 1 }, 
+                                happiness: 10 
+                            } 
+                        }
+                    ]
+                }
+            },
+            {
+                id: 'E4',
+                category: 'keluarga',
+                title: '👨‍👩‍👧 Ekspektasi Ortu vs Passion',
+                text: 'Family dinner. Ortu nanya progress dan start talking about expectations. Mereka ada specific idea tentang success. Lu punya passion yang beda. How do you handle this?',
+                choices: {
+                    sultan: [
+                        { 
+                            text: '👑 But I am supposed to take over family business', 
+                            impact: '+1 Family Loyalty, -2 Personal Freedom', 
+                            effects: { 
+                                psychology: { authenticity: -2, socialAwareness: 1 }, 
+                                happiness: -10 
+                            } 
+                        },
+                        { 
+                            text: '💰 I will pursue passion dengan financial backup', 
+                            impact: '+2 Freedom, +1 Family Support', 
+                            effects: { 
+                                psychology: { confidence: 1, resilience: -1 }, 
+                                money: 1000000, 
+                                happiness: 8 
+                            } 
+                        },
+                        { 
+                            text: '😤 I am not living other life, I am living mine', 
+                            impact: '+2 Personal Freedom, -2 Family Relations', 
+                            effects: { 
+                                psychology: { authenticity: 2, confidence: 1 }, 
+                                happiness: -5 
+                            } 
+                        }
+                    ],
+                    sandwich: [
+                        { 
+                            text: '⚖️ Compromise: pursue passion sambil maintain backup', 
+                            impact: '+1 Family Harmony, +1 Personal Pursuit', 
+                            effects: { 
+                                psychology: { socialAwareness: 1, resilience: 1 }, 
+                                happiness: 5 
+                            } 
+                        },
+                        { 
+                            text: '😔 Maybe they are right, passion does not pay bills', 
+                            impact: '+1 Family Approval, -2 Personal Fulfillment', 
+                            effects: { 
+                                psychology: { authenticity: -2, empathy: 1 }, 
+                                happiness: -12 
+                            } 
+                        },
+                        { 
+                            text: '📋 Give me time to prove passion viable', 
+                            impact: '+1 Family Relations, +1 Personal Time', 
+                            effects: { 
+                                psychology: { confidence: 1, resilience: 1 }, 
+                                happiness: 3 
+                            } 
+                        }
+                    ],
+                    kampung: [
+                        { 
+                            text: '🔥 I pursue this to honor family sacrifices better', 
+                            impact: '+2 Family Understanding, +1 Motivasi', 
+                            effects: { 
+                                psychology: { authenticity: 1, empathy: 2 }, 
+                                happiness: 10 
+                            } 
+                        },
+                        { 
+                            text: '💪 Let me show results first, then we talk', 
+                            impact: '+2 Self-Reliance, +1 Family Respect', 
+                            effects: { 
+                                psychology: { confidence: 2, resilience: 1 }, 
+                                skills: { hustle: 1 }, 
+                                happiness: 8 
+                            } 
+                        },
+                        { 
+                            text: '❤️ This is how I make family proud and happy', 
+                            impact: '+1 Family Bond, +1 Understanding', 
+                            effects: { 
+                                psychology: { empathy: 2, authenticity: 1 }, 
+                                happiness: 15 
+                            } 
+                        }
+                    ]
+                }
+            },
+            {
+                id: 'E5',
+                category: 'kerja',
+                title: '💼 Interview Pertama',
+                text: 'Interview di perusahaan impian lu. HR nanya "Ceritain tentang diri lu" dan "Kenapa harus pilih lu?" Lu nervous banget. Gimana strategi lu?',
+                choices: {
+                    sultan: [
+                        { 
+                            text: '🎭 Downplay privilege, focus ke personal achievement', 
+                            impact: '+2 Humility, +1 Authenticity', 
+                            effects: { 
+                                psychology: { authenticity: 1, confidence: -1 }, 
+                                happiness: 3 
+                            } 
+                        },
+                        { 
+                            text: '💼 Mention network dan connections yang ada', 
+                            impact: '+1 Networking, -1 Merit-based', 
+                            effects: { 
+                                skills: { networking: 1 }, 
+                                psychology: { authenticity: -1 }, 
+                                happiness: -2 
+                            } 
+                        },
+                        { 
+                            text: '🎯 Honest tentang resources tapi emphasize work ethic', 
+                            impact: '+2 Honesty, +1 Balance', 
+                            effects: { 
+                                psychology: { authenticity: 2, confidence: 1 }, 
+                                happiness: 8 
+                            } 
+                        }
+                    ],
+                    sandwich: [
+                        { 
+                            text: '💪 Cerita struggle keluarga sebagai motivasi', 
+                            impact: '+2 Resilience Story, +1 Empathy', 
+                            effects: { 
+                                psychology: { resilience: 1, empathy: 1 }, 
+                                skills: { emotional: 1 }, 
+                                happiness: 10 
+                            } 
+                        },
+                        { 
+                            text: '📚 Focus ke skill dan achievement yang concrete', 
+                            impact: '+2 Merit-based, +1 Professionalism', 
+                            effects: { 
+                                psychology: { confidence: 2 }, 
+                                skills: { adaptability: 1 }, 
+                                happiness: 5 
+                            } 
+                        },
+                        { 
+                            text: '😅 Terlalu honest sampai overshare problems', 
+                            impact: '-1 Professionalism, +1 Authenticity', 
+                            effects: { 
+                                psychology: { authenticity: 1, confidence: -2 }, 
+                                happiness: -5 
+                            } 
+                        }
+                    ],
+                    kampung: [
+                        { 
+                            text: '🔥 Gue gak punya background fancy, tapi gue punya hunger', 
+                            impact: '+3 Confidence, +2 Authenticity', 
+                            effects: { 
+                                psychology: { confidence: 3, authenticity: 2 }, 
+                                skills: { leadership: 1 }, 
+                                happiness: 15 
+                            } 
+                        },
+                        { 
+                            text: '📈 Show concrete examples dari part-time jobs', 
+                            impact: '+2 Work Ethic, +1 Experience', 
+                            effects: { 
+                                skills: { hustle: 2, adaptability: 1 }, 
+                                psychology: { confidence: 1 }, 
+                                happiness: 8 
+                            } 
+                        },
+                        { 
+                            text: '💯 Gue tau value of money dan hard work', 
+                            impact: '+2 Reliability, +1 Financial Wisdom', 
+                            effects: { 
+                                psychology: { resilience: 2, financialWisdom: 1 }, 
+                                happiness: 12 
+                            } 
+                        }
+                    ]
+                }
             }
         ];
     }
 
-    saveGame() {
-        localStorage.setItem('hidupAnakIndonesia', JSON.stringify(this.player));
-        showNotification('💾 Progress tersimpan!');
-        showSaveIndicator();
-    }
-
-    loadGame() {
-        const saved = localStorage.getItem('hidupAnakIndonesia');
-        if (saved) {
-            this.player = { ...this.player, ...JSON.parse(saved) };
-            return true;
+    generateEventQueue() {
+        this.eventQueue = [];
+        
+        // Add all 5 unique events first
+        this.allEvents.forEach(event => {
+            this.eventQueue.push(event);
+        });
+        
+        // Create variations for remaining slots
+        while (this.eventQueue.length < 15) {
+            const randomEvent = this.allEvents[Math.floor(Math.random() * this.allEvents.length)];
+            const variation = {
+                ...randomEvent,
+                id: randomEvent.id + '_V' + (this.eventQueue.length - 4),
+                title: randomEvent.title + ' (Lanjutan)'
+            };
+            this.eventQueue.push(variation);
         }
-        return false;
+        
+        console.log('🎮 Hidup Anak Indonesia RPG loaded successfully!');
+        console.log('📱 Mobile-optimized for Indonesian players');
+        console.log('🎯 15 unique events with multiple paths');
+        console.log('📊 Psychology & Skills tracking system');
     }
 
     setBackground(background) {
         this.player.background = background;
         
-        // Set initial stats based on background
         switch(background) {
             case 'sultan':
                 this.player.money = 50000000;
                 this.player.skills.networking = 3;
                 this.player.skills.financial = 2;
+                this.player.psychology.confidence = 70;
+                this.player.psychology.socialAwareness = 30;
                 this.player.status = { level: 2, title: "Apartemen Ortu", progress: 40 };
                 break;
             case 'sandwich':
                 this.player.money = 2500000;
                 this.player.skills.adaptability = 2;
                 this.player.skills.hustle = 1;
+                this.player.psychology.resilience = 60;
+                this.player.psychology.empathy = 60;
                 this.player.status = { level: 1, title: "Kamar di Rumah", progress: 15 };
                 break;
             case 'kampung':
                 this.player.money = 500000;
                 this.player.skills.hustle = 3;
                 this.player.skills.adaptability = 2;
+                this.player.psychology.resilience = 80;
+                this.player.psychology.authenticity = 70;
                 this.player.status = { level: 0, title: "Rumah Ortu", progress: 5 };
                 break;
         }
         
         this.updateUI();
-        this.saveGame();
     }
 
     updateUI() {
-        // Update header
         document.getElementById('playerName').textContent = this.player.name;
         document.getElementById('playerMoney').textContent = this.player.money.toLocaleString('id-ID');
         
-        // Update background display
         const backgroundNames = {
             sultan: "Anak Sultan",
             sandwich: "Anak Sandwich Generation", 
@@ -795,16 +1283,14 @@ class GameState {
         document.getElementById('playerBackground').textContent = 
             backgroundNames[this.player.background] || "Belum dipilih";
 
-        // Update avatar based on background
         const avatars = {
             sultan: "👑",
             sandwich: "😅", 
             kampung: "💪"
         };
-        document.getElementById('playerAvatar').textContent = 
-            avatars[this.player.background] || "🤵";
+        const avatar = avatars[this.player.background] || "🤵";
+        document.getElementById('playerAvatar').textContent = avatar;
 
-        // Update stats
         document.getElementById('careerLevel').textContent = this.player.career.title;
         document.getElementById('careerProgress').style.width = `${this.player.career.experience}%`;
         
@@ -812,10 +1298,17 @@ class GameState {
         document.getElementById('happinessProgress').style.width = `${this.player.happiness}%`;
         
         document.getElementById('networkLevel').textContent = `Lv. ${this.player.skills.networking}`;
-        document.getElementById('networkProgress').style.width = `${this.player.skills.networking * 10}%`;
+        document.getElementById('networkProgress').style.width = `${Math.min(this.player.skills.networking * 10, 100)}%`;
         
         document.getElementById('statusLevel').textContent = this.player.status.title;
         document.getElementById('statusProgress').style.width = `${this.player.status.progress}%`;
+
+        document.getElementById('confidenceLevel').textContent = `${this.player.psychology.confidence}%`;
+        document.getElementById('authenticityLevel').textContent = `${this.player.psychology.authenticity}%`;
+        document.getElementById('socialAwarenessLevel').textContent = `${this.player.psychology.socialAwareness}%`;
+        document.getElementById('resilienceLevel').textContent = `${this.player.psychology.resilience}%`;
+
+        document.getElementById('currentEventNumber').textContent = this.player.currentEvent + 1;
 
         this.updateSkillsList();
     }
@@ -828,7 +1321,9 @@ class GameState {
             { key: 'financial', name: 'Financial Literacy', icon: '💰', levels: ['Boros', 'Penabung', 'Investor', 'Trader', 'Wealth Builder'] },
             { key: 'hustle', name: 'Hustle', icon: '🏃', levels: ['Pencari Kerja', 'Side Hustler', 'Multiple Income', 'Pemilik Bisnis', 'Serial Entrepreneur'] },
             { key: 'networking', name: 'Networking', icon: '👥', levels: ['Introvert Akut', 'Tukang Kenal', 'Influencer', 'Industry Leader', 'Raja Networking'] },
-            { key: 'leadership', name: 'Leadership', icon: '👨‍💼', levels: ['Anak Buah', 'Team Player', 'Team Lead', 'Manager', 'Pemimpin Visioner'] }
+            { key: 'leadership', name: 'Leadership', icon: '👨‍💼', levels: ['Anak Buah', 'Team Player', 'Team Lead', 'Manager', 'Pemimpin Visioner'] },
+            { key: 'adaptability', name: 'Adaptability', icon: '🔄', levels: ['Rigid', 'Flexible', 'Quick Learner', 'Change Agent', 'Chameleon'] },
+            { key: 'emotional', name: 'Emotional Intelligence', icon: '❤️', levels: ['Emotionally Deaf', 'Self Aware', 'Empathetic', 'People Reader', 'Emotional Guru'] }
         ];
 
         skillsList.innerHTML = skillsData.map(skill => {
@@ -852,58 +1347,147 @@ class GameState {
         }).join('');
     }
 
-    processChoice(choiceIndex, eventId) {
-        const event = this.events.find(e => e.id === eventId);
-        if (!event || !event.choices[choiceIndex]) return;
-
-        const choice = event.choices[choiceIndex];
+    processChoice(choiceIndex) {
+        console.log('Processing choice:', choiceIndex);
         
-        // Apply effects
-        if (choice.effects) {
-            if (choice.effects.money) {
-                this.player.money = Math.max(0, this.player.money + choice.effects.money);
-            }
-            if (choice.effects.happiness) {
-                this.player.happiness = Math.max(0, Math.min(100, this.player.happiness + choice.effects.happiness));
-            }
-            if (choice.effects.skills) {
-                Object.keys(choice.effects.skills).forEach(skill => {
-                    if (this.player.skills[skill] !== undefined) {
-                        this.player.skills[skill] = Math.max(0, Math.min(10, this.player.skills[skill] + choice.effects.skills[skill]));
-                    }
-                });
-            }
+        if (this.player.currentEvent >= this.eventQueue.length) {
+            console.error('No more events in queue');
+            return;
+        }
+        
+        const event = this.eventQueue[this.player.currentEvent];
+        if (!event) {
+            console.error('Event not found');
+            return;
+        }
+        
+        const backgroundChoices = event.choices[this.player.background];
+        if (!backgroundChoices || !backgroundChoices[choiceIndex]) {
+            console.error('Invalid choice');
+            return;
         }
 
-        // Show result notification
-        showNotification(`${choice.text} - ${choice.impact}`);
-
-        // Move to next event or update current event
-        this.player.currentEvent++;
+        const choice = backgroundChoices[choiceIndex];
+        console.log('Selected choice:', choice);
         
-        // Update UI
-        this.updateUI();
-        this.saveGame();
+        this.applyChoiceEffects(choice);
+        
+        this.player.eventHistory.push({
+            eventId: event.id,
+            choice: choiceIndex,
+            choiceText: choice.text,
+            impact: choice.impact
+        });
 
-        // Load next event after delay
+        this.player.completedEvents.push(event.id);
+        showNotification(choice.impact);
+
+        this.player.currentEvent++;
+        console.log('Moving to event:', this.player.currentEvent);
+        
+        this.updateUI();
+
+        const choicesContainer = document.getElementById('choicesContainer');
+        const buttons = choicesContainer.querySelectorAll('.choice-btn');
+        buttons.forEach(btn => {
+            btn.disabled = true;
+            btn.style.opacity = '0.5';
+        });
+
         setTimeout(() => {
-            this.loadCurrentEvent();
+            if (this.player.currentEvent < this.eventQueue.length) {
+                this.loadCurrentEvent();
+            } else {
+                this.showGameComplete();
+            }
         }, 2000);
     }
 
-    loadCurrentEvent() {
-        const event = this.events[this.player.currentEvent % this.events.length];
+    applyChoiceEffects(choice) {
+        if (!choice.effects) return;
+
+        if (choice.effects.money) {
+            this.player.money = Math.max(0, this.player.money + choice.effects.money);
+        }
         
+        if (choice.effects.happiness) {
+            this.player.happiness = Math.max(0, Math.min(100, this.player.happiness + choice.effects.happiness));
+        }
+        
+        if (choice.effects.skills) {
+            Object.keys(choice.effects.skills).forEach(skill => {
+                if (this.player.skills[skill] !== undefined) {
+                    this.player.skills[skill] = Math.max(0, Math.min(10, this.player.skills[skill] + choice.effects.skills[skill]));
+                }
+            });
+        }
+        
+        if (choice.effects.psychology) {
+            Object.keys(choice.effects.psychology).forEach(stat => {
+                if (this.player.psychology[stat] !== undefined) {
+                    this.player.psychology[stat] = Math.max(0, Math.min(100, this.player.psychology[stat] + choice.effects.psychology[stat]));
+                }
+            });
+        }
+    }
+
+    loadCurrentEvent() {
+        console.log('Loading event:', this.player.currentEvent);
+        
+        if (this.player.currentEvent >= this.eventQueue.length) {
+            this.showGameComplete();
+            return;
+        }
+
+        const event = this.eventQueue[this.player.currentEvent];
+        if (!event) {
+            console.error('No event found');
+            return;
+        }
+
+        const categoryNames = {
+            kampus: "📚 Kampus",
+            kerja: "💼 Kerja", 
+            sosial: "👥 Sosial",
+            keluarga: "👨‍👩‍👧 Keluarga",
+            random: "🎲 Random"
+        };
+
+        document.getElementById('eventCategory').textContent = categoryNames[event.category] || "📖 Event";
         document.getElementById('currentEventTitle').innerHTML = event.title;
         document.getElementById('currentEventText').textContent = event.text;
         
         const choicesContainer = document.getElementById('choicesContainer');
-        choicesContainer.innerHTML = event.choices.map((choice, index) => `
-            <button class="choice-btn" onclick="gameState.processChoice(${index}, ${event.id})">
+        const backgroundChoices = event.choices[this.player.background];
+        
+        if (!backgroundChoices) {
+            console.error('No choices for background:', this.player.background);
+            return;
+        }
+
+        choicesContainer.innerHTML = backgroundChoices.map((choice, index) => `
+            <button class="choice-btn" onclick="gameState.processChoice(${index})">
                 ${choice.text}
                 <div class="choice-impact">${choice.impact}</div>
             </button>
         `).join('');
+    }
+
+    showGameComplete() {
+        document.getElementById('currentEventTitle').innerHTML = '🎉 Game Selesai!';
+        document.getElementById('currentEventText').textContent = 
+            'Selamat! Lu udah menyelesaikan 15 event dalam hidup anak Indonesia. Liat pencapaian lu di tab Skill dan mulai game baru kalau mau!';
+        
+        document.getElementById('choicesContainer').innerHTML = `
+            <button class="choice-btn" onclick="showScreen('skills')">
+                📊 Liat Final Stats
+            </button>
+            <button class="choice-btn" onclick="resetGame()">
+                🔄 Main Lagi
+            </button>
+        `;
+
+        showNotification('🎉 Congratulations! Game completed!');
     }
 }
 
@@ -912,21 +1496,20 @@ let gameState;
 
 // Utility Functions
 function showScreen(screenId) {
-    // Hide all screens
     document.querySelectorAll('.screen').forEach(screen => {
         screen.classList.remove('active');
     });
     
-    // Hide all nav buttons active state
     document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.classList.remove('active');
     });
     
-    // Show selected screen
     document.getElementById(screenId).classList.add('active');
     
-    // Activate corresponding nav button
-    document.getElementById(`nav-${screenId}`).classList.add('active');
+    const navBtn = document.getElementById(`nav-${screenId}`);
+    if (navBtn) {
+        navBtn.classList.add('active');
+    }
 }
 
 function showNotification(message) {
@@ -939,19 +1522,6 @@ function showNotification(message) {
     }, 3000);
 }
 
-function showSaveIndicator() {
-    const indicator = document.getElementById('saveIndicator');
-    indicator.style.display = 'block';
-    
-    setTimeout(() => {
-        indicator.style.display = 'none';
-    }, 2000);
-}
-
-function showProfile() {
-    showNotification('Profile feature coming soon! 🚧');
-}
-
 function startFirstEvent() {
     if (!gameState.player.background) {
         showNotification('Pilih background dulu di character creation!');
@@ -962,59 +1532,48 @@ function startFirstEvent() {
     gameState.loadCurrentEvent();
 }
 
+function resetGame() {
+    if (confirm('Yakin mau reset game? Progress akan hilang!')) {
+        location.reload();
+    }
+}
+
+function showProfile() {
+    showNotification('Profile feature coming soon! 🚧');
+}
+
 // Character Creation Logic
 document.addEventListener('DOMContentLoaded', function() {
-    // Hide loading screen
     setTimeout(() => {
         document.getElementById('loading').style.display = 'none';
     }, 1500);
 
-    // Initialize game state
     gameState = new GameState();
-    
-    // Check if there's saved game
-    if (gameState.loadGame()) {
-        showScreen('home');
-        gameState.updateUI();
-        showNotification('Game dimuat dari save terakhir!');
-    }
 
-    // Background selection
     const backgroundCards = document.querySelectorAll('.background-card');
     const startBtn = document.getElementById('startGame');
     let selectedBackground = null;
 
     backgroundCards.forEach(card => {
         card.addEventListener('click', function() {
-            // Remove selection from all cards
             backgroundCards.forEach(c => c.classList.remove('selected'));
-            
-            // Select current card
             this.classList.add('selected');
             selectedBackground = this.dataset.background;
-            
-            // Enable start button
             startBtn.disabled = false;
-            startBtn.style.opacity = '1';
-            startBtn.style.cursor = 'pointer';
         });
     });
 
-    // Start game button
     startBtn.addEventListener('click', function() {
         if (!selectedBackground) {
             showNotification('Pilih background dulu!');
             return;
         }
 
-        // Set background and initialize
         gameState.setBackground(selectedBackground);
         
-        // Show loading
         document.getElementById('loading').style.display = 'flex';
         document.querySelector('.loading-text').textContent = 'Memulai petualangan...';
         
-        // Switch to home screen
         setTimeout(() => {
             document.getElementById('loading').style.display = 'none';
             showScreen('home');
@@ -1022,20 +1581,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 2000);
     });
 
-    // Navigation event listeners
-    document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            if (this.id === 'nav-profile') {
-                showProfile();
-                return;
-            }
-            
-            const screenId = this.id.replace('nav-', '');
-            showScreen(screenId);
-        });
-    });
-
-    // Choice button interactions
     document.addEventListener('click', function(e) {
         if (e.target.classList.contains('choice-btn')) {
             e.target.style.background = 'rgba(34, 197, 94, 0.3)';
@@ -1047,173 +1592,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 500);
         }
     });
-
-    // Auto-save every 30 seconds
-    setInterval(() => {
-        if (gameState && gameState.player.background) {
-            gameState.saveGame();
-        }
-    }, 30000);
-
-    // Add some Easter eggs
-    let clickCount = 0;
-    document.getElementById('playerName').addEventListener('click', function() {
-        clickCount++;
-        if (clickCount >= 5) {
-            showNotification('🎉 Easter egg! +1000 uang bonus!');
-            gameState.player.money += 1000;
-            gameState.updateUI();
-            gameState.saveGame();
-            clickCount = 0;
-        }
-    });
 });
-
-// Story Screen Functions
-function loadStoryMode() {
-    showScreen('story');
-    
-    // Sample story for demo
-    document.getElementById('storyTitle').innerHTML = '🏢 Chapter 1: Dunia Kerja';
-    document.getElementById('storyText').textContent = `
-        Hari pertama kerja di startup yang katanya "unicorn" tapi ternyata masih tahap "kuda poni". 
-        
-        Bos bilang "We're family here!" sambil ngasih task dengan deadline kemarin. 
-        Laptop lemot, kursi goyang, tapi semangat masih tinggi.
-        
-        Rekan kerja sebelah bilang "Selamat datang di survival game real life!"
-        
-        Gimana strategi lu menghadapi hari pertama?
-    `;
-    
-    document.getElementById('storyChoices').innerHTML = `
-        <button class="choice-btn" onclick="processStoryChoice(1)">
-            🔥 All-in bekerja keras, show them who's boss!
-            <div class="choice-impact">+3 Etos Kerja, +2 Stress, -1 Work-Life Balance</div>
-        </button>
-        <button class="choice-btn" onclick="processStoryChoice(2)">
-            🤝 Fokus networking, kenalan sama semua orang
-            <div class="choice-impact">+2 Networking, +1 Basa-basi, -1 Focus</div>
-        </button>
-        <button class="choice-btn" onclick="processStoryChoice(3)">
-            🧠 Observe dulu, pelajari budaya kantor
-            <div class="choice-impact">+2 Wisdom, +1 Adaptasi, +1 Patience</div>
-        </button>
-        <button class="choice-btn" onclick="processStoryChoice(4)">
-            😴 Santai aja, yang penting gajian lancar
-            <div class="choice-impact">+1 Peace of Mind, -1 Ambisi, -1 Respect</div>
-        </button>
-    `;
-}
-
-function processStoryChoice(choice) {
-    const effects = {
-        1: { skills: { hustle: 2 }, happiness: -5, money: 0 },
-        2: { skills: { networking: 2, basabasi: 1 }, happiness: 5, money: 0 },
-        3: { skills: { adaptability: 1, emotional: 1 }, happiness: 10, money: 0 },
-        4: { skills: { hustle: -1 }, happiness: 5, money: 100000 }
-    };
-    
-    const messages = {
-        1: "Lu kerja keras banget sampai lembur! Bos notice tapi lu mulai stress.",
-        2: "Lu jadi populer di kantor! Semua orang kenal tapi kerjaan agak terbengkalai.",
-        3: "Lu jadi orang yang bijak di kantor. Semua datang minta saran.",
-        4: "Lu santai tapi reputasi agak menurun. Gak papa, mental health prioritas!"
-    };
-    
-    // Apply effects
-    if (effects[choice]) {
-        Object.keys(effects[choice].skills || {}).forEach(skill => {
-            gameState.player.skills[skill] = Math.max(0, Math.min(10, 
-                gameState.player.skills[skill] + effects[choice].skills[skill]));
-        });
-        
-        if (effects[choice].happiness) {
-            gameState.player.happiness = Math.max(0, Math.min(100, 
-                gameState.player.happiness + effects[choice].happiness));
-        }
-        
-        if (effects[choice].money) {
-            gameState.player.money += effects[choice].money;
-        }
-    }
-    
-    gameState.updateUI();
-    gameState.saveGame();
-    showNotification(messages[choice]);
-    
-    // Generate next story after delay
-    setTimeout(() => {
-        generateRandomStory();
-    }, 3000);
-}
-
-function generateRandomStory() {
-    const randomStories = [
-        {
-            title: "📱 Dilema Social Media",
-            text: "Temen posting gaji baru yang 2x lipat dari lu. Lu ngerasa gimana?",
-            choices: [
-                { text: "😤 Termotivasi upgrade skill", impact: "+2 Ambition, +1 Stress" },
-                { text: "🤷 Cuek, rezeki beda-beda", impact: "+2 Peace of Mind" },
-                { text: "📴 Mute social media", impact: "+1 Mental Health" }
-            ]
-        },
-        {
-            title: "💰 Unexpected Windfall",
-            text: "Dapet bonus THR yang lumayan. Mau diapain uangnya?",
-            choices: [
-                { text: "💎 Invest saham", impact: "+1 Financial Skill, Risk" },
-                { text: "🛍️ Belanja yang diinginkan", impact: "+2 Happiness, -Money" },
-                { text: "💰 Simpen di tabungan", impact: "+1 Security, +Money" }
-            ]
-        }
-    ];
-    
-    const story = randomStories[Math.floor(Math.random() * randomStories.length)];
-    
-    document.getElementById('storyTitle').innerHTML = story.title;
-    document.getElementById('storyText').textContent = story.text;
-    document.getElementById('storyChoices').innerHTML = story.choices.map((choice, index) => `
-        <button class="choice-btn" onclick="processRandomChoice(${index})">
-            ${choice.text}
-            <div class="choice-impact">${choice.impact}</div>
-        </button>
-    `).join('');
-}
-
-function processRandomChoice(index) {
-    showNotification("Pilihan lu bakal mempengaruhi masa depan!");
-    setTimeout(() => {
-        loadStoryMode(); // Reload story mode with new content
-    }, 2000);
-}
-
-// Add keyboard shortcuts
-document.addEventListener('keydown', function(e) {
-    if (e.key === 's' && e.ctrlKey) {
-        e.preventDefault();
-        gameState.saveGame();
-    }
-});
-
-// Add PWA support
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js').then(function(registration) {
-            console.log('SW registered: ', registration);
-        }).catch(function(registrationError) {
-            console.log('SW registration failed: ', registrationError);
-        });
-    });
-}
-
-// Performance monitoring
-console.log('🎮 Hidup Anak Indo RPG loaded successfully!');
-console.log('📱 Mobile-optimized for Indonesian players');
-console.log('💾 Auto-save enabled every 30 seconds');
 </script>
 
 </body>
 </html>
-            
