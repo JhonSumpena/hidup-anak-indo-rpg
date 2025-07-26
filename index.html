@@ -1113,7 +1113,21 @@ class GameState {
 
         setTimeout(() => {
             if (this.player.currentChapterEvent < this.currentChapterEvents.length) {
-                this.loadCurrentEvent();
+                this.loadCurrentEvent()
+                {
+
+    choicesContainer.innerHTML = backgroundChoices.map((choice, index) => {
+        // Strip quotes dari impact text
+        const cleanImpact = choice.impact.replace(/^"(.*)"$/, '$1');
+        
+        return `
+            <button class="choice-btn" onclick="gameState.processChoice(${index})">
+                ${choice.text}
+                <div class="choice-impact">${cleanImpact}</div>
+            </button>
+        `;
+    }).join('');
+};
             } else {
                 this.proceedToNextChapter();
             }
