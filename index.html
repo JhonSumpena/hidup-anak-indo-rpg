@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hidup Anak Indonesia RPG</title>
+    <title>Hidup Anak Indo RPG</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -517,6 +517,16 @@
             border: 1px solid #dc2626;
             text-align: center;
         }
+
+        .chapter-progress {
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-bottom: 15px;
+            border: 1px solid #3b82f6;
+            font-size: 12px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -535,7 +545,7 @@
     <!-- Character Creation Screen -->
     <div class="screen active" id="characterCreation">
         <div class="character-creation">
-            <div class="screen-title">Hidup Anak Indonesia</div>
+            <div class="screen-title">Hidup Anak Indo</div>
             <div class="intro-text">
                 Pilih latar belakang hidup lu. Setiap pilihan punya tantangan dan keuntungan masing-masing. 
                 Siap-siap menghadapi realita kehidupan Indonesia! 🇮🇩
@@ -546,18 +556,19 @@
                     <div class="background-icon">👑</div>
                     <div class="background-title">Anak Sultan</div>
                     <div class="background-desc">
-                        Lahir dari keluarga tajir. iPhone terbaru, mobil sendiri, sekolah internasional. 
-                        Tapi ekspektasi tinggi dan susah buktiin kemampuan asli. Progress cepat di awal, 
-                        tantangan berat di akhir.
+                        Lahir dari keluarga kaya. HP terbaru, motor sendiri, sekolah bagus. 
+                        Tapi ekspektasi tinggi dan susah buktiin kemampuan asli. Mulai enak, 
+                        makin lama makin challenging.
                     </div>
                 </div>
                 
                 <div class="background-card" data-background="sandwich">
                     <div class="background-icon">😅</div>
-                    <div class="background-title">Anak Sandwich Generation</div>
+                    <div class="background-title">Anak Kelas Menengah</div>
                     <div class="background-desc">
-                        Generasi terjepit antara ngurus ortu dan masa depan sendiri. Hidup serba nanggung, 
-                        budget pas-pasan, tapi mental kuat. Progress seimbang sepanjang game.
+                        Hidup pas-pasan antara ngurus ortu dan masa depan sendiri. Budget terbatas, 
+                        tapi mental kuat. Progress stabil sepanjang game - gak terlalu susah, 
+                        gak terlalu mudah.
                     </div>
                 </div>
                 
@@ -565,8 +576,9 @@
                     <div class="background-icon">💪</div>
                     <div class="background-title">Anak Kampung</div>
                     <div class="background-desc">
-                        Dari keluarga sederhana, terbiasa nguli dari kecil. Modal nekat dan semangat pantang 
-                        menyerah. Lambat di awal tapi explosive growth di akhir. True underdog story!
+                        Dari keluarga sederhana, terbiasa kerja keras dari kecil. Modal nekad 
+                        dan semangat pantang menyerah. Susah di awal tapi berkembang pesat! 
+                        True underdog story!
                     </div>
                 </div>
             </div>
@@ -583,7 +595,7 @@
             <div class="user-info">
                 <div class="avatar" id="playerAvatar">🤵</div>
                 <div class="user-details">
-                    <h3 id="playerName">Jhon Sumpena</h3>
+                    <h3 id="playerName">Andi Setiawan</h3>
                     <p id="playerBackground">Pilih background dulu</p>
                 </div>
             </div>
@@ -593,15 +605,18 @@
         </div>
 
         <div class="chapter-info">
-            <div>📖 <strong>Chapter <span id="currentChapter">1</span>: Hidup Dewasa Muda</strong></div>
-            <div style="font-size: 12px; margin-top: 5px;">Event <span id="currentEventNumber">1</span> dari <span id="totalEvents">Loading...</span></div>
+            <div>📖 <strong>Chapter <span id="currentChapter">1</span>: <span id="chapterTitle">Hidup Remaja</span></strong></div>
+            <div class="chapter-progress">
+                Event <span id="currentEventNumber">1</span> dari <span id="chapterTotalEvents">-</span> 
+                • Total <span id="totalEvents">Loading...</span> event
+            </div>
         </div>
 
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon">💼</div>
                 <div class="stat-label">Karir</div>
-                <div class="stat-value" id="careerLevel">Pengangguran</div>
+                <div class="stat-value" id="careerLevel">Belum Kerja</div>
                 <div class="progress-bar">
                     <div class="progress-fill" id="careerProgress" style="width: 0%;"></div>
                 </div>
@@ -616,8 +631,8 @@
             </div>
             <div class="stat-card">
                 <div class="stat-icon">👥</div>
-                <div class="stat-label">Networking</div>
-                <div class="stat-value" id="networkLevel">Lv. 1</div>
+                <div class="stat-label">Pertemanan</div>
+                <div class="stat-value" id="networkLevel">Level 1</div>
                 <div class="progress-bar">
                     <div class="progress-fill" id="networkProgress" style="width: 10%;"></div>
                 </div>
@@ -634,19 +649,19 @@
 
         <div class="psychology-stats">
             <div class="psychology-stat">
-                <div>🧠 Kepercayaan Diri</div>
+                <div>🧠 Percaya Diri</div>
                 <div id="confidenceLevel">50%</div>
             </div>
             <div class="psychology-stat">
-                <div>💯 Autentisitas</div>
+                <div>💯 Jadi Diri Sendiri</div>
                 <div id="authenticityLevel">50%</div>
             </div>
             <div class="psychology-stat">
-                <div>🤝 Kesadaran Sosial</div>
+                <div>🤝 Baca Situasi</div>
                 <div id="socialAwarenessLevel">50%</div>
             </div>
             <div class="psychology-stat">
-                <div>💪 Resiliensi</div>
+                <div>💪 Tahan Banting</div>
                 <div id="resilienceLevel">50%</div>
             </div>
         </div>
@@ -684,7 +699,7 @@
                 📖 Loading...
             </div>
             <div class="story-text" id="storyText">
-                Loading story content...
+                Memuat cerita...
             </div>
             <div class="choices-container" id="storyChoices">
                 <!-- Choices will be populated by JavaScript -->
@@ -719,7 +734,7 @@
 class GameState {
     constructor() {
         this.player = {
-            name: "Jhon Sumpena",
+            name: "Andi Setiawan",
             background: null,
             money: 1250000,
             age: 18,
@@ -744,7 +759,7 @@ class GameState {
             },
             career: {
                 level: 0,
-                title: "Pengangguran",
+                title: "Belum Kerja",
                 experience: 0
             },
             status: {
@@ -754,26 +769,35 @@ class GameState {
             },
             currentChapter: 1,
             currentEvent: 0,
+            currentChapterEvent: 0, // Event index dalam chapter saat ini
             completedEvents: [],
             achievements: [],
             eventHistory: [],
-            relationship: 0  // New stat for relationship management
+            relationship: 0
         };
         
-        this.eventQueue = [];
         this.allEvents = [];
         this.allChoices = [];
+        this.eventsByChapter = {}; // Organize events by chapter
+        this.currentChapterEvents = []; // Events untuk chapter saat ini
         this.googleSheetUrl = 'https://script.google.com/macros/s/AKfycbztYYJcErBhuosDNjCj4pJtNK2QP8SsZeasW_AvPyZCXnuwfylS1ZBg_5zAZPgWI8Pj/exec';
         this.dataLoaded = false;
         
-        // REMOVE ALL HARDCODED EVENT GENERATION
+        this.chapterTitles = {
+            1: "Masa Remaja",
+            2: "Dewasa Muda", 
+            3: "Karir Awal",
+            4: "Pencarian Jati Diri",
+            5: "Menuju Dewasa"
+        };
+        
         this.loadDataFromGoogleSheets();
     }
 
     async loadDataFromGoogleSheets() {
         try {
             showNotification('Memuat data dari Google Sheets...');
-            console.log('Loading data from Google Sheets...');
+            console.log('Memuat data events dan choices...');
             
             // Fetch events data
             const eventsResponse = await fetch(`${this.googleSheetUrl}?sheet=events`);
@@ -781,7 +805,7 @@ class GameState {
                 throw new Error(`HTTP error! status: ${eventsResponse.status}`);
             }
             const eventsData = await eventsResponse.json();
-            console.log('Events data loaded:', eventsData);
+            console.log('Data events berhasil dimuat:', eventsData);
             
             // Fetch choices data  
             const choicesResponse = await fetch(`${this.googleSheetUrl}?sheet=choices`);
@@ -789,22 +813,21 @@ class GameState {
                 throw new Error(`HTTP error! status: ${choicesResponse.status}`);
             }
             const choicesData = await choicesResponse.json();
-            console.log('Choices data loaded:', choicesData);
+            console.log('Data choices berhasil dimuat:', choicesData);
             
             this.processLoadedData(eventsData, choicesData);
             this.dataLoaded = true;
             
-            console.log('🎮 Hidup Anak Indonesia RPG loaded successfully!');
-            console.log('📱 Mobile-optimized for Indonesian players');
-            console.log(`🎯 ${this.allEvents.length} unique events loaded from Google Sheets`);
-            console.log(`📊 ${this.allChoices.length} total choices available`);
-            console.log('📊 Psychology & Skills tracking system');
-            console.log('🔀 Events shuffled for variety - no more repeating patterns!');
+            console.log('🎮 Hidup Anak Indo RPG berhasil dimuat!');
+            console.log('📱 Dioptimalkan untuk anak muda Indonesia');
+            console.log(`🎯 ${this.allEvents.length} events unik dimuat dari Google Sheets`);
+            console.log(`📊 ${this.allChoices.length} total pilihan tersedia`);
+            console.log('📖 Sistem progression chapter aktif');
             
-            showNotification(`✅ ${this.allEvents.length} events loaded! 🎉`);
+            showNotification(`✅ ${this.allEvents.length} events siap dimainkan! 🎉`);
             
         } catch (error) {
-            console.error('Error loading data from Google Sheets:', error);
+            console.error('Error loading data dari Google Sheets:', error);
             this.handleDataLoadError(error);
         }
     }
@@ -819,21 +842,48 @@ class GameState {
             text: event.text
         }));
 
-        // Process choices and group by event_id and background
+        // Organize events by chapter untuk progression system
+        this.eventsByChapter = {};
+        this.allEvents.forEach(event => {
+            if (!this.eventsByChapter[event.chapter]) {
+                this.eventsByChapter[event.chapter] = [];
+            }
+            this.eventsByChapter[event.chapter].push(event);
+        });
+
+        // Process choices
         this.allChoices = choicesData;
         
-        // Shuffle events untuk variety (tanpa duplikasi)
-        this.shuffleArray(this.allEvents);
+        // Setup chapter 1 events sebagai starting point
+        this.setupCurrentChapter(1);
         
-        // Create event queue with structured choices (no duplication!)
-        this.eventQueue = this.allEvents.map(event => {
+        // Update total events counter
+        document.getElementById('totalEvents').textContent = this.allEvents.length;
+        
+        console.log('Events diproses:', this.allEvents.length);
+        console.log('Events per chapter:', Object.keys(this.eventsByChapter).map(ch => 
+            `Chapter ${ch}: ${this.eventsByChapter[ch].length} events`).join(', '));
+    }
+
+    setupCurrentChapter(chapterNumber) {
+        this.player.currentChapter = chapterNumber;
+        this.player.currentChapterEvent = 0;
+        
+        // Get events untuk chapter ini
+        this.currentChapterEvents = this.eventsByChapter[chapterNumber] || [];
+        
+        // Shuffle events dalam chapter untuk variety
+        this.shuffleArray(this.currentChapterEvents);
+        
+        // Process events dengan choices
+        this.currentChapterEvents = this.currentChapterEvents.map(event => {
             const eventChoices = {
                 sultan: [],
                 sandwich: [],
                 kampung: []
             };
             
-            // Find choices for this event
+            // Find choices untuk event ini
             const relatedChoices = this.allChoices.filter(choice => choice.event_id === event.id);
             
             relatedChoices.forEach(choice => {
@@ -848,60 +898,37 @@ class GameState {
                 }
             });
             
-            // Validate that all backgrounds have choices
-            const backgrounds = ['sultan', 'sandwich', 'kampung'];
-            for (let bg of backgrounds) {
-                if (eventChoices[bg].length === 0) {
-                    console.warn(`Event ${event.id} missing choices for background: ${bg}`);
-                }
-            }
-            
             return {
                 ...event,
                 choices: eventChoices
             };
         }).filter(event => {
-            // Filter out events that don't have choices for all backgrounds
+            // Filter events yang punya choices untuk semua background
             const backgrounds = ['sultan', 'sandwich', 'kampung'];
             return backgrounds.every(bg => event.choices[bg] && event.choices[bg].length > 0);
         });
-
-        // Update total events counter with ACTUAL data from sheets
-        document.getElementById('totalEvents').textContent = this.eventQueue.length;
         
-        console.log('Processed events:', this.eventQueue.length);
-        console.log('Total unique events loaded:', this.eventQueue.length);
-        console.log('Events after filtering:', this.eventQueue.length);
-        console.log('Sample event structure:', this.eventQueue[0]);
+        // Update UI dengan info chapter
+        this.updateChapterUI();
         
-        // Debug: Show event IDs to verify no duplicates
-        const eventIds = this.eventQueue.map(e => e.id);
-        console.log('Event IDs:', eventIds);
-        console.log('Unique Event IDs:', [...new Set(eventIds)].length);
-        
-        if (eventIds.length !== [...new Set(eventIds)].length) {
-            console.error('DUPLICATE EVENTS DETECTED!');
-        } else {
-            console.log('✅ No duplicate events - all unique!');
-        }
+        console.log(`Setup Chapter ${chapterNumber}:`, this.currentChapterEvents.length, 'events');
     }
 
-    // Helper function untuk shuffle array
-    shuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
+    updateChapterUI() {
+        document.getElementById('currentChapter').textContent = this.player.currentChapter;
+        document.getElementById('chapterTitle').textContent = this.chapterTitles[this.player.currentChapter] || 'Chapter Baru';
+        document.getElementById('chapterTotalEvents').textContent = this.currentChapterEvents.length;
+        document.getElementById('currentEventNumber').textContent = this.player.currentChapterEvent + 1;
     }
 
     parseEffectsJson(effectsString) {
         try {
-            // Replace single quotes with double quotes for valid JSON
+            // Replace single quotes dengan double quotes untuk valid JSON
             const cleanEffects = effectsString.replace(/'/g, '"');
             return JSON.parse(cleanEffects);
         } catch (error) {
             console.error('Error parsing effects JSON:', effectsString, error);
-            return {}; // Return empty object if parsing fails
+            return {};
         }
     }
 
@@ -931,7 +958,7 @@ class GameState {
                 this.player.skills.financial = 2;
                 this.player.psychology.confidence = 70;
                 this.player.psychology.socialAwareness = 30;
-                this.player.status = { level: 2, title: "Apartemen Ortu", progress: 40 };
+                this.player.status = { level: 2, title: "Apartemen Sendiri", progress: 40 };
                 break;
             case 'sandwich':
                 this.player.money = 2500000;
@@ -960,7 +987,7 @@ class GameState {
         
         const backgroundNames = {
             sultan: "Anak Sultan",
-            sandwich: "Anak Sandwich Generation", 
+            sandwich: "Anak Kelas Menengah", 
             kampung: "Anak Kampung"
         };
         document.getElementById('playerBackground').textContent = 
@@ -980,7 +1007,7 @@ class GameState {
         document.getElementById('happinessLevel').textContent = `${this.player.happiness}%`;
         document.getElementById('happinessProgress').style.width = `${this.player.happiness}%`;
         
-        document.getElementById('networkLevel').textContent = `Lv. ${this.player.skills.networking}`;
+        document.getElementById('networkLevel').textContent = `Level ${this.player.skills.networking}`;
         document.getElementById('networkProgress').style.width = `${Math.min(this.player.skills.networking * 10, 100)}%`;
         
         document.getElementById('statusLevel').textContent = this.player.status.title;
@@ -991,23 +1018,21 @@ class GameState {
         document.getElementById('socialAwarenessLevel').textContent = `${this.player.psychology.socialAwareness}%`;
         document.getElementById('resilienceLevel').textContent = `${this.player.psychology.resilience}%`;
 
-        document.getElementById('currentEventNumber').textContent = this.player.currentEvent + 1;
-        document.getElementById('currentChapter').textContent = this.player.currentChapter;
-
+        this.updateChapterUI();
         this.updateSkillsList();
     }
 
     updateSkillsList() {
         const skillsList = document.getElementById('skillsList');
         const skillsData = [
-            { key: 'coding', name: 'Coding', icon: '💻', levels: ['Gagap IT', 'User Excel', 'Junior Dev', 'Senior Dev', 'Tech Lead'] },
-            { key: 'basabasi', name: 'Basa-basi', icon: '🗣️', levels: ['Kaku', 'Sopan', 'Tukang Gombal', 'Kameleon Sosial', 'Master Basa-basi'] },
-            { key: 'financial', name: 'Financial Literacy', icon: '💰', levels: ['Boros', 'Penabung', 'Investor', 'Trader', 'Wealth Builder'] },
-            { key: 'hustle', name: 'Hustle', icon: '🏃', levels: ['Pencari Kerja', 'Side Hustler', 'Multiple Income', 'Pemilik Bisnis', 'Serial Entrepreneur'] },
-            { key: 'networking', name: 'Networking', icon: '👥', levels: ['Introvert Akut', 'Tukang Kenal', 'Influencer', 'Industry Leader', 'Raja Networking'] },
-            { key: 'leadership', name: 'Leadership', icon: '👨‍💼', levels: ['Anak Buah', 'Team Player', 'Team Lead', 'Manager', 'Pemimpin Visioner'] },
-            { key: 'adaptability', name: 'Adaptability', icon: '🔄', levels: ['Rigid', 'Flexible', 'Quick Learner', 'Change Agent', 'Chameleon'] },
-            { key: 'emotional', name: 'Emotional Intelligence', icon: '❤️', levels: ['Emotionally Deaf', 'Self Aware', 'Empathetic', 'People Reader', 'Emotional Guru'] }
+            { key: 'coding', name: 'Coding', icon: '💻', levels: ['Gaptek', 'Bisa Excel', 'Junior Dev', 'Senior Dev', 'Tech Lead'] },
+            { key: 'basabasi', name: 'Basa-basi', icon: '🗣️', levels: ['Kaku', 'Sopan', 'Pinter Gombal', 'Kameleon Sosial', 'Master Basa-basi'] },
+            { key: 'financial', name: 'Atur Duit', icon: '💰', levels: ['Boros', 'Nabung', 'Investor', 'Trader', 'Wealth Builder'] },
+            { key: 'hustle', name: 'Hustle', icon: '🏃', levels: ['Cari Kerja', 'Side Job', 'Multiple Income', 'Punya Bisnis', 'Entrepreneur'] },
+            { key: 'networking', name: 'Networking', icon: '👥', levels: ['Introvert', 'Tukang Kenal', 'Influencer', 'Industry Leader', 'Raja Networking'] },
+            { key: 'leadership', name: 'Leadership', icon: '👨‍💼', levels: ['Anak Buah', 'Team Player', 'Team Lead', 'Manager', 'Pemimpin'] },
+            { key: 'adaptability', name: 'Adaptasi', icon: '🔄', levels: ['Kaku', 'Fleksibel', 'Quick Learner', 'Change Agent', 'Chameleon'] },
+            { key: 'emotional', name: 'EQ', icon: '❤️', levels: ['Emotionally Blank', 'Self Aware', 'Empati', 'People Reader', 'Emotional Guru'] }
         ];
 
         skillsList.innerHTML = skillsData.map(skill => {
@@ -1032,37 +1057,39 @@ class GameState {
     }
 
     processChoice(choiceIndex) {
-        console.log('Processing choice:', choiceIndex);
+        console.log('Memproses pilihan:', choiceIndex);
         
         if (!this.dataLoaded) {
             showNotification('Data masih dimuat, tunggu sebentar...');
             return;
         }
         
-        if (this.player.currentEvent >= this.eventQueue.length) {
-            console.error('No more events in queue');
+        if (this.player.currentChapterEvent >= this.currentChapterEvents.length) {
+            console.log('Chapter selesai, lanjut ke chapter berikutnya');
+            this.proceedToNextChapter();
             return;
         }
         
-        const event = this.eventQueue[this.player.currentEvent];
+        const event = this.currentChapterEvents[this.player.currentChapterEvent];
         if (!event) {
-            console.error('Event not found');
+            console.error('Event tidak ditemukan');
             return;
         }
         
         const backgroundChoices = event.choices[this.player.background];
         if (!backgroundChoices || !backgroundChoices[choiceIndex]) {
-            console.error('Invalid choice');
+            console.error('Pilihan tidak valid');
             return;
         }
 
         const choice = backgroundChoices[choiceIndex];
-        console.log('Selected choice:', choice);
+        console.log('Pilihan terpilih:', choice);
         
         this.applyChoiceEffects(choice);
         
         this.player.eventHistory.push({
             eventId: event.id,
+            chapter: this.player.currentChapter,
             choice: choiceIndex,
             choiceText: choice.text,
             impact: choice.impact
@@ -1071,14 +1098,9 @@ class GameState {
         this.player.completedEvents.push(event.id);
         showNotification(choice.impact);
 
-        this.player.currentEvent++;
+        this.player.currentChapterEvent++;
         
-        // Update chapter based on event progress
-        if (this.player.currentEvent > 0 && this.player.currentEvent % 15 === 0) {
-            this.player.currentChapter++;
-        }
-        
-        console.log('Moving to event:', this.player.currentEvent);
+        console.log('Lanjut ke event:', this.player.currentChapterEvent);
         
         this.updateUI();
 
@@ -1090,33 +1112,64 @@ class GameState {
         });
 
         setTimeout(() => {
-            if (this.player.currentEvent < this.eventQueue.length) {
+            if (this.player.currentChapterEvent < this.currentChapterEvents.length) {
                 this.loadCurrentEvent();
             } else {
-                this.showGameComplete();
+                this.proceedToNextChapter();
             }
         }, 2000);
+    }
+
+    proceedToNextChapter() {
+        const nextChapter = this.player.currentChapter + 1;
+        
+        if (this.eventsByChapter[nextChapter] && this.eventsByChapter[nextChapter].length > 0) {
+            // Ada chapter berikutnya
+            this.showChapterTransition(nextChapter);
+        } else {
+            // Game selesai
+            this.showGameComplete();
+        }
+    }
+
+    showChapterTransition(nextChapter) {
+        document.getElementById('currentEventTitle').innerHTML = `🎉 Chapter ${this.player.currentChapter} Selesai!`;
+        document.getElementById('currentEventText').textContent = 
+            `Selamat! Lu udah menyelesaikan Chapter ${this.player.currentChapter}. Siap lanjut ke ${this.chapterTitles[nextChapter]}?`;
+        
+        document.getElementById('choicesContainer').innerHTML = `
+            <button class="choice-btn" onclick="gameState.startNextChapter(${nextChapter})">
+                📖 Lanjut ke Chapter ${nextChapter}
+            </button>
+            <button class="choice-btn" onclick="showScreen('skills')">
+                📊 Liat Progress Dulu
+            </button>
+        `;
+
+        showNotification(`🎉 Chapter ${this.player.currentChapter} selesai!`);
+    }
+
+    startNextChapter(chapterNumber) {
+        this.setupCurrentChapter(chapterNumber);
+        this.loadCurrentEvent();
+        showNotification(`📖 Mulai ${this.chapterTitles[chapterNumber]}!`);
     }
 
     applyChoiceEffects(choice) {
         if (!choice.effects) return;
 
-        // Apply money effects
         if (choice.effects.money) {
             this.player.money = Math.max(0, this.player.money + choice.effects.money);
         }
         
-        // Apply happiness effects
         if (choice.effects.happiness) {
             this.player.happiness = Math.max(0, Math.min(100, this.player.happiness + choice.effects.happiness));
         }
         
-        // Apply relationship effects (new feature)
         if (choice.effects.relationship) {
             this.player.relationship = Math.max(0, Math.min(100, this.player.relationship + choice.effects.relationship));
         }
         
-        // Apply skills effects
         if (choice.effects.skills) {
             Object.keys(choice.effects.skills).forEach(skill => {
                 if (this.player.skills[skill] !== undefined) {
@@ -1125,7 +1178,6 @@ class GameState {
             });
         }
         
-        // Apply psychology effects
         if (choice.effects.psychology) {
             Object.keys(choice.effects.psychology).forEach(stat => {
                 if (this.player.psychology[stat] !== undefined) {
@@ -1134,32 +1186,30 @@ class GameState {
             });
         }
 
-        console.log('Applied effects:', choice.effects);
-        console.log('New player state:', this.player);
+        console.log('Efek diterapkan:', choice.effects);
     }
 
     loadCurrentEvent() {
-        console.log('Loading event:', this.player.currentEvent);
-        console.log('Total events available:', this.eventQueue.length);
+        console.log('Memuat event chapter', this.player.currentChapter, 'event ke-', this.player.currentChapterEvent + 1);
         
         if (!this.dataLoaded) {
             showNotification('Data belum dimuat lengkap...');
             return;
         }
         
-        if (this.player.currentEvent >= this.eventQueue.length) {
-            console.log('All events completed!');
-            this.showGameComplete();
+        if (this.player.currentChapterEvent >= this.currentChapterEvents.length) {
+            console.log('Chapter events habis, lanjut chapter berikutnya');
+            this.proceedToNextChapter();
             return;
         }
 
-        const event = this.eventQueue[this.player.currentEvent];
+        const event = this.currentChapterEvents[this.player.currentChapterEvent];
         if (!event) {
-            console.error('No event found at index:', this.player.currentEvent);
+            console.error('Event tidak ditemukan di index:', this.player.currentChapterEvent);
             return;
         }
 
-        console.log('Current event:', event.id, '-', event.title);
+        console.log('Event saat ini:', event.id, '-', event.title);
 
         const categoryNames = {
             kampus: "📚 Kampus",
@@ -1178,19 +1228,19 @@ class GameState {
         const backgroundChoices = event.choices[this.player.background];
         
         if (!backgroundChoices || backgroundChoices.length === 0) {
-            console.error('No choices for background:', this.player.background, 'in event:', event.id);
+            console.error('Tidak ada pilihan untuk background:', this.player.background, 'di event:', event.id);
             choicesContainer.innerHTML = `
                 <div class="error-message">
-                    No choices available for background: ${this.player.background} in event ${event.id}
+                    Tidak ada pilihan untuk background: ${this.player.background} di event ${event.id}
                 </div>
-                <button class="choice-btn" onclick="gameState.player.currentEvent++; gameState.loadCurrentEvent()">
+                <button class="choice-btn" onclick="gameState.player.currentChapterEvent++; gameState.loadCurrentEvent()">
                     ⏭️ Skip Event
                 </button>
             `;
             return;
         }
 
-        console.log(`Loaded ${backgroundChoices.length} choices for background:`, this.player.background);
+        console.log(`Dimuat ${backgroundChoices.length} pilihan untuk background:`, this.player.background);
 
         choicesContainer.innerHTML = backgroundChoices.map((choice, index) => `
             <button class="choice-btn" onclick="gameState.processChoice(${index})">
@@ -1201,10 +1251,10 @@ class GameState {
     }
 
     showGameComplete() {
-        const totalEventsCompleted = this.eventQueue.length;
+        const totalEventsCompleted = this.player.completedEvents.length;
         document.getElementById('currentEventTitle').innerHTML = '🎉 Game Selesai!';
         document.getElementById('currentEventText').textContent = 
-            `Selamat! Lu udah menyelesaikan ${totalEventsCompleted} event dalam hidup anak Indonesia. Liat pencapaian lu di tab Skill dan mulai game baru kalau mau!`;
+            `Selamat! Lu udah menyelesaikan ${totalEventsCompleted} event dalam hidup anak Indonesia. Liat pencapaian lu di tab Skill dan main lagi kalau mau!`;
         
         document.getElementById('choicesContainer').innerHTML = `
             <button class="choice-btn" onclick="showScreen('skills')">
@@ -1216,6 +1266,13 @@ class GameState {
         `;
 
         showNotification(`🎉 Selesai! ${totalEventsCompleted} events completed!`);
+    }
+
+    shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
     }
 }
 
@@ -1252,7 +1309,7 @@ function showNotification(message) {
 
 function startFirstEvent() {
     if (!gameState.player.background) {
-        showNotification('Pilih background dulu di character creation!');
+        showNotification('Pilih background dulu!');
         showScreen('characterCreation');
         return;
     }
@@ -1272,7 +1329,7 @@ function resetGame() {
 }
 
 function showProfile() {
-    showNotification('Profile feature coming soon! 🚧');
+    showNotification('Fitur profil segera hadir! 🚧');
 }
 
 // Character Creation Logic
