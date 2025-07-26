@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hidup Anak Indo RPG</title>
+    <title>Hidup Anak Indonesia RPG</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -545,7 +545,7 @@
     <!-- Character Creation Screen -->
     <div class="screen active" id="characterCreation">
         <div class="character-creation">
-            <div class="screen-title">Hidup Anak Indo</div>
+            <div class="screen-title">Hidup Anak Indonesia</div>
             <div class="intro-text">
                 Pilih latar belakang hidup lu. Setiap pilihan punya tantangan dan keuntungan masing-masing. 
                 Siap-siap menghadapi realita kehidupan Indonesia! 🇮🇩
@@ -818,7 +818,7 @@ class GameState {
             this.processLoadedData(eventsData, choicesData);
             this.dataLoaded = true;
             
-            console.log('🎮 Hidup Anak Indo RPG berhasil dimuat!');
+            console.log('🎮 Hidup Anak Indonesia RPG berhasil dimuat!');
             console.log('📱 Dioptimalkan untuk anak muda Indonesia');
             console.log(`🎯 ${this.allEvents.length} events unik dimuat dari Google Sheets`);
             console.log(`📊 ${this.allChoices.length} total pilihan tersedia`);
@@ -851,8 +851,11 @@ class GameState {
             this.eventsByChapter[event.chapter].push(event);
         });
 
-        // Process choices
-        this.allChoices = choicesData;
+        // Process choices - UPDATED untuk handle multiple choices per background
+        this.allChoices = choicesData.map(choice => ({
+            ...choice,
+            impact: choice.impact.replace(/^"(.*)"$/, '$1') // Strip quotes dari impact
+        }));
         
         // Setup chapter 1 events sebagai starting point
         this.setupCurrentChapter(1);
@@ -861,6 +864,7 @@ class GameState {
         document.getElementById('totalEvents').textContent = this.allEvents.length;
         
         console.log('Events diproses:', this.allEvents.length);
+        console.log('Total choices:', this.allChoices.length);
         console.log('Events per chapter:', Object.keys(this.eventsByChapter).map(ch => 
             `Chapter ${ch}: ${this.eventsByChapter[ch].length} events`).join(', '));
     }
@@ -875,7 +879,7 @@ class GameState {
         // Shuffle events dalam chapter untuk variety
         this.shuffleArray(this.currentChapterEvents);
         
-        // Process events dengan choices
+        // Process events dengan choices - UPDATED untuk multiple choices
         this.currentChapterEvents = this.currentChapterEvents.map(event => {
             const eventChoices = {
                 sultan: [],
@@ -883,13 +887,13 @@ class GameState {
                 kampung: []
             };
             
-            // Find choices untuk event ini
+            // Find ALL choices untuk event ini (bukan hanya 1 per background)
             const relatedChoices = this.allChoices.filter(choice => choice.event_id === event.id);
             
             relatedChoices.forEach(choice => {
                 const choiceData = {
                     text: choice.text,
-                    impact: choice.impact,
+                    impact: choice.impact, // Quotes sudah di-strip di processLoadedData
                     effects: this.parseEffectsJson(choice.effects_json)
                 };
                 
@@ -903,7 +907,7 @@ class GameState {
                 choices: eventChoices
             };
         }).filter(event => {
-            // Filter events yang punya choices untuk semua background
+            // Filter events yang punya minimal 1 choice untuk setiap background
             const backgrounds = ['sultan', 'sandwich', 'kampung'];
             return backgrounds.every(bg => event.choices[bg] && event.choices[bg].length > 0);
         });
@@ -912,6 +916,14 @@ class GameState {
         this.updateChapterUI();
         
         console.log(`Setup Chapter ${chapterNumber}:`, this.currentChapterEvents.length, 'events');
+        
+        // Debug: Check choices per event
+        this.currentChapterEvents.slice(0, 3).forEach(event => {
+            console.log(`Event ${event.id}:`, 
+                `Sultan=${event.choices.sultan.length}`, 
+                `Sandwich=${event.choices.sandwich.length}`, 
+                `Kampung=${event.choices.kampung.length}`);
+        });
     }
 
     updateChapterUI() {
@@ -1113,21 +1125,7 @@ class GameState {
 
         setTimeout(() => {
             if (this.player.currentChapterEvent < this.currentChapterEvents.length) {
-                this.loadCurrentEvent()
-                {
-
-    choicesContainer.innerHTML = backgroundChoices.map((choice, index) => {
-        // Strip quotes dari impact text
-        const cleanImpact = choice.impact.replace(/^"(.*)"$/, '$1');
-        
-        return `
-            <button class="choice-btn" onclick="gameState.processChoice(${index})">
-                ${choice.text}
-                <div class="choice-impact">${cleanImpact}</div>
-            </button>
-        `;
-    }).join('');
-};
+                this.loadCurrentEvent();
             } else {
                 this.proceedToNextChapter();
             }
