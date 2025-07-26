@@ -507,6 +507,16 @@
             text-align: center;
             font-size: 12px;
         }
+
+        .error-message {
+            background: rgba(220, 38, 38, 0.2);
+            color: #fca5a5;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #dc2626;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -583,8 +593,8 @@
         </div>
 
         <div class="chapter-info">
-            <div>📖 <strong>Chapter 1: Hidup Dewasa Muda</strong></div>
-            <div style="font-size: 12px; margin-top: 5px;">Event <span id="currentEventNumber">1</span> dari 15</div>
+            <div>📖 <strong>Chapter <span id="currentChapter">1</span>: Hidup Dewasa Muda</strong></div>
+            <div style="font-size: 12px; margin-top: 5px;">Event <span id="currentEventNumber">1</span> dari <span id="totalEvents">15</span></div>
         </div>
 
         <div class="stats-grid">
@@ -746,496 +756,130 @@ class GameState {
             currentEvent: 0,
             completedEvents: [],
             achievements: [],
-            eventHistory: []
+            eventHistory: [],
+            relationship: 0  // New stat for relationship management
         };
         
         this.eventQueue = [];
-        this.loadEvents();
-        this.generateEventQueue();
+        this.allEvents = [];
+        this.allChoices = [];
+        this.googleSheetUrl = 'https://script.google.com/macros/s/AKfycbztYYJcErBhuosDNjCj4pJtNK2QP8SsZeasW_AvPyZCXnuwfylS1ZBg_5zAZPgWI8Pj/exec';
+        this.dataLoaded = false;
+        
+        this.loadDataFromGoogleSheets();
     }
 
-    loadEvents() {
-        this.allEvents = [
-            {
-                id: 'E1',
-                category: 'kampus',
-                title: '🎓 Orientasi Pertama',
-                text: 'Hari pertama orientasi kampus. Lu liat diversity yang gila - ada yang datang naik mobil mewah, ada yang naik motor, ada yang angkot. Giliran lu perkenalan, semua mata ngeliatin. Gimana lu introduce diri?',
-                choices: {
-                    sultan: [
-                        { 
-                            text: '😅 Bilang nama aja, hindari detail family background', 
-                            impact: '+1 Rendah Hati, +2 Diterima Sosial', 
-                            effects: { 
-                                psychology: { confidence: -1, authenticity: 1 }, 
-                                happiness: 5 
-                            } 
-                        },
-                        { 
-                            text: '💼 Casual mention international school experiences', 
-                            impact: '+2 Kesan Pertama, -1 Relatabilitas', 
-                            effects: { 
-                                psychology: { confidence: 2, socialAwareness: -1 }, 
-                                happiness: -2 
-                            } 
-                        },
-                        { 
-                            text: '🤝 Berusaha keras sound normal dan down-to-earth', 
-                            impact: '+1 Empati, -1 Autentisitas', 
-                            effects: { 
-                                psychology: { empathy: 1, authenticity: -1 }, 
-                                happiness: -5 
-                            } 
-                        }
-                    ],
-                    sandwich: [
-                        { 
-                            text: '⚖️ Balance antara humble dan proud, highlight achievements', 
-                            impact: '+2 Navigasi Sosial, +1 Respek', 
-                            effects: { 
-                                psychology: { confidence: 1, socialAwareness: 2 }, 
-                                skills: { networking: 1 }, 
-                                happiness: 5 
-                            } 
-                        },
-                        { 
-                            text: '😔 Merasa inferior, focus ke kekurangan diri', 
-                            impact: '-2 Percaya Diri, +1 Motivasi', 
-                            effects: { 
-                                psychology: { confidence: -2, resilience: 1 }, 
-                                happiness: -10 
-                            } 
-                        },
-                        { 
-                            text: '💪 Bangga cerita struggle dan sacrifice keluarga', 
-                            impact: '+2 Autentisitas, +1 Inspirasi', 
-                            effects: { 
-                                psychology: { authenticity: 2, confidence: 1 }, 
-                                skills: { leadership: 1 }, 
-                                happiness: 10 
-                            } 
-                        }
-                    ],
-                    kampung: [
-                        { 
-                            text: '🔥 Honest about background, zero shame', 
-                            impact: '+3 Percaya Diri, +2 Respek', 
-                            effects: { 
-                                psychology: { confidence: 3, authenticity: 2 }, 
-                                skills: { leadership: 1 }, 
-                                happiness: 15 
-                            } 
-                        },
-                        { 
-                            text: '🛡️ Siap defend background dari potential judgment', 
-                            impact: '+1 Resiliensi, -1 Keterbukaan', 
-                            effects: { 
-                                psychology: { resilience: 1, socialAwareness: -1 }, 
-                                happiness: 0 
-                            } 
-                        },
-                        { 
-                            text: '🎯 Highlight achievements yang earned, bukan background', 
-                            impact: '+2 Ambisi, +1 Etos Kerja', 
-                            effects: { 
-                                psychology: { confidence: 1, resilience: 1 }, 
-                                skills: { hustle: 1 }, 
-                                happiness: 5 
-                            } 
-                        }
-                    ]
-                }
-            },
-            {
-                id: 'E2',
-                category: 'kampus',
-                title: '👥 Grup Project Dinamika',
-                text: 'Grup project pertama dengan deadline ketat. Tim lu mixed: ada yang suggest ketemu di cafe mahal, ada yang prefer perpustakaan. Diskusi jadi awkward soal budget. Gimana lu handle this?',
-                choices: {
-                    sultan: [
-                        { 
-                            text: '💳 Gue treat semua di tempat yang nyaman', 
-                            impact: '+1 Popularitas, -1 Kesetaraan Tim', 
-                            effects: { 
-                                money: -200000, 
-                                psychology: { socialAwareness: -1 }, 
-                                skills: { networking: 1 }, 
-                                happiness: -5 
-                            } 
-                        },
-                        { 
-                            text: '🏠 Rumah gue luas dan nyaman kok', 
-                            impact: '+1 Praktis, -1 Kesadaran Sosial', 
-                            effects: { 
-                                psychology: { socialAwareness: -2, confidence: 1 }, 
-                                happiness: -3 
-                            } 
-                        },
-                        { 
-                            text: '🤐 Ikut aja keputusan mayoritas', 
-                            impact: '+1 Harmoni, -1 Kepemimpinan', 
-                            effects: { 
-                                psychology: { confidence: -1, empathy: 1 }, 
-                                happiness: 2 
-                            } 
-                        }
-                    ],
-                    sandwich: [
-                        { 
-                            text: '💡 Cari middle ground yang affordable tapi productive', 
-                            impact: '+2 Kepemimpinan, +1 Problem Solving', 
-                            effects: { 
-                                psychology: { confidence: 1, socialAwareness: 1 }, 
-                                skills: { leadership: 2 }, 
-                                happiness: 8 
-                            } 
-                        },
-                        { 
-                            text: '😰 Agree sambil mental calculation budget', 
-                            impact: '-1 Autentisitas, +1 Tekanan Sosial', 
-                            effects: { 
-                                psychology: { authenticity: -1, resilience: -1 }, 
-                                happiness: -8 
-                            } 
-                        },
-                        { 
-                            text: '📋 Suggest online collab buat save money dan time', 
-                            impact: '+1 Inovasi, +1 Efisiensi', 
-                            effects: { 
-                                psychology: { confidence: 1 }, 
-                                skills: { adaptability: 1 }, 
-                                happiness: 3 
-                            } 
-                        }
-                    ],
-                    kampung: [
-                        { 
-                            text: '🏫 Perpustakaan gratis dan lengkap, kenapa bayar?', 
-                            impact: '+2 Praktis, +1 Kebijaksanaan Finansial', 
-                            effects: { 
-                                psychology: { financialWisdom: 2, confidence: 1 }, 
-                                skills: { leadership: 1 }, 
-                                happiness: 10 
-                            } 
-                        },
-                        { 
-                            text: '💪 Gue handle lebih banyak kerjaan kalo tempatnya murah', 
-                            impact: '+2 Etos Kerja, +1 Nilai Tim', 
-                            effects: { 
-                                psychology: { resilience: 1 }, 
-                                skills: { hustle: 2 }, 
-                                happiness: 5 
-                            } 
-                        },
-                        { 
-                            text: '💯 Budget gue terbatas, but commitment unlimited', 
-                            impact: '+2 Autentisitas, +1 Kepemimpinan', 
-                            effects: { 
-                                psychology: { authenticity: 2, confidence: 1 }, 
-                                skills: { leadership: 1 }, 
-                                happiness: 12 
-                            } 
-                        }
-                    ]
-                }
-            },
-            {
-                id: 'E3',
-                category: 'sosial',
-                title: '💸 Teman Ajak Nongkrong Mahal',
-                text: 'Weekend plans: temen ajak nongkrong ke tempat yang obviously expensive. Mereka casual bilang "Come on, treat yourself!" FOMO vs financial reality.',
-                choices: {
-                    sultan: [
-                        { 
-                            text: '💳 Sure, malah gue yang treat semua orang', 
-                            impact: '+2 Popularitas, -1 Authentic Friendship', 
-                            effects: { 
-                                money: -1500000, 
-                                psychology: { socialAwareness: -1 }, 
-                                skills: { networking: 1 }, 
-                                happiness: 5 
-                            } 
-                        },
-                        { 
-                            text: '🤔 Suggest tempat yang authentic dan cheaper', 
-                            impact: '+1 Cultural Exploration, +1 Humility', 
-                            effects: { 
-                                psychology: { authenticity: 1, socialAwareness: 1 }, 
-                                happiness: 3 
-                            } 
-                        },
-                        { 
-                            text: '😅 Sure, sounds fun! (gak sadar ini expensive)', 
-                            impact: '+1 Social Inclusion, -1 Social Awareness', 
-                            effects: { 
-                                money: -800000, 
-                                psychology: { socialAwareness: -2 }, 
-                                happiness: 8 
-                            } 
-                        }
-                    ],
-                    sandwich: [
-                        { 
-                            text: '💡 Gimana kalo tempat yang lebih reasonable?', 
-                            impact: '+2 Kepemimpinan, +1 Financial Wisdom', 
-                            effects: { 
-                                psychology: { socialAwareness: 2, financialWisdom: 1 }, 
-                                skills: { leadership: 1 }, 
-                                happiness: 8 
-                            } 
-                        },
-                        { 
-                            text: '😰 Smile and agree, panic about budget internally', 
-                            impact: '+1 Social Acceptance, -2 Financial Health', 
-                            effects: { 
-                                money: -600000, 
-                                psychology: { authenticity: -1, resilience: -1 }, 
-                                happiness: -5 
-                            } 
-                        },
-                        { 
-                            text: '📱 Lagi saving buat something important', 
-                            impact: '+2 Financial Discipline, -1 Social Inclusion', 
-                            effects: { 
-                                psychology: { authenticity: 2, financialWisdom: 1 }, 
-                                happiness: 5 
-                            } 
-                        }
-                    ],
-                    kampung: [
-                        { 
-                            text: '💯 Di luar budget gue, but kalian have fun!', 
-                            impact: '+2 Honesty, +1 Self-Respect', 
-                            effects: { 
-                                psychology: { authenticity: 2, confidence: 1 }, 
-                                happiness: 8 
-                            } 
-                        },
-                        { 
-                            text: '🎯 Gue tau tempat yang cheaper tapi lebih memorable', 
-                            impact: '+2 Kepemimpinan, +1 Kreativitas', 
-                            effects: { 
-                                psychology: { confidence: 2, socialAwareness: 1 }, 
-                                skills: { leadership: 1 }, 
-                                happiness: 12 
-                            } 
-                        },
-                        { 
-                            text: '⚡ Kalo gue bisa afford tanpa sacrifice basic needs', 
-                            impact: '+2 Financial Responsibility, +1 Integritas', 
-                            effects: { 
-                                psychology: { financialWisdom: 2, authenticity: 1 }, 
-                                happiness: 10 
-                            } 
-                        }
-                    ]
-                }
-            },
-            {
-                id: 'E4',
-                category: 'keluarga',
-                title: '👨‍👩‍👧 Ekspektasi Ortu vs Passion',
-                text: 'Family dinner. Ortu nanya progress dan start talking about expectations. Mereka ada specific idea tentang success. Lu punya passion yang beda. How do you handle this?',
-                choices: {
-                    sultan: [
-                        { 
-                            text: '👑 But I am supposed to take over family business', 
-                            impact: '+1 Family Loyalty, -2 Personal Freedom', 
-                            effects: { 
-                                psychology: { authenticity: -2, socialAwareness: 1 }, 
-                                happiness: -10 
-                            } 
-                        },
-                        { 
-                            text: '💰 I will pursue passion dengan financial backup', 
-                            impact: '+2 Freedom, +1 Family Support', 
-                            effects: { 
-                                psychology: { confidence: 1, resilience: -1 }, 
-                                money: 1000000, 
-                                happiness: 8 
-                            } 
-                        },
-                        { 
-                            text: '😤 I am not living other life, I am living mine', 
-                            impact: '+2 Personal Freedom, -2 Family Relations', 
-                            effects: { 
-                                psychology: { authenticity: 2, confidence: 1 }, 
-                                happiness: -5 
-                            } 
-                        }
-                    ],
-                    sandwich: [
-                        { 
-                            text: '⚖️ Compromise: pursue passion sambil maintain backup', 
-                            impact: '+1 Family Harmony, +1 Personal Pursuit', 
-                            effects: { 
-                                psychology: { socialAwareness: 1, resilience: 1 }, 
-                                happiness: 5 
-                            } 
-                        },
-                        { 
-                            text: '😔 Maybe they are right, passion does not pay bills', 
-                            impact: '+1 Family Approval, -2 Personal Fulfillment', 
-                            effects: { 
-                                psychology: { authenticity: -2, empathy: 1 }, 
-                                happiness: -12 
-                            } 
-                        },
-                        { 
-                            text: '📋 Give me time to prove passion viable', 
-                            impact: '+1 Family Relations, +1 Personal Time', 
-                            effects: { 
-                                psychology: { confidence: 1, resilience: 1 }, 
-                                happiness: 3 
-                            } 
-                        }
-                    ],
-                    kampung: [
-                        { 
-                            text: '🔥 I pursue this to honor family sacrifices better', 
-                            impact: '+2 Family Understanding, +1 Motivasi', 
-                            effects: { 
-                                psychology: { authenticity: 1, empathy: 2 }, 
-                                happiness: 10 
-                            } 
-                        },
-                        { 
-                            text: '💪 Let me show results first, then we talk', 
-                            impact: '+2 Self-Reliance, +1 Family Respect', 
-                            effects: { 
-                                psychology: { confidence: 2, resilience: 1 }, 
-                                skills: { hustle: 1 }, 
-                                happiness: 8 
-                            } 
-                        },
-                        { 
-                            text: '❤️ This is how I make family proud and happy', 
-                            impact: '+1 Family Bond, +1 Understanding', 
-                            effects: { 
-                                psychology: { empathy: 2, authenticity: 1 }, 
-                                happiness: 15 
-                            } 
-                        }
-                    ]
-                }
-            },
-            {
-                id: 'E5',
-                category: 'kerja',
-                title: '💼 Interview Pertama',
-                text: 'Interview di perusahaan impian lu. HR nanya "Ceritain tentang diri lu" dan "Kenapa harus pilih lu?" Lu nervous banget. Gimana strategi lu?',
-                choices: {
-                    sultan: [
-                        { 
-                            text: '🎭 Downplay privilege, focus ke personal achievement', 
-                            impact: '+2 Humility, +1 Authenticity', 
-                            effects: { 
-                                psychology: { authenticity: 1, confidence: -1 }, 
-                                happiness: 3 
-                            } 
-                        },
-                        { 
-                            text: '💼 Mention network dan connections yang ada', 
-                            impact: '+1 Networking, -1 Merit-based', 
-                            effects: { 
-                                skills: { networking: 1 }, 
-                                psychology: { authenticity: -1 }, 
-                                happiness: -2 
-                            } 
-                        },
-                        { 
-                            text: '🎯 Honest tentang resources tapi emphasize work ethic', 
-                            impact: '+2 Honesty, +1 Balance', 
-                            effects: { 
-                                psychology: { authenticity: 2, confidence: 1 }, 
-                                happiness: 8 
-                            } 
-                        }
-                    ],
-                    sandwich: [
-                        { 
-                            text: '💪 Cerita struggle keluarga sebagai motivasi', 
-                            impact: '+2 Resilience Story, +1 Empathy', 
-                            effects: { 
-                                psychology: { resilience: 1, empathy: 1 }, 
-                                skills: { emotional: 1 }, 
-                                happiness: 10 
-                            } 
-                        },
-                        { 
-                            text: '📚 Focus ke skill dan achievement yang concrete', 
-                            impact: '+2 Merit-based, +1 Professionalism', 
-                            effects: { 
-                                psychology: { confidence: 2 }, 
-                                skills: { adaptability: 1 }, 
-                                happiness: 5 
-                            } 
-                        },
-                        { 
-                            text: '😅 Terlalu honest sampai overshare problems', 
-                            impact: '-1 Professionalism, +1 Authenticity', 
-                            effects: { 
-                                psychology: { authenticity: 1, confidence: -2 }, 
-                                happiness: -5 
-                            } 
-                        }
-                    ],
-                    kampung: [
-                        { 
-                            text: '🔥 Gue gak punya background fancy, tapi gue punya hunger', 
-                            impact: '+3 Confidence, +2 Authenticity', 
-                            effects: { 
-                                psychology: { confidence: 3, authenticity: 2 }, 
-                                skills: { leadership: 1 }, 
-                                happiness: 15 
-                            } 
-                        },
-                        { 
-                            text: '📈 Show concrete examples dari part-time jobs', 
-                            impact: '+2 Work Ethic, +1 Experience', 
-                            effects: { 
-                                skills: { hustle: 2, adaptability: 1 }, 
-                                psychology: { confidence: 1 }, 
-                                happiness: 8 
-                            } 
-                        },
-                        { 
-                            text: '💯 Gue tau value of money dan hard work', 
-                            impact: '+2 Reliability, +1 Financial Wisdom', 
-                            effects: { 
-                                psychology: { resilience: 2, financialWisdom: 1 }, 
-                                happiness: 12 
-                            } 
-                        }
-                    ]
-                }
+    async loadDataFromGoogleSheets() {
+        try {
+            showNotification('Memuat data dari Google Sheets...');
+            console.log('Loading data from Google Sheets...');
+            
+            // Fetch events data
+            const eventsResponse = await fetch(`${this.googleSheetUrl}?sheet=events`);
+            if (!eventsResponse.ok) {
+                throw new Error(`HTTP error! status: ${eventsResponse.status}`);
             }
-        ];
+            const eventsData = await eventsResponse.json();
+            console.log('Events data loaded:', eventsData);
+            
+            // Fetch choices data  
+            const choicesResponse = await fetch(`${this.googleSheetUrl}?sheet=choices`);
+            if (!choicesResponse.ok) {
+                throw new Error(`HTTP error! status: ${choicesResponse.status}`);
+            }
+            const choicesData = await choicesResponse.json();
+            console.log('Choices data loaded:', choicesData);
+            
+            this.processLoadedData(eventsData, choicesData);
+            this.dataLoaded = true;
+            
+            console.log('🎮 Hidup Anak Indonesia RPG loaded successfully!');
+            console.log('📱 Mobile-optimized for Indonesian players');
+            console.log(`🎯 ${this.allEvents.length} events loaded from Google Sheets`);
+            console.log('📊 Psychology & Skills tracking system');
+            
+            showNotification('Data berhasil dimuat! 🎉');
+            
+        } catch (error) {
+            console.error('Error loading data from Google Sheets:', error);
+            this.handleDataLoadError(error);
+        }
     }
 
-    generateEventQueue() {
-        this.eventQueue = [];
+    processLoadedData(eventsData, choicesData) {
+        // Process events
+        this.allEvents = eventsData.map(event => ({
+            id: event.id,
+            chapter: event.chapter,
+            category: event.theme,
+            title: event.title,
+            text: event.text
+        }));
+
+        // Process choices and group by event_id and background
+        this.allChoices = choicesData;
         
-        // Add all 5 unique events first
-        this.allEvents.forEach(event => {
-            this.eventQueue.push(event);
-        });
-        
-        // Create variations for remaining slots
-        while (this.eventQueue.length < 15) {
-            const randomEvent = this.allEvents[Math.floor(Math.random() * this.allEvents.length)];
-            const variation = {
-                ...randomEvent,
-                id: randomEvent.id + '_V' + (this.eventQueue.length - 4),
-                title: randomEvent.title + ' (Lanjutan)'
+        // Create event queue with structured choices
+        this.eventQueue = this.allEvents.map(event => {
+            const eventChoices = {
+                sultan: [],
+                sandwich: [],
+                kampung: []
             };
-            this.eventQueue.push(variation);
-        }
+            
+            // Find choices for this event
+            const relatedChoices = this.allChoices.filter(choice => choice.event_id === event.id);
+            
+            relatedChoices.forEach(choice => {
+                const choiceData = {
+                    text: choice.text,
+                    impact: choice.impact,
+                    effects: this.parseEffectsJson(choice.effects_json)
+                };
+                
+                if (eventChoices[choice.background]) {
+                    eventChoices[choice.background].push(choiceData);
+                }
+            });
+            
+            return {
+                ...event,
+                choices: eventChoices
+            };
+        });
+
+        // Update total events counter
+        document.getElementById('totalEvents').textContent = this.eventQueue.length;
         
-        console.log('🎮 Hidup Anak Indonesia RPG loaded successfully!');
-        console.log('📱 Mobile-optimized for Indonesian players');
-        console.log('🎯 15 unique events with multiple paths');
-        console.log('📊 Psychology & Skills tracking system');
+        console.log('Processed events:', this.eventQueue.length);
+        console.log('Sample event:', this.eventQueue[0]);
+    }
+
+    parseEffectsJson(effectsString) {
+        try {
+            // Replace single quotes with double quotes for valid JSON
+            const cleanEffects = effectsString.replace(/'/g, '"');
+            return JSON.parse(cleanEffects);
+        } catch (error) {
+            console.error('Error parsing effects JSON:', effectsString, error);
+            return {}; // Return empty object if parsing fails
+        }
+    }
+
+    handleDataLoadError(error) {
+        const choicesContainer = document.getElementById('choicesContainer');
+        choicesContainer.innerHTML = `
+            <div class="error-message">
+                <strong>❌ Gagal memuat data game</strong><br>
+                Error: ${error.message}<br>
+                <small>Pastikan koneksi internet stabil dan Google Apps Script dapat diakses.</small>
+            </div>
+            <button class="choice-btn" onclick="location.reload()">
+                🔄 Coba Lagi
+            </button>
+        `;
+        
+        showNotification('❌ Gagal memuat data game!');
     }
 
     setBackground(background) {
@@ -1309,6 +953,7 @@ class GameState {
         document.getElementById('resilienceLevel').textContent = `${this.player.psychology.resilience}%`;
 
         document.getElementById('currentEventNumber').textContent = this.player.currentEvent + 1;
+        document.getElementById('currentChapter').textContent = this.player.currentChapter;
 
         this.updateSkillsList();
     }
@@ -1350,6 +995,11 @@ class GameState {
     processChoice(choiceIndex) {
         console.log('Processing choice:', choiceIndex);
         
+        if (!this.dataLoaded) {
+            showNotification('Data masih dimuat, tunggu sebentar...');
+            return;
+        }
+        
         if (this.player.currentEvent >= this.eventQueue.length) {
             console.error('No more events in queue');
             return;
@@ -1383,6 +1033,12 @@ class GameState {
         showNotification(choice.impact);
 
         this.player.currentEvent++;
+        
+        // Update chapter based on event progress
+        if (this.player.currentEvent > 0 && this.player.currentEvent % 15 === 0) {
+            this.player.currentChapter++;
+        }
+        
         console.log('Moving to event:', this.player.currentEvent);
         
         this.updateUI();
@@ -1406,14 +1062,22 @@ class GameState {
     applyChoiceEffects(choice) {
         if (!choice.effects) return;
 
+        // Apply money effects
         if (choice.effects.money) {
             this.player.money = Math.max(0, this.player.money + choice.effects.money);
         }
         
+        // Apply happiness effects
         if (choice.effects.happiness) {
             this.player.happiness = Math.max(0, Math.min(100, this.player.happiness + choice.effects.happiness));
         }
         
+        // Apply relationship effects (new feature)
+        if (choice.effects.relationship) {
+            this.player.relationship = Math.max(0, Math.min(100, this.player.relationship + choice.effects.relationship));
+        }
+        
+        // Apply skills effects
         if (choice.effects.skills) {
             Object.keys(choice.effects.skills).forEach(skill => {
                 if (this.player.skills[skill] !== undefined) {
@@ -1422,6 +1086,7 @@ class GameState {
             });
         }
         
+        // Apply psychology effects
         if (choice.effects.psychology) {
             Object.keys(choice.effects.psychology).forEach(stat => {
                 if (this.player.psychology[stat] !== undefined) {
@@ -1429,10 +1094,18 @@ class GameState {
                 }
             });
         }
+
+        console.log('Applied effects:', choice.effects);
+        console.log('New player state:', this.player);
     }
 
     loadCurrentEvent() {
         console.log('Loading event:', this.player.currentEvent);
+        
+        if (!this.dataLoaded) {
+            showNotification('Data belum dimuat lengkap...');
+            return;
+        }
         
         if (this.player.currentEvent >= this.eventQueue.length) {
             this.showGameComplete();
@@ -1450,6 +1123,7 @@ class GameState {
             kerja: "💼 Kerja", 
             sosial: "👥 Sosial",
             keluarga: "👨‍👩‍👧 Keluarga",
+            percintaan: "💕 Percintaan",
             random: "🎲 Random"
         };
 
@@ -1460,8 +1134,13 @@ class GameState {
         const choicesContainer = document.getElementById('choicesContainer');
         const backgroundChoices = event.choices[this.player.background];
         
-        if (!backgroundChoices) {
+        if (!backgroundChoices || backgroundChoices.length === 0) {
             console.error('No choices for background:', this.player.background);
+            choicesContainer.innerHTML = `
+                <div class="error-message">
+                    No choices available for background: ${this.player.background}
+                </div>
+            `;
             return;
         }
 
@@ -1476,7 +1155,7 @@ class GameState {
     showGameComplete() {
         document.getElementById('currentEventTitle').innerHTML = '🎉 Game Selesai!';
         document.getElementById('currentEventText').textContent = 
-            'Selamat! Lu udah menyelesaikan 15 event dalam hidup anak Indonesia. Liat pencapaian lu di tab Skill dan mulai game baru kalau mau!';
+            `Selamat! Lu udah menyelesaikan ${this.eventQueue.length} event dalam hidup anak Indonesia. Liat pencapaian lu di tab Skill dan mulai game baru kalau mau!`;
         
         document.getElementById('choicesContainer').innerHTML = `
             <button class="choice-btn" onclick="showScreen('skills')">
@@ -1529,6 +1208,11 @@ function startFirstEvent() {
         return;
     }
     
+    if (!gameState.dataLoaded) {
+        showNotification('Data masih dimuat, tunggu sebentar...');
+        return;
+    }
+    
     gameState.loadCurrentEvent();
 }
 
@@ -1566,6 +1250,11 @@ document.addEventListener('DOMContentLoaded', function() {
     startBtn.addEventListener('click', function() {
         if (!selectedBackground) {
             showNotification('Pilih background dulu!');
+            return;
+        }
+
+        if (!gameState.dataLoaded) {
+            showNotification('Data masih dimuat dari Google Sheets, tunggu sebentar...');
             return;
         }
 
