@@ -594,7 +594,7 @@
 
         <div class="chapter-info">
             <div>📖 <strong>Chapter <span id="currentChapter">1</span>: Hidup Dewasa Muda</strong></div>
-            <div style="font-size: 12px; margin-top: 5px;">Event <span id="currentEventNumber">1</span> dari <span id="totalEvents">15</span></div>
+            <div style="font-size: 12px; margin-top: 5px;">Event <span id="currentEventNumber">1</span> dari <span id="totalEvents">Loading...</span></div>
         </div>
 
         <div class="stats-grid">
@@ -766,6 +766,7 @@ class GameState {
         this.googleSheetUrl = 'https://script.google.com/macros/s/AKfycbztYYJcErBhuosDNjCj4pJtNK2QP8SsZeasW_AvPyZCXnuwfylS1ZBg_5zAZPgWI8Pj/exec';
         this.dataLoaded = false;
         
+        // REMOVE ALL HARDCODED EVENT GENERATION
         this.loadDataFromGoogleSheets();
     }
 
@@ -795,10 +796,12 @@ class GameState {
             
             console.log('🎮 Hidup Anak Indonesia RPG loaded successfully!');
             console.log('📱 Mobile-optimized for Indonesian players');
-            console.log(`🎯 ${this.allEvents.length} events loaded from Google Sheets`);
+            console.log(`🎯 ${this.allEvents.length} unique events loaded from Google Sheets`);
+            console.log(`📊 ${this.allChoices.length} total choices available`);
             console.log('📊 Psychology & Skills tracking system');
+            console.log('🔀 Events shuffled for variety - no more repeating patterns!');
             
-            showNotification('Data berhasil dimuat! 🎉');
+            showNotification(`✅ ${this.allEvents.length} events loaded! 🎉`);
             
         } catch (error) {
             console.error('Error loading data from Google Sheets:', error);
@@ -819,7 +822,10 @@ class GameState {
         // Process choices and group by event_id and background
         this.allChoices = choicesData;
         
-        // Create event queue with structured choices
+        // Shuffle events untuk variety (tanpa duplikasi)
+        this.shuffleArray(this.allEvents);
+        
+        // Create event queue with structured choices (no duplication!)
         this.eventQueue = this.allEvents.map(event => {
             const eventChoices = {
                 sultan: [],
@@ -842,17 +848,50 @@ class GameState {
                 }
             });
             
+            // Validate that all backgrounds have choices
+            const backgrounds = ['sultan', 'sandwich', 'kampung'];
+            for (let bg of backgrounds) {
+                if (eventChoices[bg].length === 0) {
+                    console.warn(`Event ${event.id} missing choices for background: ${bg}`);
+                }
+            }
+            
             return {
                 ...event,
                 choices: eventChoices
             };
+        }).filter(event => {
+            // Filter out events that don't have choices for all backgrounds
+            const backgrounds = ['sultan', 'sandwich', 'kampung'];
+            return backgrounds.every(bg => event.choices[bg] && event.choices[bg].length > 0);
         });
 
-        // Update total events counter
+        // Update total events counter with ACTUAL data from sheets
         document.getElementById('totalEvents').textContent = this.eventQueue.length;
         
         console.log('Processed events:', this.eventQueue.length);
-        console.log('Sample event:', this.eventQueue[0]);
+        console.log('Total unique events loaded:', this.eventQueue.length);
+        console.log('Events after filtering:', this.eventQueue.length);
+        console.log('Sample event structure:', this.eventQueue[0]);
+        
+        // Debug: Show event IDs to verify no duplicates
+        const eventIds = this.eventQueue.map(e => e.id);
+        console.log('Event IDs:', eventIds);
+        console.log('Unique Event IDs:', [...new Set(eventIds)].length);
+        
+        if (eventIds.length !== [...new Set(eventIds)].length) {
+            console.error('DUPLICATE EVENTS DETECTED!');
+        } else {
+            console.log('✅ No duplicate events - all unique!');
+        }
+    }
+
+    // Helper function untuk shuffle array
+    shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
     }
 
     parseEffectsJson(effectsString) {
@@ -1101,6 +1140,7 @@ class GameState {
 
     loadCurrentEvent() {
         console.log('Loading event:', this.player.currentEvent);
+        console.log('Total events available:', this.eventQueue.length);
         
         if (!this.dataLoaded) {
             showNotification('Data belum dimuat lengkap...');
@@ -1108,15 +1148,18 @@ class GameState {
         }
         
         if (this.player.currentEvent >= this.eventQueue.length) {
+            console.log('All events completed!');
             this.showGameComplete();
             return;
         }
 
         const event = this.eventQueue[this.player.currentEvent];
         if (!event) {
-            console.error('No event found');
+            console.error('No event found at index:', this.player.currentEvent);
             return;
         }
+
+        console.log('Current event:', event.id, '-', event.title);
 
         const categoryNames = {
             kampus: "📚 Kampus",
@@ -1135,14 +1178,19 @@ class GameState {
         const backgroundChoices = event.choices[this.player.background];
         
         if (!backgroundChoices || backgroundChoices.length === 0) {
-            console.error('No choices for background:', this.player.background);
+            console.error('No choices for background:', this.player.background, 'in event:', event.id);
             choicesContainer.innerHTML = `
                 <div class="error-message">
-                    No choices available for background: ${this.player.background}
+                    No choices available for background: ${this.player.background} in event ${event.id}
                 </div>
+                <button class="choice-btn" onclick="gameState.player.currentEvent++; gameState.loadCurrentEvent()">
+                    ⏭️ Skip Event
+                </button>
             `;
             return;
         }
+
+        console.log(`Loaded ${backgroundChoices.length} choices for background:`, this.player.background);
 
         choicesContainer.innerHTML = backgroundChoices.map((choice, index) => `
             <button class="choice-btn" onclick="gameState.processChoice(${index})">
@@ -1153,9 +1201,10 @@ class GameState {
     }
 
     showGameComplete() {
+        const totalEventsCompleted = this.eventQueue.length;
         document.getElementById('currentEventTitle').innerHTML = '🎉 Game Selesai!';
         document.getElementById('currentEventText').textContent = 
-            `Selamat! Lu udah menyelesaikan ${this.eventQueue.length} event dalam hidup anak Indonesia. Liat pencapaian lu di tab Skill dan mulai game baru kalau mau!`;
+            `Selamat! Lu udah menyelesaikan ${totalEventsCompleted} event dalam hidup anak Indonesia. Liat pencapaian lu di tab Skill dan mulai game baru kalau mau!`;
         
         document.getElementById('choicesContainer').innerHTML = `
             <button class="choice-btn" onclick="showScreen('skills')">
@@ -1166,7 +1215,7 @@ class GameState {
             </button>
         `;
 
-        showNotification('🎉 Congratulations! Game completed!');
+        showNotification(`🎉 Selesai! ${totalEventsCompleted} events completed!`);
     }
 }
 
