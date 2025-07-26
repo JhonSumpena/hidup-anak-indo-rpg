@@ -3,7 +3,7 @@
 Text-based RPG tentang kehidupan nyata anak Indonesia dengan humor dan challenge yang relatable.
 
 ## 📱 Play Now
-[Mainkan di Browser](https://JhonSumpena.github.io/hidup-anak-indonesia-rpg)
+[Mainkan di Browser](https://jhonsumpena.github.io/hidup-anak-indo-rpg/)
 
 ## 🎯 Features
 - 3 background karakter (Sultan, Sandwich Gen, Kampung)
@@ -13,4 +13,4 @@ Text-based RPG tentang kehidupan nyata anak Indonesia dengan humor dan challenge
 - Auto-save progress
 
 ## 🤝 Feedback
-Kirim feedback ke [email/contact]
+Kirim feedback ke [email/contact](udin666epil@gmail.com)
