@@ -996,14 +996,13 @@ class GameState {
     }
 
     processChoicesData(choicesData) {
-        this.allChoices = choicesData.map(choice => ({
-            ...choice,
-            impact: choice.impact.replace(/^"(.*)"$/, '$1'),
-            effects: this.parseEffectsJson(choice.effects_json)
-        }));
-
-        // Attach choices to events
-        this.attachChoicesToEvents();
+    this.allChoices = choicesData.map(choice => {
+        const effects = this.parseEffectsJson(choice.effects_json);
+        if (choice.career_experience) effects.career_experience = Number(choice.career_experience);
+        if (choice.career_title)      effects.career_title      = choice.career_title;
+        return { ...choice, effects };
+    });
+    this.attachChoicesToEvents();
     }
 
     processConfigData(configData) {
@@ -1608,10 +1607,17 @@ class GameState {
     document.getElementById('happinessLevel').textContent = `${this.player.happiness}%`;
     document.getElementById('happinessProgress').style.width = `${this.player.happiness}%`;
 
-    // duit & career
+    // duit
     document.getElementById('playerMoney').textContent = this.player.money.toLocaleString('id-ID');
-    document.getElementById('careerLevel').textContent    = this.player.career.title;
-    document.getElementById('careerProgress').style.width = `${this.player.career.experience}%`;
+
+    // Career
+    const carTitleEl = document.getElementById('careerLevel');
+    const carProgEl  = document.getElementById('careerProgress');
+
+    carTitleEl.textContent = this.player.career.title;
+    // misal experience 0–100 jadi width%, atau divide by maxXP-mu
+    const xp = Math.min(this.player.career.experience, 100);
+    carProgEl.style.width = `${xp}%`;
 
     document.getElementById('confidenceLevel').textContent      = `${this.player.psychology.confidence}%`;
     document.getElementById('authenticityLevel').textContent    = `${this.player.psychology.authenticity}%`;
@@ -1806,33 +1812,52 @@ class GameState {
     applyChoiceEffects(choice) {
         if (!choice.effects) return;
 
-        if (choice.effects.money) {
-            this.player.money = Math.max(0, this.player.money + choice.effects.money);
+        const e = choice.effects;
+
+        if (e.money) {
+            this.player.money = Math.max(0, this.player.money + e.money);
         }
         
-        if (choice.effects.happiness) {
-            this.player.happiness = Math.max(0, Math.min(100, this.player.happiness + choice.effects.happiness));
+        if (e.happiness) {
+            this.player.happiness = Math.max(0, Math.min(100, this.player.happiness + e.happiness));
         }
         
-        if (choice.effects.relationship) {
-            this.player.relationship = Math.max(0, Math.min(100, this.player.relationship + choice.effects.relationship));
+        if (e.relationship) {
+            this.player.relationship = Math.max(0, Math.min(100, this.player.relationship + e.relationship));
         }
         
-        if (choice.effects.skills) {
-            Object.keys(choice.effects.skills).forEach(skill => {
+        if (e.skills) {
+            Object.keys(e.skills).forEach(skill => {
                 if (this.player.skills[skill] !== undefined) {
-                    this.player.skills[skill] = Math.max(0, Math.min(10, this.player.skills[skill] + choice.effects.skills[skill]));
+                    this.player.skills[skill] = Math.max(
+                        0,
+                        Math.min(10, this.player.skills[skill] + e.skills[skill])
+                    );
                 }
             });
         }
         
-        if (choice.effects.psychology) {
-            Object.keys(choice.effects.psychology).forEach(stat => {
+        if (e.psychology) {
+            Object.keys(e.psychology).forEach(stat => {
                 if (this.player.psychology[stat] !== undefined) {
-                    this.player.psychology[stat] = Math.max(0, Math.min(100, this.player.psychology[stat] + choice.effects.psychology[stat]));
+                    this.player.psychology[stat] = Math.max(
+                        0,
+                        Math.min(100, this.player.psychology[stat] + e.psychology[stat])
+                    );
                 }
             });
         }
+
+        // —— career effects ——  
+        if (e.career_experience != null) {
+            this.player.career.experience += Number(e.career_experience);
+        }
+        if (e.career_title) {
+            this.player.career.title = e.career_title;
+        }
+
+        // —— kunci: refresh UI setelah semua perubahan ——  
+        this.updateUI();
     }
 
     proceedToNextChapter() {
