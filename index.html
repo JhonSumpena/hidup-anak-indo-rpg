@@ -626,6 +626,28 @@
             color: #fef3c7;
             border: 1px solid #fbbf24;
         }
+
+        /* NEW: Fallback choice styling */
+        .fallback-choice {
+            border: 2px solid #6b7280 !important;
+            background: rgba(107, 114, 128, 0.15) !important;
+            font-style: italic;
+        }
+
+        .fallback-choice::before {
+            content: "🔧 ";
+            color: #9ca3af;
+        }
+
+        .debug-info {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid #3b82f6;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 11px;
+            color: #bfdbfe;
+        }
     </style>
 </head>
 <body>
@@ -827,7 +849,7 @@
 </div>
 
 <script>
-// Enhanced Game State Management with Google Sheets Config
+// Enhanced Game State Management with NO FILTERING
 class GameState {
     constructor() {
         this.player = {
@@ -1019,8 +1041,14 @@ class GameState {
         });
     }
 
+    // FIXED: NO FILTERING - Keep ALL events regardless of missing choices
     attachChoicesToEvents() {
+        let eventsKept = 0;
+        let eventsWithMissingChoices = 0;
+        let totalEventsProcessed = 0;
+
         this.currentChapterEvents = this.currentChapterEvents.map(event => {
+            totalEventsProcessed++;
             const eventChoices = {
                 sultan: [],
                 sandwich: [],
@@ -1040,24 +1068,57 @@ class GameState {
                 }
             });
             
-            return { ...event, choices: eventChoices };
-        }).filter(event => {
-            // FIXED: More lenient filtering - at least 1 choice per background
+            // Check if event has missing choices but DON'T FILTER IT OUT
             const backgrounds = ['sultan', 'sandwich', 'kampung'];
-            const hasMinimumChoices = backgrounds.every(bg => 
-                event.choices[bg] && event.choices[bg].length >= 1
+            const missingChoices = backgrounds.filter(bg => 
+                !eventChoices[bg] || eventChoices[bg].length === 0
             );
             
-            if (!hasMinimumChoices) {
-                console.warn(`⚠️ Event ${event.id} removed - missing choices:`, {
-                    sultan: event.choices.sultan?.length || 0,
-                    sandwich: event.choices.sandwich?.length || 0,
-                    kampung: event.choices.kampung?.length || 0
+            if (missingChoices.length > 0) {
+                eventsWithMissingChoices++;
+                console.log(`⚠️  Event ${event.id} has missing choices for:`, missingChoices, '- but keeping it anyway!');
+                
+                // Add fallback choices for missing backgrounds
+                missingChoices.forEach(background => {
+                    eventChoices[background] = this.generateFallbackChoices(event, background);
                 });
             }
             
-            return hasMinimumChoices;
-        });
+            eventsKept++;
+            return { ...event, choices: eventChoices };
+        }); // NO .filter() HERE - keep all events!
+
+        console.log(`✅ Events processed: ${totalEventsProcessed}, kept: ${eventsKept}, had missing choices: ${eventsWithMissingChoices}`);
+        console.log('🎯 ALL EVENTS KEPT - no filtering applied!');
+    }
+
+    // NEW: Generate fallback choices when original choices are missing
+    generateFallbackChoices(event, background) {
+        const backgroundInfo = {
+            sultan: { icon: "👑", context: "dengan privilege dan koneksi" },
+            sandwich: { icon: "😅", context: "dengan cara praktis dan hati-hati" },
+            kampung: { icon: "💪", context: "dengan kerja keras dan kreativitas" }
+        };
+
+        const info = backgroundInfo[background];
+        
+        return [
+            {
+                text: `${info.icon} Hadapi situasi ${info.context}`,
+                impact: `Pendekatan khas ${background} - efek standar`,
+                effects: { happiness: 1, psychology: { confidence: 1 } }
+            },
+            {
+                text: `${info.icon} Cari solusi kreatif dengan background ${background}`,
+                impact: `Manfaatkan keunggulan ${background} - risiko sedang`,
+                effects: { happiness: 2, psychology: { confidence: 2, adaptability: 1 } }
+            },
+            {
+                text: `${info.icon} Main aman dan hindari masalah`,
+                impact: `Pilihan konservatif - pertumbuhan minimal`,
+                effects: { happiness: -1, psychology: { resilience: -1 } }
+            }
+        ];
     }
 
     attachCrisisChoicesToEvents() {
@@ -1575,6 +1636,7 @@ class GameState {
         }).join('');
     }
 
+    // ENHANCED: Better event loading with fallback handling
     loadCurrentEvent() {
         if (!this.dataLoaded) {
             showNotification('Data belum dimuat lengkap...');
@@ -1609,15 +1671,19 @@ class GameState {
         const backgroundChoices = event.choices[this.player.background];
         
         if (!backgroundChoices || backgroundChoices.length === 0) {
-            console.error('Tidak ada pilihan untuk background:', this.player.background, 'di event:', event.id);
+            console.warn(`⚠️ No choices for background ${this.player.background} in event ${event.id} - using fallback`);
+            
+            // Show debug info
             choicesContainer.innerHTML = `
-                <div class="error-message">
-                    Tidak ada pilihan untuk background: ${this.player.background} di event ${event.id}
+                <div class="debug-info">
+                    🔧 Event ${event.id} menggunakan fallback choices untuk background: ${this.player.background}
                 </div>
-                <button class="choice-btn" onclick="gameState.player.currentChapterEvent++; gameState.loadCurrentEvent()">
-                    ⏭️ Skip Event
+            ` + this.generateFallbackChoices(event, this.player.background).map((choice, index) => `
+                <button class="choice-btn fallback-choice" onclick="gameState.processFallbackChoice(${index})">
+                    ${choice.text}
+                    <div class="choice-impact">${choice.impact}</div>
                 </button>
-            `;
+            `).join('');
             return;
         }
 
@@ -1627,6 +1693,46 @@ class GameState {
                 <div class="choice-impact">${choice.impact}</div>
             </button>
         `).join('');
+    }
+
+    // NEW: Process fallback choices
+    processFallbackChoice(choiceIndex) {
+        const event = this.currentChapterEvents[this.player.currentChapterEvent];
+        const fallbackChoices = this.generateFallbackChoices(event, this.player.background);
+        const choice = fallbackChoices[choiceIndex];
+        
+        if (!choice) return;
+        
+        // Apply effects
+        this.applyChoiceEffects({ effects: choice.effects });
+        
+        // Check game over
+        if (this.checkGameOver()) return;
+        
+        // Track choice
+        this.player.eventHistory.push({
+            eventId: event.id,
+            chapter: this.player.currentChapter,
+            choice: choiceIndex,
+            choiceText: choice.text,
+            impact: choice.impact,
+            psychState: this.getPsychologyState(),
+            isFallback: true
+        });
+
+        this.player.completedEvents.push(event.id);
+        showNotification(choice.impact);
+        this.player.currentChapterEvent++;
+        this.updateUI();
+
+        // Continue
+        setTimeout(() => {
+            if (this.player.currentChapterEvent < this.currentChapterEvents.length) {
+                this.loadCurrentEvent();
+            } else {
+                this.proceedToNextChapter();
+            }
+        }, 2000);
     }
 
     applyChoiceEffects(choice) {
@@ -1734,67 +1840,7 @@ class GameState {
         });
     }
 
-    // 4. NEW: Fallback choice processing
-    processFallbackChoice(choiceIndex) {
-        const fallbackChoices = [
-            {
-                text: "Ambil keputusan dengan hati-hati",
-                impact: "Pilihan safe, efek minimal",
-                effects: { happiness: 1, psychology: { confidence: 1 } }
-            },
-            {
-                text: "Berani ambil risiko", 
-                impact: "Pilihan berisiko, potensi reward tinggi",
-                effects: { happiness: 2, psychology: { confidence: 2, resilience: 1 } }
-            },
-            {
-                text: "Hindari konflik, main aman",
-                impact: "Menghindari masalah, pertumbuhan lambat", 
-                effects: { happiness: -1, psychology: { resilience: -1 } }
-            }
-        ];
-        
-        const choice = fallbackChoices[choiceIndex];
-        if (!choice) return;
-        
-        // Apply effects
-        this.applyChoiceEffects(choice);
-        
-        // Check game over
-        if (this.checkGameOver()) return;
-        
-        // Track choice
-        this.player.eventHistory.push({
-            eventId: `FALLBACK_${this.player.currentChapterEvent}`,
-            chapter: this.player.currentChapter,
-            choice: choiceIndex,
-            choiceText: choice.text,
-            impact: choice.impact,
-            psychState: this.getPsychologyState()
-        });
-
-        showNotification(choice.impact);
-        this.player.currentChapterEvent++;
-        this.updateUI();
-
-        // Continue
-        setTimeout(() => {
-            this.loadCurrentEvent();
-        }, 2000);
-    }
-
-    // 5. NEW: Skip event method
-    skipCurrentEvent() {
-        console.log(`⏭️ Skipping event ${this.player.currentChapterEvent + 1}`);
-        this.player.currentChapterEvent++;
-        this.updateUI();
-        
-        setTimeout(() => {
-            this.loadCurrentEvent();
-        }, 1000);
-    }
-
-    // 7. ADD: Debug method untuk console
+    // Debug method 
     debugChapter1() {
         console.log('🔍 CHAPTER 1 DEBUG INFO:');
         console.log('Current event:', this.player.currentChapterEvent + 1);
