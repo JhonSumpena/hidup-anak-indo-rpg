@@ -753,9 +753,9 @@
             <div class="stat-card">
                 <div class="stat-icon">👥</div>
                 <div class="stat-label">Pertemanan</div>
-                <div class="stat-value" id="networkLevel">Level 1</div>
+                <div class="stat-value" id="networkingLevel">Level 1</div>
                 <div class="progress-bar">
-                    <div class="progress-fill" id="networkProgress" style="width: 10%;"></div>
+                    <div class="progress-fill" id="networkingProgress" style="width: 10%;"></div>
                 </div>
             </div>
             <div class="stat-card">
@@ -924,7 +924,7 @@ class GameState {
 
     async loadAllDataFromGoogleSheets() {
         try {
-            showNotification('Memuat data dari Google Sheets...');
+            showNotification('Memuat data dari Demon Lord...');
             console.log('Memuat semua data game...');
             
             // Load all sheets concurrently
@@ -1524,83 +1524,101 @@ class GameState {
         showNotification('❌ Gagal memuat data game!');
     }
 
-    setBackground(background) {
-        this.player.background = background;
-        
-        switch(background) {
-            case 'sultan':
-                this.player.money = 50000000;
-                this.player.skills.networking = 3;
-                this.player.skills.financial = 2;
-                this.player.psychology.confidence = 70;
-                this.player.psychology.socialAwareness = 30;
-                break;
-            case 'sandwich':
-                this.player.money = 2500000;
-                this.player.skills.adaptability = 2;
-                this.player.skills.hustle = 1;
-                this.player.psychology.resilience = 60;
-                this.player.psychology.empathy = 60;
-                break;
-            case 'kampung':
-                this.player.money = 500000;
-                this.player.skills.hustle = 3;
-                this.player.skills.adaptability = 2;
-                this.player.psychology.resilience = 80;
-                this.player.psychology.authenticity = 70;
-                break;
+    setBackground(bg) {
+    this.player.background = bg;
+
+    // 1) Ubah money & happiness
+    this.player.money     = Number(this.gameConfig[`initial_money_${bg}`]    || 0);
+    this.player.happiness = Number(this.gameConfig[`initial_happiness_${bg}`] || 0);
+
+    // ————————————— KARIR —————————————
+    this.player.career = {title: this.gameConfig[`initial_career_title_${bg}`]       || "Belum Kerja",
+        experience: Number(this.gameConfig[`initial_career_experience_${bg}`]|| 0)
+    };
+
+    // 2) Reset skills & psychology
+    this.player.skills     = {};
+    this.player.psychology = {};
+
+    // 3) Isi skills dari config initial
+    Object.keys(this.gameConfig).forEach(key => {
+        const parts = key.split('_');
+        // pattern initial_skill_<attr>_<bg>
+        if (parts[0] === 'initial' && parts[1] === 'skill' && parts[3] === bg) {
+        const attr = parts[2];
+        this.player.skills[attr] = Number(this.gameConfig[key] || 0);
         }
-        
-        this.updateUI();
+        // pattern baseline_psych_<attr>_<bg>
+        if (parts[0] === 'baseline' && parts[1] === 'psych' && parts[3] === bg) {
+        const attr = parts[2];
+        this.player.psychology[attr] = Number(this.gameConfig[key] || 0);
+        }
+    });
+
+    this.updateUI();
     }
+
 
     updateUI() {
-        document.getElementById('playerName').textContent = this.player.name;
-        document.getElementById('playerMoney').textContent = this.player.money.toLocaleString('id-ID');
-        
-        const backgroundNames = {
-            sultan: "Anak Sultan",
-            sandwich: "Anak Kelas Menengah", 
-            kampung: "Anak Kampung"
-        };
-        document.getElementById('playerBackground').textContent = 
-            backgroundNames[this.player.background] || "Belum dipilih";
+    // Ambil dari sheet via gameConfig, fallback ke hard‑code atau default
+    const bgKey   = this.player.background;
+    const cfgKey  = `background_name_${bgKey}`;
+    const fromCfg = this.gameConfig[cfgKey];
+    const label   = fromCfg
+    || {
+        sultan:    "Anak Sultan",
+        sandwich:  "Anak Gen Sandwich",
+        kampung:   "Anak Kampung"
+        }[bgKey]
+    || "Belum dipilih";
 
-        const avatars = {
-            sultan: "👑",
-            sandwich: "😅", 
-            kampung: "💪"
-        };
-        document.getElementById('playerAvatar').textContent = avatars[this.player.background] || "🤵";
+    document.getElementById('playerBackground').textContent = label;
 
-        document.getElementById('careerLevel').textContent = this.player.career.title;
-        document.getElementById('careerProgress').style.width = `${this.player.career.experience}%`;
-        
-        document.getElementById('happinessLevel').textContent = `${this.player.happiness}%`;
-        document.getElementById('happinessProgress').style.width = `${this.player.happiness}%`;
-        
-        document.getElementById('networkLevel').textContent = `Level ${this.player.skills.networking}`;
-        document.getElementById('networkProgress').style.width = `${Math.min(this.player.skills.networking * 10, 100)}%`;
+    // update happiness, career, background, dll.
+    document.getElementById('happinessLevel').textContent = `${this.player.happiness}%`;
+    document.getElementById('happinessProgress').style.width = `${this.player.happiness}%`;
 
-        document.getElementById('confidenceLevel').textContent = `${this.player.psychology.confidence}%`;
-        document.getElementById('authenticityLevel').textContent = `${this.player.psychology.authenticity}%`;
-        document.getElementById('socialAwarenessLevel').textContent = `${this.player.psychology.socialAwareness}%`;
-        document.getElementById('resilienceLevel').textContent = `${this.player.psychology.resilience}%`;
+    // duit & career
+    document.getElementById('playerMoney').textContent = this.player.money.toLocaleString('id-ID');
+    document.getElementById('careerLevel').textContent    = this.player.career.title;
+    document.getElementById('careerProgress').style.width = `${this.player.career.experience}%`;
 
-        // Update psychology state
+
+    // Networking
+    //document.getElementById('networkingLevel').textContent = `Level ${this.player.skills.networking || 0}`;
+    //document.getElementById('networkingProgress').style.width = `${Math.min((this.player.skills.networking || 0) * 10, 100)}%`;
+
+    // Hustle
+    //document.getElementById('hustleLevel').textContent = `Level ${this.player.skills.hustle || 0}`;
+    //document.getElementById('hustleProgress').style.width = `${Math.min((this.player.skills.hustle || 0) * 10, 100)}%`;
+
+    // Adaptability
+    //document.getElementById('adaptabilityLevel').textContent = `Level ${this.player.skills.adaptability || 0}`;
+    //document.getElementById('adaptabilityProgress').style.width = `${Math.min((this.player.skills.adaptability || 0) * 10, 100)}%`;
+
+    // ——— Update Skills Dinamis dengan Debug ———
+    Object.entries(this.player.skills).forEach(([skillKey,val])=>{
+        const lvl = document.getElementById(`${skillKey}Level`);
+        const bar = document.getElementById(`${skillKey}Progress`);
+        if (lvl) lvl.textContent = `Level ${val||0}`;
+        if (bar) bar.style.width = `${Math.min((val||0)*10,100)}%`;
+    });
+
+    // ——— Update Psychology Dinamis ———
+    Object.entries(this.player.psychology).forEach(([psy, val]) => {
+        const el = document.getElementById(`${psy}Level`);
+        if (el) el.textContent = `${val || 0}%`;
+    });
+
+    // existing code…
+    this.updateChapterUI();
+    this.updateSkillsList();
+    if (this.dataLoaded) {
         const psychState = this.getPsychologyState();
-        document.getElementById('psychologyState').textContent = this.getPsychologyStateText();
-        document.getElementById('psychologyIndicator').textContent = this.getPsychologyStateText();
-        document.getElementById('psychologyIndicator').className = `psychology-indicator ${psychState}`;
-
-        this.updateChapterUI();
-        this.updateSkillsList();
-        
-        // Update warning indicators if data is loaded
-        if (this.dataLoaded) {
-            this.updateWarningUI(psychState);
-        }
+        this.updateWarningUI(psychState);
     }
+    }
+
 
     updateSkillsList() {
         const skillsList = document.getElementById('skillsList');
@@ -1769,7 +1787,20 @@ class GameState {
 
     proceedToNextChapter() {
         const nextChapter = this.player.currentChapter + 1;
-        
+
+        // Ambil threshold dari config
+        const key = `progress_chapter_${nextChapter}_happiness_min`;
+        const minHap = this.gameConfig[key];
+
+        if (typeof minHap === 'number') {
+            if (this.player.happiness < minHap) {
+                // Blok dan notifikasi kalau kebahagiaan belum cukup
+                showNotification(`Kebahagiaan minimal ${minHap}% untuk lanjut ke Chapter ${nextChapter}`);
+                return;
+            }
+        }
+
+        // Kalau lolos threshold, lanjut seperti biasa
         if (this.eventsByChapter[nextChapter] && this.eventsByChapter[nextChapter].length > 0) {
             this.showChapterTransition(nextChapter);
         } else {
