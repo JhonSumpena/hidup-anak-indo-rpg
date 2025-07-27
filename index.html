@@ -1042,8 +1042,21 @@ class GameState {
             
             return { ...event, choices: eventChoices };
         }).filter(event => {
+            // FIXED: More lenient filtering - at least 1 choice per background
             const backgrounds = ['sultan', 'sandwich', 'kampung'];
-            return backgrounds.every(bg => event.choices[bg] && event.choices[bg].length > 0);
+            const hasMinimumChoices = backgrounds.every(bg => 
+                event.choices[bg] && event.choices[bg].length >= 1
+            );
+            
+            if (!hasMinimumChoices) {
+                console.warn(`⚠️ Event ${event.id} removed - missing choices:`, {
+                    sultan: event.choices.sultan?.length || 0,
+                    sandwich: event.choices.sandwich?.length || 0,
+                    kampung: event.choices.kampung?.length || 0
+                });
+            }
+            
+            return hasMinimumChoices;
         });
     }
 
@@ -1232,6 +1245,11 @@ class GameState {
     }
 
     shouldTriggerCrisis() {
+        // TEMPORARY: Disable crisis for Chapter 1 debugging
+        if (this.player.currentChapter === 1) {
+            return false; // No crisis in Chapter 1 for now
+        }
+
         const psychState = this.getPsychologyState();
         const configKey = `crisis_chance_${psychState}`;
         let baseChance = this.gameConfig[configKey] || 0;
@@ -1714,6 +1732,88 @@ class GameState {
             psychState: this.getPsychologyState(),
             timestamp: new Date().toISOString()
         });
+    }
+
+    // 4. NEW: Fallback choice processing
+    processFallbackChoice(choiceIndex) {
+        const fallbackChoices = [
+            {
+                text: "Ambil keputusan dengan hati-hati",
+                impact: "Pilihan safe, efek minimal",
+                effects: { happiness: 1, psychology: { confidence: 1 } }
+            },
+            {
+                text: "Berani ambil risiko", 
+                impact: "Pilihan berisiko, potensi reward tinggi",
+                effects: { happiness: 2, psychology: { confidence: 2, resilience: 1 } }
+            },
+            {
+                text: "Hindari konflik, main aman",
+                impact: "Menghindari masalah, pertumbuhan lambat", 
+                effects: { happiness: -1, psychology: { resilience: -1 } }
+            }
+        ];
+        
+        const choice = fallbackChoices[choiceIndex];
+        if (!choice) return;
+        
+        // Apply effects
+        this.applyChoiceEffects(choice);
+        
+        // Check game over
+        if (this.checkGameOver()) return;
+        
+        // Track choice
+        this.player.eventHistory.push({
+            eventId: `FALLBACK_${this.player.currentChapterEvent}`,
+            chapter: this.player.currentChapter,
+            choice: choiceIndex,
+            choiceText: choice.text,
+            impact: choice.impact,
+            psychState: this.getPsychologyState()
+        });
+
+        showNotification(choice.impact);
+        this.player.currentChapterEvent++;
+        this.updateUI();
+
+        // Continue
+        setTimeout(() => {
+            this.loadCurrentEvent();
+        }, 2000);
+    }
+
+    // 5. NEW: Skip event method
+    skipCurrentEvent() {
+        console.log(`⏭️ Skipping event ${this.player.currentChapterEvent + 1}`);
+        this.player.currentChapterEvent++;
+        this.updateUI();
+        
+        setTimeout(() => {
+            this.loadCurrentEvent();
+        }, 1000);
+    }
+
+    // 7. ADD: Debug method untuk console
+    debugChapter1() {
+        console.log('🔍 CHAPTER 1 DEBUG INFO:');
+        console.log('Current event:', this.player.currentChapterEvent + 1);
+        console.log('Total events:', this.currentChapterEvents.length);
+        console.log('Events completed:', this.player.completedEvents.length);
+        console.log('Available events:');
+        
+        this.currentChapterEvents.forEach((event, i) => {
+            const choices = event.choices?.[this.player.background];
+            const marker = i === this.player.currentChapterEvent ? '👉' : '  ';
+            console.log(`${marker} ${i + 1}. ${event.id}: ${event.title} (${choices?.length || 0} choices)`);
+        });
+        
+        return {
+            currentEvent: this.player.currentChapterEvent,
+            totalEvents: this.currentChapterEvents.length,
+            completed: this.player.completedEvents.length,
+            dataLoaded: this.dataLoaded
+        };
     }
 }
 
