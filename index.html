@@ -670,6 +670,8 @@
             <div class="intro-text">
                 Pilih latar belakang hidup lu. Setiap pilihan punya tantangan dan keuntungan masing-masing. 
                 Siap-siap menghadapi realita kehidupan Indonesia! 🇮🇩
+                <div class="background-title">Mental mines lu Mati!</div>
+                <div class="background-title">Duit 0 lu Tewas juga!</div>
             </div>
             
             <div class="background-cards">
@@ -869,12 +871,12 @@ class GameState {
                 emotional: 0
             },
             psychology: {
-                confidence: 50,
-                authenticity: 50,
-                socialAwareness: 50,
-                resilience: 50,
-                empathy: 50,
-                financialWisdom: 50
+                confidence: 0,
+                authenticity: 0,
+                socialAwareness: 0,
+                resilience: 0,
+                empathy: 0,
+                financialWisdom: 0
             },
             career: {
                 level: 0,
@@ -918,6 +920,9 @@ class GameState {
             4: "Pencarian Jati Diri",
             5: "Menuju Dewasa"
         };
+
+        this.bridgingDone1 = false;
+        this.bridgingDone2 = false;
         
         this.loadAllDataFromGoogleSheets();
     }
@@ -950,6 +955,7 @@ class GameState {
             console.log('🎮 Hidup Anak Indonesia RPG berhasil dimuat!');
             console.log(`🎯 ${this.allEvents.length} events, ${this.crisisEvents.length} crisis events`);
             console.log(`📊 ${this.allChoices.length} choices, ${this.crisisChoices.length} crisis choices`);
+            //console.log("Loaded gameConfig:", this.gameConfig);
             
             showNotification(`✅ ${this.allEvents.length} events siap dimainkan! 🎉`);
             
@@ -1348,40 +1354,50 @@ class GameState {
     }
 
     triggerCrisisEvent() {
-        const psychState = this.getPsychologyState();
-        const availableCrises = this.crisisEvents.filter(crisis => 
-            crisis.psychologyState === psychState
-        );
-        
-        if (availableCrises.length === 0) {
-            console.log('No crisis events available for psychology state:', psychState);
-            return;
+    // 1. Hitung state psikologi terkini
+    const psychState = this.getPsychologyState();
+
+    // 2. Cari crisis sesuai state
+    let availableCrises = this.crisisEvents.filter(
+        crisis => crisis.psychologyState === psychState
+    );
+
+    // 3. Kalau kosong, fallback ke state berikutnya
+    if (availableCrises.length === 0) {
+        const fallbackOrder = [
+        'danger',
+        'critical',
+        'stable',
+        'good',
+        'excellent'
+        ];
+        for (let s of fallbackOrder) {
+        if (s === psychState) continue;
+        const found = this.crisisEvents.filter(c => c.psychologyState === s);
+        if (found.length) {
+            availableCrises = found;
+            console.warn(
+            `No crises for "${psychState}", falling back to "${s}"`
+            );
+            break;
         }
-        
-        const crisis = availableCrises[Math.floor(Math.random() * availableCrises.length)];
-        
-        showNotification(this.uiMessages.crisis_trigger || '🚨 Crisis Event!');
-        
-        setTimeout(() => {
-            document.getElementById('eventCategory').textContent = '🚨 Crisis';
-            document.getElementById('currentEventTitle').innerHTML = crisis.title;
-            document.getElementById('currentEventText').textContent = crisis.text;
-            
-            const backgroundChoices = crisis.choices[this.player.background];
-            if (!backgroundChoices || backgroundChoices.length === 0) {
-                console.error('No crisis choices for background:', this.player.background);
-                return;
-            }
-            
-            const choicesContainer = document.getElementById('choicesContainer');
-            choicesContainer.innerHTML = backgroundChoices.map((choice, index) => `
-                <button class="choice-btn crisis-choice" onclick="gameState.processCrisisChoice('${crisis.id}', ${index})">
-                    ${choice.text}
-                    <div class="choice-impact">${choice.impact}</div>
-                </button>
-            `).join('');
-        }, 1500);
+        }
+        if (availableCrises.length === 0) {
+        console.error('No crises available at all!');
+        return;
+        }
     }
+
+    // 4. Pilih satu random dan tampilkan
+    const crisis = availableCrises[
+        Math.floor(Math.random() * availableCrises.length)
+    ];
+    showNotification(
+        this.uiMessages.crisis_trigger || '❗ Crisis Event!'
+    );
+    // … lanjut render crisis …
+    }
+
 
     processCrisisChoice(crisisId, choiceIndex) {
         const crisis = this.crisisEvents.find(c => c.id === crisisId);
@@ -1540,6 +1556,20 @@ class GameState {
     this.player.skills     = {};
     this.player.psychology = {};
 
+    // **> inisialisasi psychology dari sheet**  
+    const psychKeys = [
+        'confidence',
+        'authenticity',
+        'socialAwareness',
+        'resilience',
+        'empathy',
+        'financialWisdom'
+    ];
+    psychKeys.forEach(key => {
+        this.player.psychology[key] = 
+        Number(this.gameConfig[`initial_${key}_${bg}`] || 0);
+    });
+
     // 3) Isi skills dari config initial
     Object.keys(this.gameConfig).forEach(key => {
         const parts = key.split('_');
@@ -1582,6 +1612,26 @@ class GameState {
     document.getElementById('playerMoney').textContent = this.player.money.toLocaleString('id-ID');
     document.getElementById('careerLevel').textContent    = this.player.career.title;
     document.getElementById('careerProgress').style.width = `${this.player.career.experience}%`;
+
+    document.getElementById('confidenceLevel').textContent      = `${this.player.psychology.confidence}%`;
+    document.getElementById('authenticityLevel').textContent    = `${this.player.psychology.authenticity}%`;
+    document.getElementById('socialAwarenessLevel').textContent = `${this.player.psychology.socialAwareness}%`;
+    document.getElementById('resilienceLevel').textContent      = `${this.player.psychology.resilience}%`;
+
+    // 1) compute the current psych state
+    const stateKey = this.getPsychologyState();        // e.g. 'critical','danger','stable','good','excellent'
+    const stateText = this.getPsychologyStateText();   // pulls your localized label, e.g. '😐 Normal','🌟 Excellent'
+
+    // 2) render it dynamically
+    const psychLabelEl     = document.getElementById('psychologyState');
+    const psychIndicatorEl = document.getElementById('psychologyIndicator');
+
+    psychLabelEl.textContent     = stateText;
+    psychIndicatorEl.textContent = stateText;
+
+    // swap the CSS class so your color/border matches the state
+    psychIndicatorEl.className = `psychology-indicator ${stateKey}`;
+
 
 
     // Networking
@@ -1786,26 +1836,42 @@ class GameState {
     }
 
     proceedToNextChapter() {
-        const nextChapter = this.player.currentChapter + 1;
+    // Pastikan UI terkini
+    this.updateUI();
 
-        // Ambil threshold dari config
-        const key = `progress_chapter_${nextChapter}_happiness_min`;
-        const minHap = this.gameConfig[key];
+    const curr = this.player.currentChapter;
 
-        if (typeof minHap === 'number') {
-            if (this.player.happiness < minHap) {
-                // Blok dan notifikasi kalau kebahagiaan belum cukup
-                showNotification(`Kebahagiaan minimal ${minHap}% untuk lanjut ke Chapter ${nextChapter}`);
-                return;
-            }
+    // —————— Bridge C1→C2 jika belum pernah ——————
+    if (curr === 1 && !this.bridgingDone1) {
+        const minH1 = Number(this.gameConfig['trigger_chapter1_mental_min']);
+        if (this.player.happiness >= minH1) {
+        this.bridgingDone1 = true;
+        ['E101','E102','E103','E104','E105','E106','E107']
+            .forEach(eid => this.enqueueEvent(eid));
+        return;
         }
+    }
 
-        // Kalau lolos threshold, lanjut seperti biasa
-        if (this.eventsByChapter[nextChapter] && this.eventsByChapter[nextChapter].length > 0) {
-            this.showChapterTransition(nextChapter);
-        } else {
-            this.showGameComplete();
+    // —————— Bridge C2→C3 jika belum pernah ——————
+    if (curr === 2 && !this.bridgingDone2) {
+        const minMoney = Number(this.gameConfig['trigger_chapter2_money_min']);
+        const minM2     = Number(this.gameConfig['trigger_chapter2_mental_min']);
+        if (this.player.money  >= minMoney &&
+            this.player.happiness >= minH2) {
+        this.bridgingDone2 = true;
+        ['E201','E202','E203','E204','E205','E206','E207','E208']
+            .forEach(eid => this.enqueueEvent(eid));
+        return;
         }
+    }
+
+    // —————— Transisi normal ——————
+    const next = curr + 1;
+    if (this.eventsByChapter[next]?.length) {
+        this.showChapterTransition(next);
+    } else {
+        this.showGameComplete();
+    }
     }
 
     showChapterTransition(nextChapter) {
