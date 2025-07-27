@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hidup Anak Konoha RPG</title>
+    <title>Hidup Anak Indonesia RPG</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -527,6 +527,105 @@
             font-size: 12px;
             text-align: center;
         }
+
+        /* Enhanced Game Mechanics CSS */
+        .warning-warning {
+            border: 2px solid #d97706 !important;
+            animation: pulse-warning 2s infinite;
+            box-shadow: 0 0 10px rgba(217, 119, 6, 0.3);
+        }
+
+        .warning-critical {
+            border: 2px solid #dc2626 !important;
+            animation: pulse-critical 1s infinite;
+            box-shadow: 0 0 15px rgba(220, 38, 38, 0.5);
+            background: rgba(220, 38, 38, 0.1) !important;
+        }
+
+        .crisis-choice {
+            border-color: #dc2626 !important;
+            background: rgba(220, 38, 38, 0.15) !important;
+            animation: pulse-critical 2s infinite;
+        }
+
+        .crisis-choice:hover {
+            background: rgba(220, 38, 38, 0.25) !important;
+            transform: translateY(-3px);
+        }
+
+        @keyframes pulse-warning {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        @keyframes pulse-critical {
+            0%, 100% { opacity: 1; box-shadow: 0 0 15px rgba(220, 38, 38, 0.5); }
+            50% { opacity: 0.7; box-shadow: 0 0 25px rgba(220, 38, 38, 0.8); }
+        }
+
+        .game-over-screen {
+            background: linear-gradient(135deg, #7f1d1d 0%, #450a0a 100%);
+            border: 3px solid #dc2626;
+            animation: game-over-pulse 3s ease-in-out;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 10px 0;
+        }
+
+        @keyframes game-over-pulse {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .psychology-danger {
+            background: rgba(220, 38, 38, 0.2) !important;
+            border-color: #dc2626 !important;
+        }
+
+        .psychology-critical {
+            background: rgba(127, 29, 29, 0.3) !important;
+            border-color: #7f1d1d !important;
+            animation: pulse-critical 1.5s infinite;
+        }
+
+        .psychology-indicator {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 10px;
+            margin-top: 5px;
+        }
+
+        .psychology-indicator.critical {
+            background: rgba(220, 38, 38, 0.3);
+            color: #fca5a5;
+            border: 1px solid #dc2626;
+        }
+
+        .psychology-indicator.danger {
+            background: rgba(217, 119, 6, 0.3);
+            color: #fed7aa;
+            border: 1px solid #d97706;
+        }
+
+        .psychology-indicator.stable {
+            background: rgba(59, 130, 246, 0.3);
+            color: #bfdbfe;
+            border: 1px solid #3b82f6;
+        }
+
+        .psychology-indicator.good {
+            background: rgba(34, 197, 94, 0.3);
+            color: #bbf7d0;
+            border: 1px solid #22c55e;
+        }
+
+        .psychology-indicator.excellent {
+            background: rgba(251, 191, 36, 0.3);
+            color: #fef3c7;
+            border: 1px solid #fbbf24;
+        }
     </style>
 </head>
 <body>
@@ -545,10 +644,10 @@
     <!-- Character Creation Screen -->
     <div class="screen active" id="characterCreation">
         <div class="character-creation">
-            <div class="screen-title">Hidup Anak Konoha</div>
+            <div class="screen-title">Hidup Anak Indonesia</div>
             <div class="intro-text">
                 Pilih latar belakang hidup lu. Setiap pilihan punya tantangan dan keuntungan masing-masing. 
-                Siap-siap menghadapi realita kehidupan di Indonesia Tercinta! 🇮🇩
+                Siap-siap menghadapi realita kehidupan Indonesia! 🇮🇩
             </div>
             
             <div class="background-cards">
@@ -564,7 +663,7 @@
                 
                 <div class="background-card" data-background="sandwich">
                     <div class="background-icon">😅</div>
-                    <div class="background-title">Anak Gen Sandwich</div>
+                    <div class="background-title">Anak Kelas Menengah</div>
                     <div class="background-desc">
                         Hidup pas-pasan antara ngurus ortu dan masa depan sendiri. Budget terbatas, 
                         tapi mental kuat. Progress stabil sepanjang game - gak terlalu susah, 
@@ -595,7 +694,7 @@
             <div class="user-info">
                 <div class="avatar" id="playerAvatar">🤵</div>
                 <div class="user-details">
-                    <h3 id="playerName">Jhon Sumpena</h3>
+                    <h3 id="playerName">Andi Setiawan</h3>
                     <p id="playerBackground">Pilih background dulu</p>
                 </div>
             </div>
@@ -638,12 +737,10 @@
                 </div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">🏠</div>
-                <div class="stat-label">Status</div>
-                <div class="stat-value" id="statusLevel">Rumah Ortu</div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="statusProgress" style="width: 5%;"></div>
-                </div>
+                <div class="stat-icon">🧠</div>
+                <div class="stat-label">Mental State</div>
+                <div class="stat-value" id="psychologyState">😐 Normal</div>
+                <div class="psychology-indicator" id="psychologyIndicator">😐 Normal</div>
             </div>
         </div>
 
@@ -730,11 +827,11 @@
 </div>
 
 <script>
-// Game State Management
+// Enhanced Game State Management with Google Sheets Config
 class GameState {
     constructor() {
         this.player = {
-            name: "Jhon Sumpena",
+            name: "Andi Setiawan",
             background: null,
             money: 1250000,
             age: 18,
@@ -769,19 +866,28 @@ class GameState {
             },
             currentChapter: 1,
             currentEvent: 0,
-            currentChapterEvent: 0, // Event index dalam chapter saat ini
+            currentChapterEvent: 0,
             completedEvents: [],
             achievements: [],
             eventHistory: [],
             relationship: 0
         };
         
+        // Data containers
         this.allEvents = [];
         this.allChoices = [];
-        this.eventsByChapter = {}; // Organize events by chapter
-        this.currentChapterEvents = []; // Events untuk chapter saat ini
-        this.googleSheetUrl = 'https://script.google.com/macros/s/AKfycbztYYJcErBhuosDNjCj4pJtNK2QP8SsZeasW_AvPyZCXnuwfylS1ZBg_5zAZPgWI8Pj/exec';
+        this.crisisEvents = [];
+        this.crisisChoices = [];
+        this.gameConfig = {};
+        this.uiMessages = {};
+        this.eventsByChapter = {};
+        this.currentChapterEvents = [];
+        
+        // State tracking
         this.dataLoaded = false;
+        this.lastCrisisEvent = null;
+        
+        this.googleSheetUrl = 'https://script.google.com/macros/s/AKfycbztYYJcErBhuosDNjCj4pJtNK2QP8SsZeasW_AvPyZCXnuwfylS1ZBg_5zAZPgWI8Pj/exec';
         
         this.chapterTitles = {
             1: "Masa Remaja",
@@ -791,38 +897,37 @@ class GameState {
             5: "Menuju Dewasa"
         };
         
-        this.loadDataFromGoogleSheets();
+        this.loadAllDataFromGoogleSheets();
     }
 
-    async loadDataFromGoogleSheets() {
+    async loadAllDataFromGoogleSheets() {
         try {
             showNotification('Memuat data dari Google Sheets...');
-            console.log('Memuat data events dan choices...');
+            console.log('Memuat semua data game...');
             
-            // Fetch events data
-            const eventsResponse = await fetch(`${this.googleSheetUrl}?sheet=events`);
-            if (!eventsResponse.ok) {
-                throw new Error(`HTTP error! status: ${eventsResponse.status}`);
-            }
-            const eventsData = await eventsResponse.json();
-            console.log('Data events berhasil dimuat:', eventsData);
+            // Load all sheets concurrently
+            const [eventsData, choicesData, configData, crisisEventsData, crisisChoicesData, uiMessagesData] = await Promise.all([
+                this.fetchSheetData('events'),
+                this.fetchSheetData('choices'),
+                this.fetchSheetData('config'),
+                this.fetchSheetData('crisis_events'),
+                this.fetchSheetData('crisis_choices'),
+                this.fetchSheetData('ui_messages')
+            ]);
             
-            // Fetch choices data  
-            const choicesResponse = await fetch(`${this.googleSheetUrl}?sheet=choices`);
-            if (!choicesResponse.ok) {
-                throw new Error(`HTTP error! status: ${choicesResponse.status}`);
-            }
-            const choicesData = await choicesResponse.json();
-            console.log('Data choices berhasil dimuat:', choicesData);
+            // Process all data
+            this.processEventsData(eventsData);
+            this.processChoicesData(choicesData);
+            this.processConfigData(configData);
+            this.processCrisisEventsData(crisisEventsData);
+            this.processCrisisChoicesData(crisisChoicesData);
+            this.processUIMessagesData(uiMessagesData);
             
-            this.processLoadedData(eventsData, choicesData);
             this.dataLoaded = true;
             
             console.log('🎮 Hidup Anak Indonesia RPG berhasil dimuat!');
-            console.log('📱 Dioptimalkan untuk anak muda Indonesia');
-            console.log(`🎯 ${this.allEvents.length} events unik dimuat dari Google Sheets`);
-            console.log(`📊 ${this.allChoices.length} total pilihan tersedia`);
-            console.log('📖 Sistem progression chapter aktif');
+            console.log(`🎯 ${this.allEvents.length} events, ${this.crisisEvents.length} crisis events`);
+            console.log(`📊 ${this.allChoices.length} choices, ${this.crisisChoices.length} crisis choices`);
             
             showNotification(`✅ ${this.allEvents.length} events siap dimainkan! 🎉`);
             
@@ -832,8 +937,15 @@ class GameState {
         }
     }
 
-    processLoadedData(eventsData, choicesData) {
-        // Process events
+    async fetchSheetData(sheetName) {
+        const response = await fetch(`${this.googleSheetUrl}?sheet=${sheetName}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status} for sheet: ${sheetName}`);
+        }
+        return await response.json();
+    }
+
+    processEventsData(eventsData) {
         this.allEvents = eventsData.map(event => ({
             id: event.id,
             chapter: event.chapter,
@@ -842,7 +954,7 @@ class GameState {
             text: event.text
         }));
 
-        // Organize events by chapter untuk progression system
+        // Organize by chapter
         this.eventsByChapter = {};
         this.allEvents.forEach(event => {
             if (!this.eventsByChapter[event.chapter]) {
@@ -851,35 +963,63 @@ class GameState {
             this.eventsByChapter[event.chapter].push(event);
         });
 
-        // Process choices - UPDATED untuk handle multiple choices per background
-        this.allChoices = choicesData.map(choice => ({
-            ...choice,
-            impact: choice.impact.replace(/^"(.*)"$/, '$1') // Strip quotes dari impact
-        }));
-        
-        // Setup chapter 1 events sebagai starting point
         this.setupCurrentChapter(1);
-        
-        // Update total events counter
         document.getElementById('totalEvents').textContent = this.allEvents.length;
-        
-        console.log('Events diproses:', this.allEvents.length);
-        console.log('Total choices:', this.allChoices.length);
-        console.log('Events per chapter:', Object.keys(this.eventsByChapter).map(ch => 
-            `Chapter ${ch}: ${this.eventsByChapter[ch].length} events`).join(', '));
     }
 
-    setupCurrentChapter(chapterNumber) {
-        this.player.currentChapter = chapterNumber;
-        this.player.currentChapterEvent = 0;
-        
-        // Get events untuk chapter ini
-        this.currentChapterEvents = this.eventsByChapter[chapterNumber] || [];
-        
-        // Shuffle events dalam chapter untuk variety
-        this.shuffleArray(this.currentChapterEvents);
-        
-        // Process events dengan choices - UPDATED untuk multiple choices
+    processChoicesData(choicesData) {
+        this.allChoices = choicesData.map(choice => ({
+            ...choice,
+            impact: choice.impact.replace(/^"(.*)"$/, '$1'),
+            effects: this.parseEffectsJson(choice.effects_json)
+        }));
+
+        // Attach choices to events
+        this.attachChoicesToEvents();
+    }
+
+    processConfigData(configData) {
+        this.gameConfig = {};
+        configData.forEach(config => {
+            let value = config.setting_value;
+            // Parse numeric values
+            if (!isNaN(value)) {
+                value = parseFloat(value);
+            }
+            this.gameConfig[config.setting_key] = value;
+        });
+
+        console.log('Game config loaded:', this.gameConfig);
+    }
+
+    processCrisisEventsData(crisisEventsData) {
+        this.crisisEvents = crisisEventsData.map(event => ({
+            id: event.id,
+            psychologyState: event.psychology_state,
+            title: event.title,
+            text: event.text,
+            category: event.category
+        }));
+    }
+
+    processCrisisChoicesData(crisisChoicesData) {
+        this.crisisChoices = crisisChoicesData.map(choice => ({
+            ...choice,
+            effects: this.parseEffectsJson(choice.effects_json)
+        }));
+
+        // Attach crisis choices to crisis events
+        this.attachCrisisChoicesToEvents();
+    }
+
+    processUIMessagesData(uiMessagesData) {
+        this.uiMessages = {};
+        uiMessagesData.forEach(message => {
+            this.uiMessages[message.message_key] = message.message_text;
+        });
+    }
+
+    attachChoicesToEvents() {
         this.currentChapterEvents = this.currentChapterEvents.map(event => {
             const eventChoices = {
                 sultan: [],
@@ -887,14 +1027,12 @@ class GameState {
                 kampung: []
             };
             
-            // Find ALL choices untuk event ini (bukan hanya 1 per background)
             const relatedChoices = this.allChoices.filter(choice => choice.event_id === event.id);
-            
             relatedChoices.forEach(choice => {
                 const choiceData = {
                     text: choice.text,
-                    impact: choice.impact, // Quotes sudah di-strip di processLoadedData
-                    effects: this.parseEffectsJson(choice.effects_json)
+                    impact: choice.impact,
+                    effects: choice.effects
                 };
                 
                 if (eventChoices[choice.background]) {
@@ -902,28 +1040,376 @@ class GameState {
                 }
             });
             
-            return {
-                ...event,
-                choices: eventChoices
-            };
+            return { ...event, choices: eventChoices };
         }).filter(event => {
-            // Filter events yang punya minimal 1 choice untuk setiap background
             const backgrounds = ['sultan', 'sandwich', 'kampung'];
             return backgrounds.every(bg => event.choices[bg] && event.choices[bg].length > 0);
         });
+    }
+
+    attachCrisisChoicesToEvents() {
+        this.crisisEvents = this.crisisEvents.map(event => {
+            const eventChoices = {
+                sultan: [],
+                sandwich: [],
+                kampung: []
+            };
+            
+            const relatedChoices = this.crisisChoices.filter(choice => choice.crisis_id === event.id);
+            relatedChoices.forEach(choice => {
+                const choiceData = {
+                    text: choice.text,
+                    impact: choice.impact,
+                    effects: choice.effects
+                };
+                
+                if (eventChoices[choice.background]) {
+                    eventChoices[choice.background].push(choiceData);
+                }
+            });
+            
+            return { ...event, choices: eventChoices };
+        });
+    }
+
+    // Enhanced Game Mechanics Functions
+
+    checkGameOver() {
+        if (this.player.money <= this.gameConfig.game_over_money) {
+            this.triggerGameOver('money');
+            return true;
+        }
         
-        // Update UI dengan info chapter
+        if (this.player.happiness <= this.gameConfig.game_over_happiness) {
+            this.triggerGameOver('happiness');
+            return true;
+        }
+        
+        return false;
+    }
+
+    triggerGameOver(reason) {
+        const titleKey = `game_over_${reason}_title`;
+        const textKey = `game_over_${reason}_text`;
+        
+        const title = this.uiMessages[titleKey] || `Game Over: ${reason}`;
+        const text = this.uiMessages[textKey] || `Game over due to ${reason}`;
+        
+        document.getElementById('currentEventTitle').innerHTML = title;
+        document.getElementById('currentEventText').innerHTML = `
+            <div class="game-over-screen">
+                ${text}
+                <br><br>
+                <strong>📊 Final Stats:</strong><br>
+                💰 Money: Rp ${this.player.money.toLocaleString('id-ID')}<br>
+                😊 Happiness: ${this.player.happiness}%<br>
+                📚 Events Completed: ${this.player.completedEvents.length}<br>
+                📖 Chapter Reached: ${this.player.currentChapter}<br>
+                🧠 Psychology State: ${this.getPsychologyStateText()}
+            </div>
+        `;
+        
+        document.getElementById('choicesContainer').innerHTML = `
+            <button class="choice-btn" onclick="location.reload()">
+                🔄 Main Lagi dari Awal
+            </button>
+            <button class="choice-btn" onclick="showScreen('skills')">
+                📊 Lihat Final Stats
+            </button>
+        `;
+
+        this.trackGameOverStats(reason);
+        showNotification(title);
+    }
+
+    getPsychologyState() {
+        const psychStats = [
+            this.player.psychology.confidence,
+            this.player.psychology.authenticity, 
+            this.player.psychology.socialAwareness,
+            this.player.psychology.resilience,
+            this.player.psychology.empathy,
+            this.player.psychology.financialWisdom
+        ];
+        
+        const avgPsych = psychStats.reduce((a, b) => a + b, 0) / psychStats.length;
+        
+        if (avgPsych <= this.gameConfig.psych_critical_max) return 'critical';
+        if (avgPsych <= this.gameConfig.psych_danger_max) return 'danger'; 
+        if (avgPsych <= this.gameConfig.psych_stable_max) return 'stable';
+        if (avgPsych <= this.gameConfig.psych_good_max) return 'good';
+        return 'excellent';
+    }
+
+    getPsychologyStateText() {
+        const state = this.getPsychologyState();
+        const stateKey = `psych_state_${state}`;
+        return this.uiMessages[stateKey] || state;
+    }
+
+    applyPsychologyMultipliers(effects) {
+        const psychState = this.getPsychologyState();
+        const modifiedEffects = JSON.parse(JSON.stringify(effects));
+        
+        const moneyMultiplier = this.gameConfig[`multiplier_${psychState}_money`] || 1.0;
+        const happinessMultiplier = this.gameConfig[`multiplier_${psychState}_happiness`] || 1.0;
+        
+        if (modifiedEffects.money) {
+            modifiedEffects.money = Math.floor(modifiedEffects.money * moneyMultiplier);
+        }
+        
+        if (modifiedEffects.happiness) {
+            modifiedEffects.happiness = Math.floor(modifiedEffects.happiness * happinessMultiplier);
+        }
+        
+        return modifiedEffects;
+    }
+
+    checkWarnings() {
+        const warnings = [];
+        
+        // Money warnings
+        if (this.player.money <= this.gameConfig.money_warning_1 && this.player.money > this.gameConfig.money_warning_2) {
+            warnings.push(this.uiMessages.warning_money_1);
+        } else if (this.player.money <= this.gameConfig.money_warning_2 && this.player.money > 0) {
+            warnings.push(this.uiMessages.warning_money_2);
+        }
+        
+        // Happiness warnings  
+        if (this.player.happiness <= this.gameConfig.happiness_warning_1 && this.player.happiness > this.gameConfig.happiness_warning_2) {
+            warnings.push(this.uiMessages.warning_happiness_1);
+        } else if (this.player.happiness <= this.gameConfig.happiness_warning_2 && this.player.happiness > 0) {
+            warnings.push(this.uiMessages.warning_happiness_2);
+        }
+
+        // Psychology warnings
+        const psychState = this.getPsychologyState();
+        if (psychState === 'danger') {
+            warnings.push(this.uiMessages.warning_psych_danger);
+        } else if (psychState === 'critical') {
+            warnings.push(this.uiMessages.warning_psych_critical);
+        }
+        
+        warnings.forEach(warning => showNotification(warning));
+        this.updateWarningUI(psychState);
+    }
+
+    updateWarningUI(psychState) {
+        // Money indicator
+        const moneyEl = document.getElementById('playerMoney').parentElement;
+        moneyEl.classList.remove('warning-critical', 'warning-warning');
+        if (this.player.money <= this.gameConfig.money_warning_2) {
+            moneyEl.classList.add('warning-critical');
+        } else if (this.player.money <= this.gameConfig.money_warning_1) {
+            moneyEl.classList.add('warning-warning');
+        }
+        
+        // Happiness indicator
+        const happinessEl = document.getElementById('happinessLevel').parentElement;
+        happinessEl.classList.remove('warning-critical', 'warning-warning');
+        if (this.player.happiness <= this.gameConfig.happiness_warning_2) {
+            happinessEl.classList.add('warning-critical');
+        } else if (this.player.happiness <= this.gameConfig.happiness_warning_1) {
+            happinessEl.classList.add('warning-warning');
+        }
+        
+        // Psychology indicator
+        const psychEl = document.querySelector('.psychology-stats');
+        const psychIndicator = document.getElementById('psychologyIndicator');
+        
+        psychEl.classList.remove('psychology-critical', 'psychology-danger');
+        psychIndicator.className = `psychology-indicator ${psychState}`;
+        
+        if (psychState === 'critical') {
+            psychEl.classList.add('psychology-critical');
+        } else if (psychState === 'danger') {
+            psychEl.classList.add('psychology-danger');
+        }
+        
+        // Update psychology state text
+        document.getElementById('psychologyState').textContent = this.getPsychologyStateText();
+        psychIndicator.textContent = this.getPsychologyStateText();
+    }
+
+    shouldTriggerCrisis() {
+        const psychState = this.getPsychologyState();
+        const configKey = `crisis_chance_${psychState}`;
+        let baseChance = this.gameConfig[configKey] || 0;
+        
+        // Add financial stress bonus
+        if (this.player.money <= this.gameConfig.money_warning_1) {
+            baseChance += this.gameConfig.financial_stress_bonus || 0;
+        }
+        
+        // Add happiness stress bonus
+        if (this.player.happiness <= this.gameConfig.happiness_warning_1) {
+            baseChance += this.gameConfig.happiness_stress_bonus || 0;
+        }
+        
+        // Chapter modifier (later chapters more stable)
+        const chapterModifier = Math.max(0, (6 - this.player.currentChapter) * (this.gameConfig.chapter_crisis_modifier || 0));
+        baseChance += chapterModifier;
+        
+        // Crisis cooldown
+        const cooldownMs = (this.gameConfig.crisis_cooldown_minutes || 5) * 60 * 1000;
+        if (this.lastCrisisEvent && (Date.now() - this.lastCrisisEvent < cooldownMs)) {
+            baseChance *= 0.1;
+        }
+        
+        // Cap at max chance
+        baseChance = Math.min(baseChance, this.gameConfig.max_crisis_chance || 0.8);
+        
+        const shouldTrigger = Math.random() < baseChance;
+        if (shouldTrigger) {
+            this.lastCrisisEvent = Date.now();
+            console.log(`Crisis triggered! Chance was: ${(baseChance * 100).toFixed(1)}%`);
+        }
+        
+        return shouldTrigger;
+    }
+
+    triggerCrisisEvent() {
+        const psychState = this.getPsychologyState();
+        const availableCrises = this.crisisEvents.filter(crisis => 
+            crisis.psychologyState === psychState
+        );
+        
+        if (availableCrises.length === 0) {
+            console.log('No crisis events available for psychology state:', psychState);
+            return;
+        }
+        
+        const crisis = availableCrises[Math.floor(Math.random() * availableCrises.length)];
+        
+        showNotification(this.uiMessages.crisis_trigger || '🚨 Crisis Event!');
+        
+        setTimeout(() => {
+            document.getElementById('eventCategory').textContent = '🚨 Crisis';
+            document.getElementById('currentEventTitle').innerHTML = crisis.title;
+            document.getElementById('currentEventText').textContent = crisis.text;
+            
+            const backgroundChoices = crisis.choices[this.player.background];
+            if (!backgroundChoices || backgroundChoices.length === 0) {
+                console.error('No crisis choices for background:', this.player.background);
+                return;
+            }
+            
+            const choicesContainer = document.getElementById('choicesContainer');
+            choicesContainer.innerHTML = backgroundChoices.map((choice, index) => `
+                <button class="choice-btn crisis-choice" onclick="gameState.processCrisisChoice('${crisis.id}', ${index})">
+                    ${choice.text}
+                    <div class="choice-impact">${choice.impact}</div>
+                </button>
+            `).join('');
+        }, 1500);
+    }
+
+    processCrisisChoice(crisisId, choiceIndex) {
+        const crisis = this.crisisEvents.find(c => c.id === crisisId);
+        if (!crisis) return;
+        
+        const choice = crisis.choices[this.player.background][choiceIndex];
+        if (!choice) return;
+        
+        // Apply enhanced effects
+        const enhancedEffects = this.applyPsychologyMultipliers(choice.effects);
+        this.applyChoiceEffects({ effects: enhancedEffects });
+        
+        showNotification(choice.impact);
+        
+        // Check game over after crisis
+        if (this.checkGameOver()) return;
+        
+        // Check warnings
+        this.checkWarnings();
+        this.updateUI();
+        
+        // Continue normal flow
+        setTimeout(() => {
+            this.loadCurrentEvent();
+        }, 2000);
+    }
+
+    // Enhanced processChoice with new mechanics
+    processChoice(choiceIndex) {
+        if (!this.dataLoaded) {
+            showNotification('Data masih dimuat, tunggu sebentar...');
+            return;
+        }
+        
+        if (this.player.currentChapterEvent >= this.currentChapterEvents.length) {
+            this.proceedToNextChapter();
+            return;
+        }
+        
+        const event = this.currentChapterEvents[this.player.currentChapterEvent];
+        if (!event) return;
+        
+        const backgroundChoices = event.choices[this.player.background];
+        if (!backgroundChoices || !backgroundChoices[choiceIndex]) return;
+
+        const choice = backgroundChoices[choiceIndex];
+        
+        // Apply psychology multipliers
+        const enhancedEffects = this.applyPsychologyMultipliers(choice.effects);
+        this.applyChoiceEffects({ effects: enhancedEffects });
+        
+        // Check game over first
+        if (this.checkGameOver()) return;
+        
+        // Check warnings
+        this.checkWarnings();
+        
+        // Track choice
+        this.player.eventHistory.push({
+            eventId: event.id,
+            chapter: this.player.currentChapter,
+            choice: choiceIndex,
+            choiceText: choice.text,
+            impact: choice.impact,
+            psychState: this.getPsychologyState()
+        });
+
+        this.player.completedEvents.push(event.id);
+        showNotification(choice.impact);
+        this.player.currentChapterEvent++;
+        this.updateUI();
+
+        // Disable buttons
+        const choicesContainer = document.getElementById('choicesContainer');
+        const buttons = choicesContainer.querySelectorAll('.choice-btn');
+        buttons.forEach(btn => {
+            btn.disabled = true;
+            btn.style.opacity = '0.5';
+        });
+
+        setTimeout(() => {
+            if (this.player.currentChapterEvent < this.currentChapterEvents.length) {
+                // Check for crisis
+                if (this.shouldTriggerCrisis()) {
+                    this.triggerCrisisEvent();
+                } else {
+                    this.loadCurrentEvent();
+                }
+            } else {
+                this.proceedToNextChapter();
+            }
+        }, 2000);
+    }
+
+    // Rest of the original GameState methods remain the same...
+    // (setupCurrentChapter, loadCurrentEvent, applyChoiceEffects, updateUI, etc.)
+
+    setupCurrentChapter(chapterNumber) {
+        this.player.currentChapter = chapterNumber;
+        this.player.currentChapterEvent = 0;
+        
+        this.currentChapterEvents = this.eventsByChapter[chapterNumber] || [];
+        this.shuffleArray(this.currentChapterEvents);
+        this.attachChoicesToEvents();
         this.updateChapterUI();
         
         console.log(`Setup Chapter ${chapterNumber}:`, this.currentChapterEvents.length, 'events');
-        
-        // Debug: Check choices per event
-        this.currentChapterEvents.slice(0, 3).forEach(event => {
-            console.log(`Event ${event.id}:`, 
-                `Sultan=${event.choices.sultan.length}`, 
-                `Sandwich=${event.choices.sandwich.length}`, 
-                `Kampung=${event.choices.kampung.length}`);
-        });
     }
 
     updateChapterUI() {
@@ -935,7 +1421,6 @@ class GameState {
 
     parseEffectsJson(effectsString) {
         try {
-            // Replace single quotes dengan double quotes untuk valid JSON
             const cleanEffects = effectsString.replace(/'/g, '"');
             return JSON.parse(cleanEffects);
         } catch (error) {
@@ -970,7 +1455,6 @@ class GameState {
                 this.player.skills.financial = 2;
                 this.player.psychology.confidence = 70;
                 this.player.psychology.socialAwareness = 30;
-                this.player.status = { level: 2, title: "Apartemen Sendiri", progress: 40 };
                 break;
             case 'sandwich':
                 this.player.money = 2500000;
@@ -978,7 +1462,6 @@ class GameState {
                 this.player.skills.hustle = 1;
                 this.player.psychology.resilience = 60;
                 this.player.psychology.empathy = 60;
-                this.player.status = { level: 1, title: "Kamar di Rumah", progress: 15 };
                 break;
             case 'kampung':
                 this.player.money = 500000;
@@ -986,7 +1469,6 @@ class GameState {
                 this.player.skills.adaptability = 2;
                 this.player.psychology.resilience = 80;
                 this.player.psychology.authenticity = 70;
-                this.player.status = { level: 0, title: "Rumah Ortu", progress: 5 };
                 break;
         }
         
@@ -999,7 +1481,7 @@ class GameState {
         
         const backgroundNames = {
             sultan: "Anak Sultan",
-            sandwich: "Anak Gen Sandwich", 
+            sandwich: "Anak Kelas Menengah", 
             kampung: "Anak Kampung"
         };
         document.getElementById('playerBackground').textContent = 
@@ -1010,8 +1492,7 @@ class GameState {
             sandwich: "😅", 
             kampung: "💪"
         };
-        const avatar = avatars[this.player.background] || "🤵";
-        document.getElementById('playerAvatar').textContent = avatar;
+        document.getElementById('playerAvatar').textContent = avatars[this.player.background] || "🤵";
 
         document.getElementById('careerLevel').textContent = this.player.career.title;
         document.getElementById('careerProgress').style.width = `${this.player.career.experience}%`;
@@ -1021,17 +1502,25 @@ class GameState {
         
         document.getElementById('networkLevel').textContent = `Level ${this.player.skills.networking}`;
         document.getElementById('networkProgress').style.width = `${Math.min(this.player.skills.networking * 10, 100)}%`;
-        
-        document.getElementById('statusLevel').textContent = this.player.status.title;
-        document.getElementById('statusProgress').style.width = `${this.player.status.progress}%`;
 
         document.getElementById('confidenceLevel').textContent = `${this.player.psychology.confidence}%`;
         document.getElementById('authenticityLevel').textContent = `${this.player.psychology.authenticity}%`;
         document.getElementById('socialAwarenessLevel').textContent = `${this.player.psychology.socialAwareness}%`;
         document.getElementById('resilienceLevel').textContent = `${this.player.psychology.resilience}%`;
 
+        // Update psychology state
+        const psychState = this.getPsychologyState();
+        document.getElementById('psychologyState').textContent = this.getPsychologyStateText();
+        document.getElementById('psychologyIndicator').textContent = this.getPsychologyStateText();
+        document.getElementById('psychologyIndicator').className = `psychology-indicator ${psychState}`;
+
         this.updateChapterUI();
         this.updateSkillsList();
+        
+        // Update warning indicators if data is loaded
+        if (this.dataLoaded) {
+            this.updateWarningUI(psychState);
+        }
     }
 
     updateSkillsList() {
@@ -1068,103 +1557,58 @@ class GameState {
         }).join('');
     }
 
-    processChoice(choiceIndex) {
-        console.log('Memproses pilihan:', choiceIndex);
-        
+    loadCurrentEvent() {
         if (!this.dataLoaded) {
-            showNotification('Data masih dimuat, tunggu sebentar...');
+            showNotification('Data belum dimuat lengkap...');
             return;
         }
         
         if (this.player.currentChapterEvent >= this.currentChapterEvents.length) {
-            console.log('Chapter selesai, lanjut ke chapter berikutnya');
             this.proceedToNextChapter();
             return;
         }
-        
+
         const event = this.currentChapterEvents[this.player.currentChapterEvent];
         if (!event) {
-            console.error('Event tidak ditemukan');
-            return;
-        }
-        
-        const backgroundChoices = event.choices[this.player.background];
-        if (!backgroundChoices || !backgroundChoices[choiceIndex]) {
-            console.error('Pilihan tidak valid');
+            console.error('Event tidak ditemukan di index:', this.player.currentChapterEvent);
             return;
         }
 
-        const choice = backgroundChoices[choiceIndex];
-        console.log('Pilihan terpilih:', choice);
-        
-        this.applyChoiceEffects(choice);
-        
-        this.player.eventHistory.push({
-            eventId: event.id,
-            chapter: this.player.currentChapter,
-            choice: choiceIndex,
-            choiceText: choice.text,
-            impact: choice.impact
-        });
+        const categoryNames = {
+            kampus: "📚 Kampus",
+            kerja: "💼 Kerja", 
+            sosial: "👥 Sosial",
+            keluarga: "👨‍👩‍👧 Keluarga",
+            percintaan: "💕 Percintaan",
+            random: "🎲 Random"
+        };
 
-        this.player.completedEvents.push(event.id);
-        showNotification(choice.impact);
-
-        this.player.currentChapterEvent++;
+        document.getElementById('eventCategory').textContent = categoryNames[event.category] || "📖 Event";
+        document.getElementById('currentEventTitle').innerHTML = event.title;
+        document.getElementById('currentEventText').textContent = event.text;
         
-        console.log('Lanjut ke event:', this.player.currentChapterEvent);
-        
-        this.updateUI();
-
         const choicesContainer = document.getElementById('choicesContainer');
-        const buttons = choicesContainer.querySelectorAll('.choice-btn');
-        buttons.forEach(btn => {
-            btn.disabled = true;
-            btn.style.opacity = '0.5';
-        });
-
-        setTimeout(() => {
-            if (this.player.currentChapterEvent < this.currentChapterEvents.length) {
-                this.loadCurrentEvent();
-            } else {
-                this.proceedToNextChapter();
-            }
-        }, 2000);
-    }
-
-    proceedToNextChapter() {
-        const nextChapter = this.player.currentChapter + 1;
+        const backgroundChoices = event.choices[this.player.background];
         
-        if (this.eventsByChapter[nextChapter] && this.eventsByChapter[nextChapter].length > 0) {
-            // Ada chapter berikutnya
-            this.showChapterTransition(nextChapter);
-        } else {
-            // Game selesai
-            this.showGameComplete();
+        if (!backgroundChoices || backgroundChoices.length === 0) {
+            console.error('Tidak ada pilihan untuk background:', this.player.background, 'di event:', event.id);
+            choicesContainer.innerHTML = `
+                <div class="error-message">
+                    Tidak ada pilihan untuk background: ${this.player.background} di event ${event.id}
+                </div>
+                <button class="choice-btn" onclick="gameState.player.currentChapterEvent++; gameState.loadCurrentEvent()">
+                    ⏭️ Skip Event
+                </button>
+            `;
+            return;
         }
-    }
 
-    showChapterTransition(nextChapter) {
-        document.getElementById('currentEventTitle').innerHTML = `🎉 Chapter ${this.player.currentChapter} Selesai!`;
-        document.getElementById('currentEventText').textContent = 
-            `Selamat! Lu udah menyelesaikan Chapter ${this.player.currentChapter}. Siap lanjut ke ${this.chapterTitles[nextChapter]}?`;
-        
-        document.getElementById('choicesContainer').innerHTML = `
-            <button class="choice-btn" onclick="gameState.startNextChapter(${nextChapter})">
-                📖 Lanjut ke Chapter ${nextChapter}
+        choicesContainer.innerHTML = backgroundChoices.map((choice, index) => `
+            <button class="choice-btn" onclick="gameState.processChoice(${index})">
+                ${choice.text}
+                <div class="choice-impact">${choice.impact}</div>
             </button>
-            <button class="choice-btn" onclick="showScreen('skills')">
-                📊 Liat Progress Dulu
-            </button>
-        `;
-
-        showNotification(`🎉 Chapter ${this.player.currentChapter} selesai!`);
-    }
-
-    startNextChapter(chapterNumber) {
-        this.setupCurrentChapter(chapterNumber);
-        this.loadCurrentEvent();
-        showNotification(`📖 Mulai ${this.chapterTitles[chapterNumber]}!`);
+        `).join('');
     }
 
     applyChoiceEffects(choice) {
@@ -1197,69 +1641,39 @@ class GameState {
                 }
             });
         }
-
-        console.log('Efek diterapkan:', choice.effects);
     }
 
-    loadCurrentEvent() {
-        console.log('Memuat event chapter', this.player.currentChapter, 'event ke-', this.player.currentChapterEvent + 1);
+    proceedToNextChapter() {
+        const nextChapter = this.player.currentChapter + 1;
         
-        if (!this.dataLoaded) {
-            showNotification('Data belum dimuat lengkap...');
-            return;
+        if (this.eventsByChapter[nextChapter] && this.eventsByChapter[nextChapter].length > 0) {
+            this.showChapterTransition(nextChapter);
+        } else {
+            this.showGameComplete();
         }
+    }
+
+    showChapterTransition(nextChapter) {
+        document.getElementById('currentEventTitle').innerHTML = `🎉 Chapter ${this.player.currentChapter} Selesai!`;
+        document.getElementById('currentEventText').textContent = 
+            `Selamat! Lu udah menyelesaikan Chapter ${this.player.currentChapter}. Siap lanjut ke ${this.chapterTitles[nextChapter]}?`;
         
-        if (this.player.currentChapterEvent >= this.currentChapterEvents.length) {
-            console.log('Chapter events habis, lanjut chapter berikutnya');
-            this.proceedToNextChapter();
-            return;
-        }
-
-        const event = this.currentChapterEvents[this.player.currentChapterEvent];
-        if (!event) {
-            console.error('Event tidak ditemukan di index:', this.player.currentChapterEvent);
-            return;
-        }
-
-        console.log('Event saat ini:', event.id, '-', event.title);
-
-        const categoryNames = {
-            kampus: "📚 Kampus",
-            kerja: "💼 Kerja", 
-            sosial: "👥 Sosial",
-            keluarga: "👨‍👩‍👧 Keluarga",
-            percintaan: "💕 Percintaan",
-            random: "🎲 Random"
-        };
-
-        document.getElementById('eventCategory').textContent = categoryNames[event.category] || "📖 Event";
-        document.getElementById('currentEventTitle').innerHTML = event.title;
-        document.getElementById('currentEventText').textContent = event.text;
-        
-        const choicesContainer = document.getElementById('choicesContainer');
-        const backgroundChoices = event.choices[this.player.background];
-        
-        if (!backgroundChoices || backgroundChoices.length === 0) {
-            console.error('Tidak ada pilihan untuk background:', this.player.background, 'di event:', event.id);
-            choicesContainer.innerHTML = `
-                <div class="error-message">
-                    Tidak ada pilihan untuk background: ${this.player.background} di event ${event.id}
-                </div>
-                <button class="choice-btn" onclick="gameState.player.currentChapterEvent++; gameState.loadCurrentEvent()">
-                    ⏭️ Skip Event
-                </button>
-            `;
-            return;
-        }
-
-        console.log(`Dimuat ${backgroundChoices.length} pilihan untuk background:`, this.player.background);
-
-        choicesContainer.innerHTML = backgroundChoices.map((choice, index) => `
-            <button class="choice-btn" onclick="gameState.processChoice(${index})">
-                ${choice.text}
-                <div class="choice-impact">${choice.impact}</div>
+        document.getElementById('choicesContainer').innerHTML = `
+            <button class="choice-btn" onclick="gameState.startNextChapter(${nextChapter})">
+                📖 Lanjut ke Chapter ${nextChapter}
             </button>
-        `).join('');
+            <button class="choice-btn" onclick="showScreen('skills')">
+                📊 Liat Progress Dulu
+            </button>
+        `;
+
+        showNotification(`🎉 Chapter ${this.player.currentChapter} selesai!`);
+    }
+
+    startNextChapter(chapterNumber) {
+        this.setupCurrentChapter(chapterNumber);
+        this.loadCurrentEvent();
+        showNotification(`📖 Mulai ${this.chapterTitles[chapterNumber]}!`);
     }
 
     showGameComplete() {
@@ -1286,12 +1700,27 @@ class GameState {
             [array[i], array[j]] = [array[j], array[i]];
         }
     }
+
+    trackGameOverStats(reason) {
+        if (!this.player.achievements) this.player.achievements = [];
+        
+        this.player.achievements.push({
+            type: 'game_over',
+            reason: reason,
+            chapter: this.player.currentChapter,
+            events: this.player.completedEvents.length,
+            finalMoney: this.player.money,
+            finalHappiness: this.player.happiness,
+            psychState: this.getPsychologyState(),
+            timestamp: new Date().toISOString()
+        });
+    }
 }
 
 // Initialize game
 let gameState;
 
-// Utility Functions
+// Utility Functions (unchanged from original)
 function showScreen(screenId) {
     document.querySelectorAll('.screen').forEach(screen => {
         screen.classList.remove('active');
@@ -1344,7 +1773,7 @@ function showProfile() {
     showNotification('Fitur profil segera hadir! 🚧');
 }
 
-// Character Creation Logic
+// Character Creation Logic (unchanged)
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         document.getElementById('loading').style.display = 'none';
