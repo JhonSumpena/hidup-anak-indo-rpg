@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Koruptor Simulator</title>
+    <title>Koruptor Simulator Indonesia</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -641,6 +641,18 @@
             color: #9ca3af;
         }
 
+        /* NEW: Chain indicator styling */
+        .chain-indicator {
+            background: rgba(59, 130, 246, 0.2);
+            color: #bfdbfe;
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            border: 1px solid #3b82f6;
+            margin-left: 8px;
+        }
+
         /* Corruption Glow Effects */
         .corrupt-glow {
             box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
@@ -691,7 +703,7 @@
     <!-- Character Creation Screen -->
     <div class="screen active" id="characterCreation">
         <div class="character-creation">
-            <div class="screen-title">Koruptor Simulator</div>
+            <div class="screen-title">Koruptor Simulator Indonesia</div>
             <div class="intro-text">
                 Pilih latar belakang hidup lu. Setiap pilihan punya jalan berbeda menuju kekuasaan dan korupsi. 
                 Siap-siap jadi bagian dari sistem yang korup! 💰
@@ -876,7 +888,7 @@
 </div>
 
 <script>
-// Enhanced Game State Management with CORRUPT ESSENCE SYSTEM
+// Enhanced Game State Management with CORRUPT ESSENCE SYSTEM + CHAIN EVENTS
 class GameState {
     constructor() {
         this.player = {
@@ -920,7 +932,11 @@ class GameState {
             completedEvents: [],
             achievements: [],
             eventHistory: [],
-            relationship: 0
+            relationship: 0,
+            // NEW: Chain tracking
+            chainProgress: {}, // track chain completion
+            activeChain: null, // current active chain
+            chainSequence: 0 // current position in chain
         };
         
         // Data containers
@@ -932,6 +948,11 @@ class GameState {
         this.uiMessages = {};
         this.eventsByChapter = {};
         this.currentChapterEvents = [];
+        
+        // NEW: Chain system
+        this.eventsByChain = {};
+        this.eventChains = {}; // loaded from config sheet
+        this.chainPriority = []; // loaded from config sheet
         
         // State tracking
         this.dataLoaded = false;
@@ -949,25 +970,6 @@ class GameState {
 
         this.bridgingDone1 = false;
         this.bridgingDone2 = false;
-        
-        /*
-        CONTOH CORRUPTION EVENTS UNTUK GOOGLE SHEET:
-        
-        Event dengan corruptEssence effects:
-        
-        E100 - Suap Pertama
-        text: "Satpam kampus nawarin 'jalan pintas' buat masuk perpus tanpa antri. Cuma 10 ribu doang."
-        
-        Choices:
-        - Sultan: "Kasih 50 ribu biar dia inget lu" 
-          effects: {'corruptEssence': 2, 'money': -50000, 'skills': {'networking': 1}}
-          
-        - Sandwich: "Bayar 10 ribu, tapi merasa bersalah"
-          effects: {'corruptEssence': 1, 'money': -10000, 'happiness': -2}
-          
-        - Kampung: "Tolak dan antri biasa"
-          effects: {'happiness': 1, 'psychology': {'authenticity': 2}}
-        */
         
         this.loadAllDataFromGoogleSheets();
     }
@@ -997,10 +999,10 @@ class GameState {
             
             this.dataLoaded = true;
             
-            console.log('🎮 Koruptor Simulator berhasil dimuat!');
+            console.log('🎮 Koruptor Simulator Indonesia berhasil dimuat!');
             console.log(`🎯 ${this.allEvents.length} events, ${this.crisisEvents.length} crisis events`);
             console.log(`📊 ${this.allChoices.length} choices, ${this.crisisChoices.length} crisis choices`);
-            //console.log("Loaded gameConfig:", this.gameConfig);
+            console.log(`🔗 ${Object.keys(this.eventChains).length} chains configured`);
             
             showNotification(`✅ ${this.allEvents.length} events siap dimainkan! 🎉`);
             
@@ -1018,38 +1020,82 @@ class GameState {
         return await response.json();
     }
 
+    // MODIFIED: Enhanced processEventsData to handle chain fields from events sheet
     processEventsData(eventsData) {
-        this.allEvents = eventsData.map(event => ({
-            id: event.id,
-            chapter: event.chapter,
-            category: event.theme,
-            title: event.title,
-            text: event.text
-        }));
+        this.allEvents = eventsData.map(event => {
+            // SAFE: Handle missing or empty chain fields
+            const chainId = event.chain_id && event.chain_id.trim() ? event.chain_id.trim() : null;
+            const chainSequence = event.chain_sequence !== undefined && event.chain_sequence !== null && event.chain_sequence !== '' 
+                ? (parseInt(event.chain_sequence) || 0) : 0;
+            const requiredEvents = event.required_events && event.required_events.trim() 
+                ? event.required_events.split(',').map(e => e.trim()).filter(e => e) : [];
+            const minCorruption = event.min_corruption !== undefined && event.min_corruption !== null && event.min_corruption !== ''
+                ? (parseInt(event.min_corruption) || 0) : 0;
+            const maxCorruption = event.max_corruption !== undefined && event.max_corruption !== null && event.max_corruption !== ''
+                ? (parseInt(event.max_corruption) || 100) : 100;
+                
+            return {
+                id: event.id,
+                chapter: event.chapter,
+                category: event.theme,
+                title: event.title,
+                text: event.text,
+                // NEW: Chain fields from events sheet (null-safe)
+                chainId,
+                chainSequence,
+                requiredEvents,
+                minCorruption,
+                maxCorruption
+            };
+        });
 
-        // Organize by chapter
+        // Organize by chapter AND chain
         this.eventsByChapter = {};
+        this.eventsByChain = {};
+        
         this.allEvents.forEach(event => {
+            // By chapter (existing logic)
             if (!this.eventsByChapter[event.chapter]) {
                 this.eventsByChapter[event.chapter] = [];
             }
             this.eventsByChapter[event.chapter].push(event);
+            
+            // NEW: By chain (from events sheet data) - SAFE: only if chainId exists
+            if (event.chainId && event.chainId.trim()) {
+                if (!this.eventsByChain[event.chainId]) {
+                    this.eventsByChain[event.chainId] = [];
+                }
+                this.eventsByChain[event.chainId].push(event);
+            }
+        });
+
+        // Sort chain events by sequence - SAFE: handle missing sequences
+        Object.keys(this.eventsByChain).forEach(chainId => {
+            this.eventsByChain[chainId].sort((a, b) => {
+                const seqA = a.chainSequence || 0;
+                const seqB = b.chainSequence || 0;
+                return seqA - seqB;
+            });
         });
 
         this.setupCurrentChapter(1);
         document.getElementById('totalEvents').textContent = this.allEvents.length;
+        
+        console.log('🔗 Chain events loaded from events sheet:', this.eventsByChain);
+        console.log('📚 Regular events by chapter:', Object.keys(this.eventsByChapter).map(ch => `Ch${ch}: ${this.eventsByChapter[ch].length} events`));
     }
 
     processChoicesData(choicesData) {
-    this.allChoices = choicesData.map(choice => {
-        const effects = this.parseEffectsJson(choice.effects_json);
-        if (choice.career_experience) effects.career_experience = Number(choice.career_experience);
-        if (choice.career_title)      effects.career_title      = choice.career_title;
-        return { ...choice, effects };
-    });
-    this.attachChoicesToEvents();
+        this.allChoices = choicesData.map(choice => {
+            const effects = this.parseEffectsJson(choice.effects_json);
+            if (choice.career_experience) effects.career_experience = Number(choice.career_experience);
+            if (choice.career_title)      effects.career_title      = choice.career_title;
+            return { ...choice, effects };
+        });
+        this.attachChoicesToEvents();
     }
 
+    // MODIFIED: Enhanced processConfigData to parse chain configs
     processConfigData(configData) {
         this.gameConfig = {};
         configData.forEach(config => {
@@ -1061,7 +1107,82 @@ class GameState {
             this.gameConfig[config.setting_key] = value;
         });
 
+        // NEW: Parse chain configurations from config
+        this.parseChainConfigs();
+        
         console.log('Game config loaded:', this.gameConfig);
+        console.log('Event chains loaded:', this.eventChains);
+    }
+
+    // NEW: Parse chain configurations from config sheet
+    parseChainConfigs() {
+        this.eventChains = {};
+        this.chainPriority = [];
+        
+        // Get unique chain IDs from config keys
+        const chainIds = new Set();
+        Object.keys(this.gameConfig).forEach(key => {
+            const match = key.match(/^chain_([^_]+)_/);
+            if (match) {
+                chainIds.add(match[1]);
+            }
+        });
+        
+        console.log('🔗 Found chain IDs in config:', Array.from(chainIds));
+        
+        // Build chain objects from config
+        chainIds.forEach(chainId => {
+            // SAFE: Handle missing config values with proper defaults
+            const eventsStr = this.getConfigValue(`chain_${chainId}_events`, '');
+            const events = eventsStr ? eventsStr.split(',').map(e => e.trim()).filter(e => e) : [];
+            
+            const requiredEventsStr = this.getConfigValue(`chain_${chainId}_required_events`, '');
+            const requiredEvents = requiredEventsStr ? requiredEventsStr.split(',').map(e => e.trim()).filter(e => e) : [];
+            
+            const chain = {
+                id: chainId,
+                events: events,
+                required: this.getConfigValue(`chain_${chainId}_required`, false),
+                requiredEvents: requiredEvents,
+                minCorruption: this.getConfigValue(`chain_${chainId}_min_corruption`, 0),
+                maxCorruption: this.getConfigValue(`chain_${chainId}_max_corruption`, 100),
+                alternativeCorruption: this.getConfigValue(`chain_${chainId}_alternative_corruption`, null),
+                priority: this.getConfigValue(`chain_${chainId}_priority`, 999),
+                name: this.getConfigValue(`chain_${chainId}_name`, chainId),
+                description: this.getConfigValue(`chain_${chainId}_description`, ''),
+                completionBonus: {
+                    money: this.getConfigValue(`chain_${chainId}_bonus_money`, 0),
+                    corruptEssence: this.getConfigValue(`chain_${chainId}_bonus_corruption`, 0),
+                    happiness: this.getConfigValue(`chain_${chainId}_bonus_happiness`, 0)
+                }
+            };
+            
+            // Only add chains that have at least some events defined
+            if (chain.events.length > 0) {
+                this.eventChains[chainId] = chain;
+                console.log(`✅ Chain ${chainId} configured:`, chain.events.length, 'events');
+            } else {
+                console.warn(`⚠️  Chain ${chainId} has no events defined, skipping`);
+            }
+        });
+        
+        // Sort chains by priority
+        this.chainPriority = Object.keys(this.eventChains)
+            .sort((a, b) => this.eventChains[a].priority - this.eventChains[b].priority);
+            
+        console.log('📋 Chain priority order:', this.chainPriority);
+    }
+    
+    // NEW: Helper to get config values with defaults
+    getConfigValue(key, defaultValue) {
+        const value = this.gameConfig[key];
+        if (value === undefined || value === null || value === '') {
+            return defaultValue;
+        }
+        // Convert string 'true'/'false' to boolean
+        if (value === 'true') return true;
+        if (value === 'false') return false;
+        return value;
     }
 
     processCrisisEventsData(crisisEventsData) {
@@ -1194,6 +1315,70 @@ class GameState {
             
             return { ...event, choices: eventChoices };
         });
+    }
+
+    // NEW: Check if player can access a chain (using config thresholds)
+    canAccessChain(chainId) {
+        const chainConfig = this.eventChains[chainId];
+        const chainEvents = this.eventsByChain[chainId];
+        
+        if (!chainConfig || !chainEvents) {
+            console.warn(`Chain ${chainId} not found in config or events`);
+            return false;
+        }
+
+        // Check corruption requirements from config
+        if (this.player.corruptEssence < chainConfig.minCorruption || 
+            this.player.corruptEssence > chainConfig.maxCorruption) {
+            console.log(`❌ Chain ${chainId}: corruption ${this.player.corruptEssence} not in range [${chainConfig.minCorruption}-${chainConfig.maxCorruption}]`);
+            return false;
+        }
+
+        // Check required events from config
+        if (chainConfig.requiredEvents && chainConfig.requiredEvents.length > 0) {
+            const hasRequired = chainConfig.requiredEvents.every(eventId => 
+                this.player.completedEvents.includes(eventId)
+            );
+            if (!hasRequired) {
+                // Check alternative corruption requirement from config
+                if (chainConfig.alternativeCorruption && 
+                    this.player.corruptEssence >= chainConfig.alternativeCorruption) {
+                    console.log(`✅ Chain ${chainId}: alternative corruption requirement met (${this.player.corruptEssence} >= ${chainConfig.alternativeCorruption})`);
+                    return true;
+                }
+                console.log(`❌ Chain ${chainId}: missing required events:`, chainConfig.requiredEvents);
+                return false;
+            }
+        }
+
+        console.log(`✅ Chain ${chainId}: can access`);
+        return true;
+    }
+
+    // MODIFIED: Get next available chain event (using config priority)
+    getNextChainEvent() {
+        // Use chain priority from config instead of hardcoded
+        for (const chainId of this.chainPriority) {
+            if (!this.canAccessChain(chainId)) continue;
+            
+            // Check if chain is completed
+            if (this.player.chainProgress[chainId]?.completed) continue;
+            
+            const chainEvents = this.eventsByChain[chainId];
+            if (!chainEvents || chainEvents.length === 0) continue;
+            
+            // Find next event in chain
+            const currentProgress = this.player.chainProgress[chainId]?.sequence || 0;
+            const nextEvent = chainEvents[currentProgress];
+            
+            if (nextEvent) {
+                console.log(`🔗 Next chain event: ${nextEvent.id} from ${chainId} (priority ${this.eventChains[chainId].priority})`);
+                return nextEvent;
+            }
+        }
+        
+        console.log('🔗 No chain events available');
+        return null;
     }
 
     // Enhanced Game Mechanics Functions
@@ -1394,67 +1579,67 @@ class GameState {
     }
 
     triggerCrisisEvent() {
-    // 1. Hitung state korupsi terkini
-    const corruptState = this.getCorruptionState();
+        // 1. Hitung state korupsi terkini
+        const corruptState = this.getCorruptionState();
 
-    // 2. Cari crisis sesuai state
-    let availableCrises = this.crisisEvents.filter(
-        crisis => crisis.psychologyState === corruptState
-    );
+        // 2. Cari crisis sesuai state
+        let availableCrises = this.crisisEvents.filter(
+            crisis => crisis.psychologyState === corruptState
+        );
 
-    // 3. Kalau kosong, fallback ke state berikutnya
-    if (availableCrises.length === 0) {
-        const fallbackOrder = [
-        'compromised',
-        'corrupt',
-        'demon_lord',
-        'tempted',
-        'pure'
-        ];
-        for (let s of fallbackOrder) {
-        if (s === corruptState) continue;
-        const found = this.crisisEvents.filter(c => c.psychologyState === s);
-        if (found.length) {
-            availableCrises = found;
-            console.warn(
-            `No crises for "${corruptState}", falling back to "${s}"`
-            );
-            break;
-        }
-        }
+        // 3. Kalau kosong, fallback ke state berikutnya
         if (availableCrises.length === 0) {
-        console.error('No crises available at all!');
-        return;
-        }
-    }
-
-    // 4. Pilih satu random dan tampilkan
-    const crisis = availableCrises[
-        Math.floor(Math.random() * availableCrises.length)
-    ];
-    showNotification(
-        this.uiMessages.crisis_trigger || '💰 Corruption Crisis!'
-    );
-    
-    setTimeout(() => {
-        document.getElementById('eventCategory').textContent = '💰 Corruption Crisis';
-        document.getElementById('currentEventTitle').innerHTML = crisis.title;
-        document.getElementById('currentEventText').textContent = crisis.text;
-        
-        const backgroundChoices = crisis.choices[this.player.background];
-        if (!backgroundChoices || backgroundChoices.length === 0) {
-            console.error('No crisis choices for background:', this.player.background);
+            const fallbackOrder = [
+            'compromised',
+            'corrupt',
+            'demon_lord',
+            'tempted',
+            'pure'
+            ];
+            for (let s of fallbackOrder) {
+            if (s === corruptState) continue;
+            const found = this.crisisEvents.filter(c => c.psychologyState === s);
+            if (found.length) {
+                availableCrises = found;
+                console.warn(
+                `No crises for "${corruptState}", falling back to "${s}"`
+                );
+                break;
+            }
+            }
+            if (availableCrises.length === 0) {
+            console.error('No crises available at all!');
             return;
+            }
         }
+
+        // 4. Pilih satu random dan tampilkan
+        const crisis = availableCrises[
+            Math.floor(Math.random() * availableCrises.length)
+        ];
+        showNotification(
+            this.uiMessages.crisis_trigger || '💰 Corruption Crisis!'
+        );
         
-        const choicesContainer = document.getElementById('choicesContainer');
-        choicesContainer.innerHTML = backgroundChoices.map((choice, index) => `
-            <button class="choice-btn crisis-choice" onclick="gameState.processCrisisChoice('${crisis.id}', ${index})">
-                ${choice.text}
-                <div class="choice-impact">${choice.impact}</div>
-            </button>
-        `).join('');
-    }, 1500);
+        setTimeout(() => {
+            document.getElementById('eventCategory').textContent = '💰 Corruption Crisis';
+            document.getElementById('currentEventTitle').innerHTML = crisis.title;
+            document.getElementById('currentEventText').textContent = crisis.text;
+            
+            const backgroundChoices = crisis.choices[this.player.background];
+            if (!backgroundChoices || backgroundChoices.length === 0) {
+                console.error('No crisis choices for background:', this.player.background);
+                return;
+            }
+            
+            const choicesContainer = document.getElementById('choicesContainer');
+            choicesContainer.innerHTML = backgroundChoices.map((choice, index) => `
+                <button class="choice-btn crisis-choice" onclick="gameState.processCrisisChoice('${crisis.id}', ${index})">
+                    ${choice.text}
+                    <div class="choice-impact">${choice.impact}</div>
+                </button>
+            `).join('');
+        }, 1500);
     }
 
     processCrisisChoice(crisisId, choiceIndex) {
@@ -1483,7 +1668,58 @@ class GameState {
         }, 2000);
     }
 
-    // Enhanced processChoice with new mechanics
+    // NEW: Handle chain progression
+    progressChain(chainId, currentSequence) {
+        if (!this.player.chainProgress[chainId]) {
+            this.player.chainProgress[chainId] = {
+                sequence: 0,
+                completed: false,
+                startedAt: Date.now()
+            };
+        }
+        
+        const progress = this.player.chainProgress[chainId];
+        progress.sequence = currentSequence + 1;
+        
+        const chainEvents = this.eventsByChain[chainId];
+        if (chainEvents && progress.sequence >= chainEvents.length) {
+            progress.completed = true;
+            progress.completedAt = Date.now();
+            this.onChainCompleted(chainId);
+        }
+        
+        console.log(`🔗 Chain ${chainId} progress:`, progress);
+    }
+
+    // MODIFIED: Handle chain completion with config bonuses
+    onChainCompleted(chainId) {
+        const chainConfig = this.eventChains[chainId];
+        if (!chainConfig) return;
+        
+        const chainName = chainConfig.name || chainId;
+        showNotification(`🎉 Chain "${chainName}" selesai!`);
+        
+        // Award chain completion bonus from config
+        const bonus = chainConfig.completionBonus;
+        if (bonus && (bonus.money || bonus.corruptEssence || bonus.happiness)) {
+            this.applyChoiceEffects({ effects: bonus });
+            
+            if (bonus.money) {
+                showNotification(`💰 Bonus chain: +${bonus.money.toLocaleString('id-ID')} rupiah!`);
+            }
+            if (bonus.corruptEssence) {
+                showNotification(`🌑 Bonus corruption: +${bonus.corruptEssence}!`);
+            }
+            if (bonus.happiness) {
+                showNotification(`😊 Bonus happiness: +${bonus.happiness}!`);
+            }
+        }
+        
+        this.player.activeChain = null;
+        this.player.chainSequence = 0;
+    }
+
+    // MODIFIED: Enhanced processChoice to handle chain progression
     processChoice(choiceIndex) {
         if (!this.dataLoaded) {
             showNotification('Data masih dimuat, tunggu sebentar...');
@@ -1520,10 +1756,18 @@ class GameState {
             choice: choiceIndex,
             choiceText: choice.text,
             impact: choice.impact,
-            corruptState: this.getCorruptionState()
+            corruptState: this.getCorruptionState(),
+            chainId: event.chainId,
+            chainSequence: event.chainSequence
         });
 
         this.player.completedEvents.push(event.id);
+        
+        // NEW: Handle chain progression
+        if (event.chainId) {
+            this.progressChain(event.chainId, event.chainSequence);
+        }
+        
         showNotification(choice.impact);
         this.player.currentChapterEvent++;
         this.updateUI();
@@ -1537,28 +1781,87 @@ class GameState {
         });
 
         setTimeout(() => {
-            if (this.player.currentChapterEvent < this.currentChapterEvents.length) {
-                // Check for crisis
+            this.proceedAfterChoice();
+        }, 2000);
+    }
+
+    // NEW: Proceed after choice with chain logic
+    proceedAfterChoice() {
+        // Check if we're in a chain and have more events
+        if (this.player.activeChain) {
+            const nextChainEvent = this.getNextChainEvent();
+            if (nextChainEvent && nextChainEvent.chainId === this.player.activeChain) {
+                // Continue chain
+                this.currentChapterEvents = [nextChainEvent];
+                this.player.currentChapterEvent = 0;
+                this.attachChoicesToEvents();
+                
                 if (this.shouldTriggerCrisis()) {
                     this.triggerCrisisEvent();
                 } else {
                     this.loadCurrentEvent();
                 }
-            } else {
-                this.proceedToNextChapter();
+                return;
             }
-        }, 2000);
+        }
+        
+        // Check for new available chains
+        const nextChainEvent = this.getNextChainEvent();
+        if (nextChainEvent) {
+            this.currentChapterEvents = [nextChainEvent];
+            this.player.currentChapterEvent = 0;
+            this.player.activeChain = nextChainEvent.chainId;
+            this.player.chainSequence = nextChainEvent.chainSequence;
+            this.attachChoicesToEvents();
+            
+            const chainConfig = this.eventChains[nextChainEvent.chainId];
+            const chainName = chainConfig ? chainConfig.name : nextChainEvent.chainId;
+            showNotification(`🔗 Memulai: ${chainName}`);
+            
+            if (this.shouldTriggerCrisis()) {
+                this.triggerCrisisEvent();
+            } else {
+                this.loadCurrentEvent();
+            }
+            return;
+        }
+        
+        // Fallback to regular chapter progression
+        if (this.player.currentChapterEvent < this.currentChapterEvents.length) {
+            if (this.shouldTriggerCrisis()) {
+                this.triggerCrisisEvent();
+            } else {
+                this.loadCurrentEvent();
+            }
+        } else {
+            this.proceedToNextChapter();
+        }
     }
 
-    // Rest of the original GameState methods remain the same...
-    // (setupCurrentChapter, loadCurrentEvent, applyChoiceEffects, updateUI, etc.)
-
+    // MODIFIED: Enhanced setupCurrentChapter to prioritize chain events
     setupCurrentChapter(chapterNumber) {
         this.player.currentChapter = chapterNumber;
         this.player.currentChapterEvent = 0;
         
-        this.currentChapterEvents = this.eventsByChapter[chapterNumber] || [];
-        this.shuffleArray(this.currentChapterEvents);
+        // Get chain events first (using config-driven logic)
+        const chainEvent = this.getNextChainEvent();
+        if (chainEvent) {
+            this.currentChapterEvents = [chainEvent];
+            this.player.activeChain = chainEvent.chainId;
+            this.player.chainSequence = chainEvent.chainSequence;
+            console.log(`🔗 Starting chain: ${chainEvent.chainId}, sequence: ${chainEvent.chainSequence}`);
+        } else {
+            // Fallback to regular chapter events (filter out chain events to avoid duplicates)
+            const regularEvents = (this.eventsByChapter[chapterNumber] || [])
+                .filter(event => !event.chainId || !event.chainId.trim());
+            
+            this.currentChapterEvents = regularEvents;
+            this.shuffleArray(this.currentChapterEvents);
+            this.player.activeChain = null;
+            
+            console.log(`📚 Using regular events for chapter ${chapterNumber}:`, regularEvents.length, 'events');
+        }
+        
         this.attachChoicesToEvents();
         this.updateChapterUI();
         
@@ -1570,6 +1873,28 @@ class GameState {
         document.getElementById('chapterTitle').textContent = this.chapterTitles[this.player.currentChapter] || 'Chapter Baru';
         document.getElementById('chapterTotalEvents').textContent = this.currentChapterEvents.length;
         document.getElementById('currentEventNumber').textContent = this.player.currentChapterEvent + 1;
+        
+        // NEW: Update chain progress if active
+        this.updateChainUI();
+    }
+
+    // NEW: Update UI to show chain progress
+    updateChainUI() {
+        if (this.player.activeChain) {
+            const chainConfig = this.eventChains[this.player.activeChain];
+            const chainEvents = this.eventsByChain[this.player.activeChain];
+            const progress = this.player.chainProgress[this.player.activeChain];
+            
+            if (chainConfig && chainEvents && progress) {
+                const chainName = chainConfig.name || this.player.activeChain;
+                const progressText = `🔗 ${chainName} (${progress.sequence}/${chainEvents.length})`;
+                document.getElementById('chapterTitle').textContent = progressText;
+                
+                // Update event counter for chains
+                document.getElementById('currentEventNumber').textContent = progress.sequence;
+                document.getElementById('chapterTotalEvents').textContent = chainEvents.length;
+            }
+        }
     }
 
     parseEffectsJson(effectsString) {
@@ -1599,143 +1924,153 @@ class GameState {
     }
 
     setBackground(bg) {
-    this.player.background = bg;
+        this.player.background = bg;
 
-    // 1) Ubah money & happiness
-    this.player.money     = Number(this.gameConfig[`initial_money_${bg}`]    || 0);
-    this.player.happiness = Number(this.gameConfig[`initial_happiness_${bg}`] || 0);
+        // 1) Ubah money & happiness
+        this.player.money     = Number(this.gameConfig[`initial_money_${bg}`]    || 0);
+        this.player.happiness = Number(this.gameConfig[`initial_happiness_${bg}`] || 0);
 
-    // ————————————— KARIR —————————————
-    this.player.career = {title: this.gameConfig[`initial_career_title_${bg}`]       || "Belum Kerja",
-        experience: Number(this.gameConfig[`initial_career_experience_${bg}`]|| 0)
-    };
+        // ————————————— KARIR —————————————
+        this.player.career = {title: this.gameConfig[`initial_career_title_${bg}`]       || "Belum Kerja",
+            experience: Number(this.gameConfig[`initial_career_experience_${bg}`]|| 0)
+        };
 
-    // ————————————— CORRUPT ESSENCE —————————————
-    this.player.corruptEssence = Number(this.gameConfig[`initial_corrupt_essence_${bg}`] || 0);
+        // ————————————— CORRUPT ESSENCE —————————————
+        this.player.corruptEssence = Number(this.gameConfig[`initial_corrupt_essence_${bg}`] || 0);
 
-    // 2) Reset skills & psychology
-    this.player.skills     = {};
-    this.player.psychology = {};
+        // 2) Reset skills & psychology
+        this.player.skills     = {};
+        this.player.psychology = {};
 
-    // **> inisialisasi psychology dari sheet**  
-    const psychKeys = [
-        'confidence',
-        'authenticity',
-        'socialAwareness',
-        'resilience',
-        'empathy',
-        'financialWisdom'
-    ];
-    psychKeys.forEach(key => {
-        this.player.psychology[key] = 
-        Number(this.gameConfig[`initial_${key}_${bg}`] || 0);
-    });
+        // **> inisialisasi psychology dari sheet**  
+        const psychKeys = [
+            'confidence',
+            'authenticity',
+            'socialAwareness',
+            'resilience',
+            'empathy',
+            'financialWisdom'
+        ];
+        psychKeys.forEach(key => {
+            this.player.psychology[key] = 
+            Number(this.gameConfig[`initial_${key}_${bg}`] || 0);
+        });
 
-    // 3) Isi skills dari config initial
-    Object.keys(this.gameConfig).forEach(key => {
-        const parts = key.split('_');
-        // pattern initial_skill_<attr>_<bg>
-        if (parts[0] === 'initial' && parts[1] === 'skill' && parts[3] === bg) {
-        const attr = parts[2];
-        this.player.skills[attr] = Number(this.gameConfig[key] || 0);
-        }
-        // pattern baseline_psych_<attr>_<bg>
-        if (parts[0] === 'baseline' && parts[1] === 'psych' && parts[3] === bg) {
-        const attr = parts[2];
-        this.player.psychology[attr] = Number(this.gameConfig[key] || 0);
-        }
-    });
+        // 3) Isi skills dari config initial
+        Object.keys(this.gameConfig).forEach(key => {
+            const parts = key.split('_');
+            // pattern initial_skill_<attr>_<bg>
+            if (parts[0] === 'initial' && parts[1] === 'skill' && parts[3] === bg) {
+            const attr = parts[2];
+            this.player.skills[attr] = Number(this.gameConfig[key] || 0);
+            }
+            // pattern baseline_psych_<attr>_<bg>
+            if (parts[0] === 'baseline' && parts[1] === 'psych' && parts[3] === bg) {
+            const attr = parts[2];
+            this.player.psychology[attr] = Number(this.gameConfig[key] || 0);
+            }
+        });
 
-    this.updateUI();
+        this.updateUI();
     }
-
 
     updateUI() {
-    // Ambil dari sheet via gameConfig, fallback ke hard‑code atau default
-    const bgKey   = this.player.background;
-    const cfgKey  = `background_name_${bgKey}`;
-    const fromCfg = this.gameConfig[cfgKey];
-    const label   = fromCfg
-    || {
-        sultan:    "Anak Konglomerat",
-        sandwich:  "Anak Pegawai Negeri",
-        kampung:   "Anak Pedagang Kecil"
-        }[bgKey]
-    || "Belum dipilih";
+        // Ambil dari sheet via gameConfig, fallback ke hard‑code atau default
+        const bgKey   = this.player.background;
+        const cfgKey  = `background_name_${bgKey}`;
+        const fromCfg = this.gameConfig[cfgKey];
+        const label   = fromCfg
+        || {
+            sultan:    "Anak Konglomerat",
+            sandwich:  "Anak Pegawai Negeri",
+            kampung:   "Anak Pedagang Kecil"
+            }[bgKey]
+        || "Belum dipilih";
 
-    document.getElementById('playerBackground').textContent = label;
+        document.getElementById('playerBackground').textContent = label;
 
-    // update happiness, career, background, dll.
-    document.getElementById('happinessLevel').textContent = `${this.player.happiness}%`;
-    document.getElementById('happinessProgress').style.width = `${this.player.happiness}%`;
+        // update happiness, career, background, dll.
+        document.getElementById('happinessLevel').textContent = `${this.player.happiness}%`;
+        document.getElementById('happinessProgress').style.width = `${this.player.happiness}%`;
 
-    // duit
-    document.getElementById('playerMoney').textContent = this.player.money.toLocaleString('id-ID');
+        // duit
+        document.getElementById('playerMoney').textContent = this.player.money.toLocaleString('id-ID');
 
-    // Career
-    const carTitleEl = document.getElementById('careerLevel');
-    const carProgEl  = document.getElementById('careerProgress');
+        // Career
+        const carTitleEl = document.getElementById('careerLevel');
+        const carProgEl  = document.getElementById('careerProgress');
 
-    carTitleEl.textContent = this.player.career.title;
-    // misal experience 0–100 jadi width%, atau divide by maxXP-mu
-    const xp = Math.min(this.player.career.experience, 100);
-    carProgEl.style.width = `${xp}%`;
+        carTitleEl.textContent = this.player.career.title;
+        // misal experience 0–100 jadi width%, atau divide by maxXP-mu
+        const xp = Math.min(this.player.career.experience, 100);
+        carProgEl.style.width = `${xp}%`;
 
-    // 1) compute the current corruption state
-    const corruptState = this.getCorruptionState();        // e.g. 'pure','tempted','compromised','corrupt','demon_lord'
-    const corruptText = this.getCorruptionStateText();     // pulls localized label, e.g. '😇 Pure Soul','🔥 Demon Lord'
+        // 1) compute the current corruption state
+        const corruptState = this.getCorruptionState();        // e.g. 'pure','tempted','compromised','corrupt','demon_lord'
+        const corruptText = this.getCorruptionStateText();     // pulls localized label, e.g. '😇 Pure Soul','🔥 Demon Lord'
 
-    // 2) render corruption essence
-    const corruptLevelEl = document.getElementById('corruptEssenceLevel');
-    const corruptIndicatorEl = document.getElementById('corruptionIndicator');
+        // 2) render corruption essence
+        const corruptLevelEl = document.getElementById('corruptEssenceLevel');
+        const corruptIndicatorEl = document.getElementById('corruptionIndicator');
 
-    corruptLevelEl.textContent = `${this.player.corruptEssence}%`;
-    corruptIndicatorEl.textContent = corruptText;
+        corruptLevelEl.textContent = `${this.player.corruptEssence}%`;
+        corruptIndicatorEl.textContent = corruptText;
 
-    // swap the CSS class so your color/border matches the state
-    corruptIndicatorEl.className = `psychology-indicator ${corruptState}`;
+        // swap the CSS class so your color/border matches the state
+        corruptIndicatorEl.className = `psychology-indicator ${corruptState}`;
 
-    // Update corruption-specific stats
-    const corruptionStats = {
-        greed: Math.min(this.player.corruptEssence * 1.2, 100),
-        blackmail: Math.min(this.player.corruptEssence * 0.8, 100), 
-        networkPower: Math.min((this.player.skills.networking || 0) * 10 + this.player.corruptEssence * 0.5, 100),
-        manipulation: Math.min(this.player.corruptEssence * 1.1, 100)
-    };
+        // Update corruption-specific stats
+        const corruptionStats = {
+            greed: Math.min(this.player.corruptEssence * 1.2, 100),
+            blackmail: Math.min(this.player.corruptEssence * 0.8, 100), 
+            networkPower: Math.min((this.player.skills.networking || 0) * 10 + this.player.corruptEssence * 0.5, 100),
+            manipulation: Math.min(this.player.corruptEssence * 1.1, 100)
+        };
 
-    document.getElementById('greedLevel').textContent = `${Math.floor(corruptionStats.greed)}%`;
-    document.getElementById('blackmailLevel').textContent = `${Math.floor(corruptionStats.blackmail)}%`;
-    document.getElementById('networkPowerLevel').textContent = `${Math.floor(corruptionStats.networkPower)}%`;
-    document.getElementById('manipulationLevel').textContent = `${Math.floor(corruptionStats.manipulation)}%`;
+        document.getElementById('greedLevel').textContent = `${Math.floor(corruptionStats.greed)}%`;
+        document.getElementById('blackmailLevel').textContent = `${Math.floor(corruptionStats.blackmail)}%`;
+        document.getElementById('networkPowerLevel').textContent = `${Math.floor(corruptionStats.networkPower)}%`;
+        document.getElementById('manipulationLevel').textContent = `${Math.floor(corruptionStats.manipulation)}%`;
 
-    // Networking
-    document.getElementById('networkingLevel').textContent = `Level ${this.player.skills.networking || 0}`;
-    document.getElementById('networkingProgress').style.width = `${Math.min((this.player.skills.networking || 0) * 10, 100)}%`;
+        // Networking
+        document.getElementById('networkingLevel').textContent = `Level ${this.player.skills.networking || 0}`;
+        document.getElementById('networkingProgress').style.width = `${Math.min((this.player.skills.networking || 0) * 10, 100)}%`;
 
-    // ——— Update Skills Dinamis dengan Debug ———
-    Object.entries(this.player.skills).forEach(([skillKey,val])=>{
-        const lvl = document.getElementById(`${skillKey}Level`);
-        const bar = document.getElementById(`${skillKey}Progress`);
-        if (lvl) lvl.textContent = `Level ${val||0}`;
-        if (bar) bar.style.width = `${Math.min((val||0)*10,100)}%`;
-    });
+        // ——— Update Skills Dinamis dengan Debug ———
+        Object.entries(this.player.skills).forEach(([skillKey,val])=>{
+            const lvl = document.getElementById(`${skillKey}Level`);
+            const bar = document.getElementById(`${skillKey}Progress`);
+            if (lvl) lvl.textContent = `Level ${val||0}`;
+            if (bar) bar.style.width = `${Math.min((val||0)*10,100)}%`;
+        });
 
-    // ——— Update Psychology Dinamis ———
-    Object.entries(this.player.psychology).forEach(([psy, val]) => {
-        const el = document.getElementById(`${psy}Level`);
-        if (el) el.textContent = `${val || 0}%`;
-    });
+        // ——— Update Psychology Dinamis ———
+        Object.entries(this.player.psychology).forEach(([psy, val]) => {
+            const el = document.getElementById(`${psy}Level`);
+            if (el) el.textContent = `${val || 0}%`;
+        });
 
-    // existing code…
-    this.updateChapterUI();
-    this.updateSkillsList();
-    // Update warning indicators if data is loaded
-    if (this.dataLoaded) {
-        const corruptState = this.getCorruptionState();
-        this.updateWarningUI(corruptState);
+        // existing code…
+        this.updateChapterUI();
+        this.updateSkillsList();
+        
+        // Update warning indicators if data is loaded
+        if (this.dataLoaded) {
+            const corruptState = this.getCorruptionState();
+            this.updateWarningUI(corruptState);
+        }
+        
+        // NEW: Show available chains in debug mode
+        if (this.getConfigValue('debug_mode', false) || window.location.hash === '#debug') {
+            console.log('🔗 Available chains:');
+            this.chainPriority.forEach(chainId => {
+                const canAccess = this.canAccessChain(chainId);
+                const progress = this.player.chainProgress[chainId];
+                const config = this.eventChains[chainId];
+                console.log(`  ${chainId} (${config?.name}): ${canAccess ? '✅' : '❌'} ${progress ? JSON.stringify(progress) : 'not started'}`);
+            });
+        }
     }
-    }
-
 
     updateSkillsList() {
         const skillsList = document.getElementById('skillsList');
@@ -1795,10 +2130,20 @@ class GameState {
             sosial: "👥 Sosial",
             keluarga: "👨‍👩‍👧 Keluarga",
             percintaan: "💕 Percintaan",
+            percintaan_sosial: "💋 Percintaan & Sosial",
             random: "🎲 Random"
         };
 
-        document.getElementById('eventCategory').textContent = categoryNames[event.category] || "📖 Event";
+        let eventCategory = categoryNames[event.category] || "📖 Event";
+        
+        // NEW: Add chain indicator if this is a chain event
+        if (event.chainId) {
+            const chainConfig = this.eventChains[event.chainId];
+            const chainName = chainConfig ? chainConfig.name : event.chainId;
+            eventCategory += ` <span class="chain-indicator">🔗 ${chainName}</span>`;
+        }
+
+        document.getElementById('eventCategory').innerHTML = eventCategory;
         document.getElementById('currentEventTitle').innerHTML = event.title;
         document.getElementById('currentEventText').textContent = event.text;
         
@@ -1922,42 +2267,42 @@ class GameState {
     }
 
     proceedToNextChapter() {
-    // Pastikan UI terkini
-    this.updateUI();
+        // Pastikan UI terkini
+        this.updateUI();
 
-    const curr = this.player.currentChapter;
+        const curr = this.player.currentChapter;
 
-    // —————— Bridge C1→C2 jika belum pernah ——————
-    if (curr === 1 && !this.bridgingDone1) {
-        const minH1 = Number(this.gameConfig['trigger_chapter1_mental_min']);
-        if (this.player.happiness >= minH1) {
-        this.bridgingDone1 = true;
-        ['E101','E102','E103','E104','E105','E106','E107']
-            .forEach(eid => this.enqueueEvent(eid));
-        return;
+        // —————— Bridge C1→C2 jika belum pernah ——————
+        if (curr === 1 && !this.bridgingDone1) {
+            const minH1 = Number(this.gameConfig['trigger_chapter1_mental_min']);
+            if (this.player.happiness >= minH1) {
+            this.bridgingDone1 = true;
+            ['E101','E102','E103','E104','E105','E106','E107']
+                .forEach(eid => this.enqueueEvent(eid));
+            return;
+            }
         }
-    }
 
-    // —————— Bridge C2→C3 jika belum pernah ——————
-    if (curr === 2 && !this.bridgingDone2) {
-        const minMoney = Number(this.gameConfig['trigger_chapter2_money_min']);
-        const minM2     = Number(this.gameConfig['trigger_chapter2_mental_min']);
-        if (this.player.money  >= minMoney &&
-            this.player.happiness >= minH2) {
-        this.bridgingDone2 = true;
-        ['E201','E202','E203','E204','E205','E206','E207','E208']
-            .forEach(eid => this.enqueueEvent(eid));
-        return;
+        // —————— Bridge C2→C3 jika belum pernah ——————
+        if (curr === 2 && !this.bridgingDone2) {
+            const minMoney = Number(this.gameConfig['trigger_chapter2_money_min']);
+            const minH2     = Number(this.gameConfig['trigger_chapter2_mental_min']);
+            if (this.player.money  >= minMoney &&
+                this.player.happiness >= minH2) {
+            this.bridgingDone2 = true;
+            ['E201','E202','E203','E204','E205','E206','E207','E208']
+                .forEach(eid => this.enqueueEvent(eid));
+            return;
+            }
         }
-    }
 
-    // —————— Transisi normal ——————
-    const next = curr + 1;
-    if (this.eventsByChapter[next]?.length) {
-        this.showChapterTransition(next);
-    } else {
-        this.showGameComplete();
-    }
+        // —————— Transisi normal ——————
+        const next = curr + 1;
+        if (this.eventsByChapter[next]?.length) {
+            this.showChapterTransition(next);
+        } else {
+            this.showGameComplete();
+        }
     }
 
     showChapterTransition(nextChapter) {
@@ -2023,6 +2368,67 @@ class GameState {
         });
     }
 
+    // NEW: Debug method for chain system
+    debugChains() {
+        console.log('🔗 CHAIN DEBUG INFO:');
+        console.log('Active chain:', this.player.activeChain);
+        console.log('Chain sequence:', this.player.chainSequence);
+        console.log('Chain progress:', this.player.chainProgress);
+        console.log('Corruption level:', this.player.corruptEssence);
+        console.log('Completed events:', this.player.completedEvents);
+        
+        console.log('\n📋 All Chain Configs:');
+        this.chainPriority.forEach(chainId => {
+            const config = this.eventChains[chainId];
+            const canAccess = this.canAccessChain(chainId);
+            const progress = this.player.chainProgress[chainId];
+            const events = this.eventsByChain[chainId];
+            
+            console.log(`\n${chainId} (Priority: ${config.priority}):`);
+            console.log(`  Name: ${config.name}`);
+            console.log(`  Can access: ${canAccess}`);
+            console.log(`  Required: ${config.required}`);
+            console.log(`  Corruption range: ${config.minCorruption}-${config.maxCorruption}`);
+            console.log(`  Required events:`, config.requiredEvents);
+            console.log(`  Alternative corruption: ${config.alternativeCorruption}`);
+            console.log(`  Progress:`, progress);
+            console.log(`  Events:`, events?.map(e => `${e.id}(seq:${e.chainSequence})`));
+            console.log(`  Completion bonus:`, config.completionBonus);
+        });
+        
+        console.log('\n📊 Event Distribution:');
+        const totalEvents = this.allEvents.length;
+        const chainEvents = Object.values(this.eventsByChain).flat().length;
+        const regularEvents = totalEvents - chainEvents;
+        
+        console.log(`  Total events: ${totalEvents}`);
+        console.log(`  Chain events: ${chainEvents}`);
+        console.log(`  Regular events: ${regularEvents}`);
+        
+        // Show events without chain info
+        const eventsWithoutChain = this.allEvents.filter(e => !e.chainId || !e.chainId.trim());
+        if (eventsWithoutChain.length > 0) {
+            console.log('\n📝 Events without chain info:');
+            eventsWithoutChain.forEach(e => {
+                console.log(`  ${e.id}: ${e.title} (Chapter ${e.chapter})`);
+            });
+        }
+        
+        return {
+            activeChain: this.player.activeChain,
+            chainProgress: this.player.chainProgress,
+            corruption: this.player.corruptEssence,
+            availableChains: this.chainPriority.filter(id => this.canAccessChain(id)),
+            allChains: this.eventChains,
+            stats: {
+                totalEvents,
+                chainEvents,
+                regularEvents,
+                eventsWithoutChain: eventsWithoutChain.length
+            }
+        };
+    }
+
     // Debug method 
     debugChapter1() {
         console.log('🔍 CHAPTER 1 DEBUG INFO:');
@@ -2049,7 +2455,7 @@ class GameState {
 // Initialize game
 let gameState;
 
-// Utility Functions (unchanged from original)
+// Utility Functions
 function showScreen(screenId) {
     document.querySelectorAll('.screen').forEach(screen => {
         screen.classList.remove('active');
@@ -2102,7 +2508,7 @@ function showProfile() {
     showNotification('Fitur profil segera hadir! 🚧');
 }
 
-// Character Creation Logic (unchanged)
+// Character Creation Logic
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         document.getElementById('loading').style.display = 'none';
@@ -2158,6 +2564,57 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+// NEW: Global debug functions for console
+window.debugChains = () => gameState.debugChains();
+window.debugChapter1 = () => gameState.debugChapter1();
+window.debugPlayer = () => console.log('Player state:', gameState.player);
+window.debugConfig = () => console.log('Game config:', gameState.gameConfig);
+window.debugEvents = () => console.log('All events:', gameState.allEvents);
+window.resetCorruption = () => {
+    gameState.player.corruptEssence = 0;
+    gameState.updateUI();
+    console.log('Corruption reset to 0');
+};
+window.addCorruption = (amount = 10) => {
+    gameState.player.corruptEssence = Math.min(100, gameState.player.corruptEssence + amount);
+    gameState.updateUI();
+    console.log(`Added ${amount} corruption. Current: ${gameState.player.corruptEssence}`);
+};
+window.completeEvent = (eventId) => {
+    if (!gameState.player.completedEvents.includes(eventId)) {
+        gameState.player.completedEvents.push(eventId);
+        console.log(`Event ${eventId} marked as completed`);
+    } else {
+        console.log(`Event ${eventId} already completed`);
+    }
+};
+
+// Console Helper - Show available debug commands
+console.log(`
+🎮 KORUPTOR SIMULATOR DEBUG COMMANDS:
+
+📊 Chain System:
+  debugChains()           - Show all chain info & progress
+  debugChapter1()         - Debug current chapter events
+  
+🎯 Player State:
+  debugPlayer()           - Show player stats
+  debugConfig()           - Show game config
+  debugEvents()           - Show all events
+  
+🔧 Quick Actions:
+  resetCorruption()       - Reset corruption to 0
+  addCorruption(10)       - Add corruption (default 10)
+  completeEvent('E110')   - Mark event as completed
+  
+🌐 Direct Access:
+  gameState.player        - Player object
+  gameState.eventChains   - Chain configurations
+  gameState.currentChapterEvents - Current events
+  
+Type any command above in console to debug! 🚀
+`);
 </script>
 
 </body>
