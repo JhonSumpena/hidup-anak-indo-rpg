@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hidup Anak Indonesia RPG</title>
+    <title>Koruptor Simulator</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -597,34 +597,36 @@
             margin-top: 5px;
         }
 
-        .psychology-indicator.critical {
-            background: rgba(220, 38, 38, 0.3);
-            color: #fca5a5;
-            border: 1px solid #dc2626;
-        }
-
-        .psychology-indicator.danger {
-            background: rgba(217, 119, 6, 0.3);
-            color: #fed7aa;
-            border: 1px solid #d97706;
-        }
-
-        .psychology-indicator.stable {
-            background: rgba(59, 130, 246, 0.3);
-            color: #bfdbfe;
-            border: 1px solid #3b82f6;
-        }
-
-        .psychology-indicator.good {
+        .psychology-indicator.pure {
             background: rgba(34, 197, 94, 0.3);
             color: #bbf7d0;
             border: 1px solid #22c55e;
         }
 
-        .psychology-indicator.excellent {
+        .psychology-indicator.tempted {
             background: rgba(251, 191, 36, 0.3);
             color: #fef3c7;
             border: 1px solid #fbbf24;
+        }
+
+        .psychology-indicator.compromised {
+            background: rgba(217, 119, 6, 0.3);
+            color: #fed7aa;
+            border: 1px solid #d97706;
+        }
+
+        .psychology-indicator.corrupt {
+            background: rgba(220, 38, 38, 0.3);
+            color: #fca5a5;
+            border: 1px solid #dc2626;
+        }
+
+        .psychology-indicator.demon_lord {
+            background: rgba(127, 29, 29, 0.5);
+            color: #fca5a5;
+            border: 2px solid #7f1d1d;
+            animation: pulse-critical 1.5s infinite;
+            box-shadow: 0 0 20px rgba(127, 29, 29, 0.8);
         }
 
         /* NEW: Fallback choice styling */
@@ -637,6 +639,29 @@
         .fallback-choice::before {
             content: "🔧 ";
             color: #9ca3af;
+        }
+
+        /* Corruption Glow Effects */
+        .corrupt-glow {
+            box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
+            border-color: #dc2626 !important;
+        }
+
+        .demon-lord-glow {
+            box-shadow: 0 0 30px rgba(127, 29, 29, 0.8);
+            border-color: #7f1d1d !important;
+            animation: corruption-pulse 2s infinite;
+        }
+
+        @keyframes corruption-pulse {
+            0%, 100% { 
+                box-shadow: 0 0 30px rgba(127, 29, 29, 0.8);
+                transform: scale(1);
+            }
+            50% { 
+                box-shadow: 0 0 40px rgba(127, 29, 29, 1);
+                transform: scale(1.02);
+            }
         }
 
         .debug-info {
@@ -666,48 +691,48 @@
     <!-- Character Creation Screen -->
     <div class="screen active" id="characterCreation">
         <div class="character-creation">
-            <div class="screen-title">Hidup Anak Indonesia</div>
+            <div class="screen-title">Koruptor Simulator</div>
             <div class="intro-text">
-                Pilih latar belakang hidup lu. Setiap pilihan punya tantangan dan keuntungan masing-masing. 
-                Siap-siap menghadapi realita kehidupan Indonesia! 🇮🇩
-                <div class="background-title">Mental mines lu Mati!</div>
-                <div class="background-title">Duit 0 lu Tewas juga!</div>
+                Pilih latar belakang hidup lu. Setiap pilihan punya jalan berbeda menuju kekuasaan dan korupsi. 
+                Siap-siap jadi bagian dari sistem yang korup! 💰
+                <div class="background-title">💀 Duit 0 = Game Over!</div>
+                <div class="background-title">😇 Tetap Pure = Susah Menang!</div>
             </div>
             
             <div class="background-cards">
                 <div class="background-card" data-background="sultan">
                     <div class="background-icon">👑</div>
-                    <div class="background-title">Anak Sultan</div>
+                    <div class="background-title">Anak Konglomerat</div>
                     <div class="background-desc">
-                        Lahir dari keluarga kaya. HP terbaru, motor sendiri, sekolah bagus. 
-                        Tapi ekspektasi tinggi dan susah buktiin kemampuan asli. Mulai enak, 
-                        makin lama makin challenging.
+                        Lahir dari keluarga elit dengan koneksi politik tinggi. Akses mudah ke tender pemerintah, 
+                        tapi harus main politik licik. Start corruption level tinggi, 
+                        tapi skill manipulation dan networking udah advanced.
                     </div>
                 </div>
                 
                 <div class="background-card" data-background="sandwich">
                     <div class="background-icon">😅</div>
-                    <div class="background-title">Anak Kelas Menengah</div>
+                    <div class="background-title">Anak Pegawai Negeri</div>
                     <div class="background-desc">
-                        Hidup pas-pasan antara ngurus ortu dan masa depan sendiri. Budget terbatas, 
-                        tapi mental kuat. Progress stabil sepanjang game - gak terlalu susah, 
-                        gak terlalu mudah.
+                        Dari keluarga PNS yang "bersih". Harus belajar korupsi pelan-pelan dari bawah. 
+                        Start pure tapi punya akses ke sistem birokrasi. Balanced corruption path 
+                        dengan risk-reward yang wajar.
                     </div>
                 </div>
                 
                 <div class="background-card" data-background="kampung">
                     <div class="background-icon">💪</div>
-                    <div class="background-title">Anak Kampung</div>
+                    <div class="background-title">Anak Pedagang Kecil</div>
                     <div class="background-desc">
-                        Dari keluarga sederhana, terbiasa kerja keras dari kecil. Modal nekad 
-                        dan semangat pantang menyerah. Susah di awal tapi berkembang pesat! 
-                        True underdog story!
+                        Dari keluarga sederhana, terbiasa cari celah dan main licik untuk survive. 
+                        Corruption level rendah tapi growth rate tinggi! True hustler yang 
+                        bakal jadi mafia baru!
                     </div>
                 </div>
             </div>
 
             <button class="start-btn" id="startGame" disabled>
-                Mulai Petualangan! 🚀
+                Mulai Jadi Koruptor! 💰
             </button>
         </div>
     </div>
@@ -761,29 +786,29 @@
                 </div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">🧠</div>
-                <div class="stat-label">Mental State</div>
-                <div class="stat-value" id="psychologyState">😐 Normal</div>
-                <div class="psychology-indicator" id="psychologyIndicator">😐 Normal</div>
+                <div class="stat-icon">🌑</div>
+                <div class="stat-label">Corrupt Essence</div>
+                <div class="stat-value" id="corruptEssenceLevel">0%</div>
+                <div class="psychology-indicator" id="corruptionIndicator">😇 Pure</div>
             </div>
         </div>
 
         <div class="psychology-stats">
             <div class="psychology-stat">
-                <div>🧠 Percaya Diri</div>
-                <div id="confidenceLevel">50%</div>
+                <div>💰 Greed Level</div>
+                <div id="greedLevel">0%</div>
             </div>
             <div class="psychology-stat">
-                <div>💯 Jadi Diri Sendiri</div>
-                <div id="authenticityLevel">50%</div>
+                <div>🤐 Blackmail Skills</div>
+                <div id="blackmailLevel">0%</div>
             </div>
             <div class="psychology-stat">
-                <div>🤝 Baca Situasi</div>
-                <div id="socialAwarenessLevel">50%</div>
+                <div>🕸️ Network Power</div>
+                <div id="networkPowerLevel">0%</div>
             </div>
             <div class="psychology-stat">
-                <div>💪 Tahan Banting</div>
-                <div id="resilienceLevel">50%</div>
+                <div>🎭 Manipulation</div>
+                <div id="manipulationLevel">0%</div>
             </div>
         </div>
 
@@ -793,12 +818,12 @@
                 📱 Selamat Datang!
             </div>
             <div class="story-text" id="currentEventText">
-                Hidup lu baru dimulai! Pilih langkah pertama dengan bijak. 
-                Setiap keputusan akan mempengaruhi masa depan lu.
+                Hidup lu baru dimulai! Pilih langkah pertama menuju kekuasaan dan kekayaan. 
+                Setiap keputusan akan menentukan seberapa korup lu nantinya.
             </div>
             <div class="choices-container" id="choicesContainer">
                 <button class="choice-btn" onclick="startFirstEvent()">
-                    🚀 Mulai Petualangan Hidup!
+                    💰 Mulai Karir Korupsi!
                 </button>
             </div>
         </div>
@@ -851,7 +876,7 @@
 </div>
 
 <script>
-// Enhanced Game State Management with NO FILTERING
+// Enhanced Game State Management with CORRUPT ESSENCE SYSTEM
 class GameState {
     constructor() {
         this.player = {
@@ -878,6 +903,7 @@ class GameState {
                 empathy: 0,
                 financialWisdom: 0
             },
+            corruptEssence: 0, // NEW: Corrupt Essence system
             career: {
                 level: 0,
                 title: "Belum Kerja",
@@ -924,12 +950,31 @@ class GameState {
         this.bridgingDone1 = false;
         this.bridgingDone2 = false;
         
+        /*
+        CONTOH CORRUPTION EVENTS UNTUK GOOGLE SHEET:
+        
+        Event dengan corruptEssence effects:
+        
+        E100 - Suap Pertama
+        text: "Satpam kampus nawarin 'jalan pintas' buat masuk perpus tanpa antri. Cuma 10 ribu doang."
+        
+        Choices:
+        - Sultan: "Kasih 50 ribu biar dia inget lu" 
+          effects: {'corruptEssence': 2, 'money': -50000, 'skills': {'networking': 1}}
+          
+        - Sandwich: "Bayar 10 ribu, tapi merasa bersalah"
+          effects: {'corruptEssence': 1, 'money': -10000, 'happiness': -2}
+          
+        - Kampung: "Tolak dan antri biasa"
+          effects: {'happiness': 1, 'psychology': {'authenticity': 2}}
+        */
+        
         this.loadAllDataFromGoogleSheets();
     }
 
     async loadAllDataFromGoogleSheets() {
         try {
-            showNotification('Memuat data dari Demon Lord...');
+            showNotification('Memuat data dari Mafia Boss...');
             console.log('Memuat semua data game...');
             
             // Load all sheets concurrently
@@ -952,7 +997,7 @@ class GameState {
             
             this.dataLoaded = true;
             
-            console.log('🎮 Hidup Anak Indonesia RPG berhasil dimuat!');
+            console.log('🎮 Koruptor Simulator berhasil dimuat!');
             console.log(`🎯 ${this.allEvents.length} events, ${this.crisisEvents.length} crisis events`);
             console.log(`📊 ${this.allChoices.length} choices, ${this.crisisChoices.length} crisis choices`);
             //console.log("Loaded gameConfig:", this.gameConfig);
@@ -1184,7 +1229,7 @@ class GameState {
                 😊 Happiness: ${this.player.happiness}%<br>
                 📚 Events Completed: ${this.player.completedEvents.length}<br>
                 📖 Chapter Reached: ${this.player.currentChapter}<br>
-                🧠 Psychology State: ${this.getPsychologyStateText()}
+                🌑 Corruption State: ${this.getCorruptionStateText()}
             </div>
         `;
         
@@ -1201,37 +1246,34 @@ class GameState {
         showNotification(title);
     }
 
-    getPsychologyState() {
-        const psychStats = [
-            this.player.psychology.confidence,
-            this.player.psychology.authenticity, 
-            this.player.psychology.socialAwareness,
-            this.player.psychology.resilience,
-            this.player.psychology.empathy,
-            this.player.psychology.financialWisdom
-        ];
+    getCorruptionState() {
+        const corruptLevel = this.player.corruptEssence;
         
-        const avgPsych = psychStats.reduce((a, b) => a + b, 0) / psychStats.length;
-        
-        if (avgPsych <= this.gameConfig.psych_critical_max) return 'critical';
-        if (avgPsych <= this.gameConfig.psych_danger_max) return 'danger'; 
-        if (avgPsych <= this.gameConfig.psych_stable_max) return 'stable';
-        if (avgPsych <= this.gameConfig.psych_good_max) return 'good';
-        return 'excellent';
+        if (corruptLevel <= 10) return 'pure';
+        if (corruptLevel <= 25) return 'tempted'; 
+        if (corruptLevel <= 50) return 'compromised';
+        if (corruptLevel <= 75) return 'corrupt';
+        return 'demon_lord';
     }
 
-    getPsychologyStateText() {
-        const state = this.getPsychologyState();
-        const stateKey = `psych_state_${state}`;
-        return this.uiMessages[stateKey] || state;
+    getCorruptionStateText() {
+        const state = this.getCorruptionState();
+        const stateTexts = {
+            pure: '😇 Pure Soul',
+            tempted: '😕 Tempted',
+            compromised: '😈 Compromised', 
+            corrupt: '👹 Corrupt',
+            demon_lord: '🔥 Demon Lord'
+        };
+        return stateTexts[state] || state;
     }
 
-    applyPsychologyMultipliers(effects) {
-        const psychState = this.getPsychologyState();
+    applyCorruptionMultipliers(effects) {
+        const corruptState = this.getCorruptionState();
         const modifiedEffects = JSON.parse(JSON.stringify(effects));
         
-        const moneyMultiplier = this.gameConfig[`multiplier_${psychState}_money`] || 1.0;
-        const happinessMultiplier = this.gameConfig[`multiplier_${psychState}_happiness`] || 1.0;
+        const moneyMultiplier = this.gameConfig[`multiplier_${corruptState}_money`] || 1.0;
+        const happinessMultiplier = this.gameConfig[`multiplier_${corruptState}_happiness`] || 1.0;
         
         if (modifiedEffects.money) {
             modifiedEffects.money = Math.floor(modifiedEffects.money * moneyMultiplier);
@@ -1261,19 +1303,19 @@ class GameState {
             warnings.push(this.uiMessages.warning_happiness_2);
         }
 
-        // Psychology warnings
-        const psychState = this.getPsychologyState();
-        if (psychState === 'danger') {
-            warnings.push(this.uiMessages.warning_psych_danger);
-        } else if (psychState === 'critical') {
-            warnings.push(this.uiMessages.warning_psych_critical);
+        // Corruption warnings
+        const corruptState = this.getCorruptionState();
+        if (corruptState === 'corrupt') {
+            warnings.push(this.uiMessages.warning_corruption_high || '🔥 Corruption level berbahaya! Hati-hati dengan pilihan selanjutnya...');
+        } else if (corruptState === 'demon_lord') {
+            warnings.push(this.uiMessages.warning_corruption_critical || '👹 DEMON LORD MODE! Lu udah jadi koruptor sejati!');
         }
         
         warnings.forEach(warning => showNotification(warning));
-        this.updateWarningUI(psychState);
+        this.updateWarningUI(this.getCorruptionState());
     }
 
-    updateWarningUI(psychState) {
+    updateWarningUI(corruptState) {
         // Money indicator
         const moneyEl = document.getElementById('playerMoney').parentElement;
         moneyEl.classList.remove('warning-critical', 'warning-warning');
@@ -1292,22 +1334,21 @@ class GameState {
             happinessEl.classList.add('warning-warning');
         }
         
-        // Psychology indicator
-        const psychEl = document.querySelector('.psychology-stats');
-        const psychIndicator = document.getElementById('psychologyIndicator');
+        // Corruption indicator
+        const corruptEl = document.querySelector('.psychology-stats');
+        const corruptIndicator = document.getElementById('corruptionIndicator');
         
-        psychEl.classList.remove('psychology-critical', 'psychology-danger');
-        psychIndicator.className = `psychology-indicator ${psychState}`;
+        corruptEl.classList.remove('psychology-critical', 'psychology-danger');
+        corruptIndicator.className = `psychology-indicator ${corruptState}`;
         
-        if (psychState === 'critical') {
-            psychEl.classList.add('psychology-critical');
-        } else if (psychState === 'danger') {
-            psychEl.classList.add('psychology-danger');
+        if (corruptState === 'demon_lord') {
+            corruptEl.classList.add('psychology-critical');
+        } else if (corruptState === 'corrupt') {
+            corruptEl.classList.add('psychology-danger');
         }
         
-        // Update psychology state text
-        document.getElementById('psychologyState').textContent = this.getPsychologyStateText();
-        psychIndicator.textContent = this.getPsychologyStateText();
+        // Update corruption state text
+        corruptIndicator.textContent = this.getCorruptionStateText();
     }
 
     shouldTriggerCrisis() {
@@ -1316,8 +1357,8 @@ class GameState {
             return false; // No crisis in Chapter 1 for now
         }
 
-        const psychState = this.getPsychologyState();
-        const configKey = `crisis_chance_${psychState}`;
+        const corruptState = this.getCorruptionState();
+        const configKey = `crisis_chance_${corruptState}`;
         let baseChance = this.gameConfig[configKey] || 0;
         
         // Add financial stress bonus
@@ -1353,30 +1394,30 @@ class GameState {
     }
 
     triggerCrisisEvent() {
-    // 1. Hitung state psikologi terkini
-    const psychState = this.getPsychologyState();
+    // 1. Hitung state korupsi terkini
+    const corruptState = this.getCorruptionState();
 
     // 2. Cari crisis sesuai state
     let availableCrises = this.crisisEvents.filter(
-        crisis => crisis.psychologyState === psychState
+        crisis => crisis.psychologyState === corruptState
     );
 
     // 3. Kalau kosong, fallback ke state berikutnya
     if (availableCrises.length === 0) {
         const fallbackOrder = [
-        'danger',
-        'critical',
-        'stable',
-        'good',
-        'excellent'
+        'compromised',
+        'corrupt',
+        'demon_lord',
+        'tempted',
+        'pure'
         ];
         for (let s of fallbackOrder) {
-        if (s === psychState) continue;
+        if (s === corruptState) continue;
         const found = this.crisisEvents.filter(c => c.psychologyState === s);
         if (found.length) {
             availableCrises = found;
             console.warn(
-            `No crises for "${psychState}", falling back to "${s}"`
+            `No crises for "${corruptState}", falling back to "${s}"`
             );
             break;
         }
@@ -1392,11 +1433,29 @@ class GameState {
         Math.floor(Math.random() * availableCrises.length)
     ];
     showNotification(
-        this.uiMessages.crisis_trigger || '❗ Crisis Event!'
+        this.uiMessages.crisis_trigger || '💰 Corruption Crisis!'
     );
-    // … lanjut render crisis …
+    
+    setTimeout(() => {
+        document.getElementById('eventCategory').textContent = '💰 Corruption Crisis';
+        document.getElementById('currentEventTitle').innerHTML = crisis.title;
+        document.getElementById('currentEventText').textContent = crisis.text;
+        
+        const backgroundChoices = crisis.choices[this.player.background];
+        if (!backgroundChoices || backgroundChoices.length === 0) {
+            console.error('No crisis choices for background:', this.player.background);
+            return;
+        }
+        
+        const choicesContainer = document.getElementById('choicesContainer');
+        choicesContainer.innerHTML = backgroundChoices.map((choice, index) => `
+            <button class="choice-btn crisis-choice" onclick="gameState.processCrisisChoice('${crisis.id}', ${index})">
+                ${choice.text}
+                <div class="choice-impact">${choice.impact}</div>
+            </button>
+        `).join('');
+    }, 1500);
     }
-
 
     processCrisisChoice(crisisId, choiceIndex) {
         const crisis = this.crisisEvents.find(c => c.id === crisisId);
@@ -1406,7 +1465,7 @@ class GameState {
         if (!choice) return;
         
         // Apply enhanced effects
-        const enhancedEffects = this.applyPsychologyMultipliers(choice.effects);
+        const enhancedEffects = this.applyCorruptionMultipliers(choice.effects);
         this.applyChoiceEffects({ effects: enhancedEffects });
         
         showNotification(choice.impact);
@@ -1444,8 +1503,8 @@ class GameState {
 
         const choice = backgroundChoices[choiceIndex];
         
-        // Apply psychology multipliers
-        const enhancedEffects = this.applyPsychologyMultipliers(choice.effects);
+        // Apply corruption multipliers
+        const enhancedEffects = this.applyCorruptionMultipliers(choice.effects);
         this.applyChoiceEffects({ effects: enhancedEffects });
         
         // Check game over first
@@ -1461,7 +1520,7 @@ class GameState {
             choice: choiceIndex,
             choiceText: choice.text,
             impact: choice.impact,
-            psychState: this.getPsychologyState()
+            corruptState: this.getCorruptionState()
         });
 
         this.player.completedEvents.push(event.id);
@@ -1551,6 +1610,9 @@ class GameState {
         experience: Number(this.gameConfig[`initial_career_experience_${bg}`]|| 0)
     };
 
+    // ————————————— CORRUPT ESSENCE —————————————
+    this.player.corruptEssence = Number(this.gameConfig[`initial_corrupt_essence_${bg}`] || 0);
+
     // 2) Reset skills & psychology
     this.player.skills     = {};
     this.player.psychology = {};
@@ -1595,9 +1657,9 @@ class GameState {
     const fromCfg = this.gameConfig[cfgKey];
     const label   = fromCfg
     || {
-        sultan:    "Anak Sultan",
-        sandwich:  "Anak Gen Sandwich",
-        kampung:   "Anak Kampung"
+        sultan:    "Anak Konglomerat",
+        sandwich:  "Anak Pegawai Negeri",
+        kampung:   "Anak Pedagang Kecil"
         }[bgKey]
     || "Belum dipilih";
 
@@ -1619,38 +1681,36 @@ class GameState {
     const xp = Math.min(this.player.career.experience, 100);
     carProgEl.style.width = `${xp}%`;
 
-    document.getElementById('confidenceLevel').textContent      = `${this.player.psychology.confidence}%`;
-    document.getElementById('authenticityLevel').textContent    = `${this.player.psychology.authenticity}%`;
-    document.getElementById('socialAwarenessLevel').textContent = `${this.player.psychology.socialAwareness}%`;
-    document.getElementById('resilienceLevel').textContent      = `${this.player.psychology.resilience}%`;
+    // 1) compute the current corruption state
+    const corruptState = this.getCorruptionState();        // e.g. 'pure','tempted','compromised','corrupt','demon_lord'
+    const corruptText = this.getCorruptionStateText();     // pulls localized label, e.g. '😇 Pure Soul','🔥 Demon Lord'
 
-    // 1) compute the current psych state
-    const stateKey = this.getPsychologyState();        // e.g. 'critical','danger','stable','good','excellent'
-    const stateText = this.getPsychologyStateText();   // pulls your localized label, e.g. '😐 Normal','🌟 Excellent'
+    // 2) render corruption essence
+    const corruptLevelEl = document.getElementById('corruptEssenceLevel');
+    const corruptIndicatorEl = document.getElementById('corruptionIndicator');
 
-    // 2) render it dynamically
-    const psychLabelEl     = document.getElementById('psychologyState');
-    const psychIndicatorEl = document.getElementById('psychologyIndicator');
-
-    psychLabelEl.textContent     = stateText;
-    psychIndicatorEl.textContent = stateText;
+    corruptLevelEl.textContent = `${this.player.corruptEssence}%`;
+    corruptIndicatorEl.textContent = corruptText;
 
     // swap the CSS class so your color/border matches the state
-    psychIndicatorEl.className = `psychology-indicator ${stateKey}`;
+    corruptIndicatorEl.className = `psychology-indicator ${corruptState}`;
 
+    // Update corruption-specific stats
+    const corruptionStats = {
+        greed: Math.min(this.player.corruptEssence * 1.2, 100),
+        blackmail: Math.min(this.player.corruptEssence * 0.8, 100), 
+        networkPower: Math.min((this.player.skills.networking || 0) * 10 + this.player.corruptEssence * 0.5, 100),
+        manipulation: Math.min(this.player.corruptEssence * 1.1, 100)
+    };
 
+    document.getElementById('greedLevel').textContent = `${Math.floor(corruptionStats.greed)}%`;
+    document.getElementById('blackmailLevel').textContent = `${Math.floor(corruptionStats.blackmail)}%`;
+    document.getElementById('networkPowerLevel').textContent = `${Math.floor(corruptionStats.networkPower)}%`;
+    document.getElementById('manipulationLevel').textContent = `${Math.floor(corruptionStats.manipulation)}%`;
 
     // Networking
-    //document.getElementById('networkingLevel').textContent = `Level ${this.player.skills.networking || 0}`;
-    //document.getElementById('networkingProgress').style.width = `${Math.min((this.player.skills.networking || 0) * 10, 100)}%`;
-
-    // Hustle
-    //document.getElementById('hustleLevel').textContent = `Level ${this.player.skills.hustle || 0}`;
-    //document.getElementById('hustleProgress').style.width = `${Math.min((this.player.skills.hustle || 0) * 10, 100)}%`;
-
-    // Adaptability
-    //document.getElementById('adaptabilityLevel').textContent = `Level ${this.player.skills.adaptability || 0}`;
-    //document.getElementById('adaptabilityProgress').style.width = `${Math.min((this.player.skills.adaptability || 0) * 10, 100)}%`;
+    document.getElementById('networkingLevel').textContent = `Level ${this.player.skills.networking || 0}`;
+    document.getElementById('networkingProgress').style.width = `${Math.min((this.player.skills.networking || 0) * 10, 100)}%`;
 
     // ——— Update Skills Dinamis dengan Debug ———
     Object.entries(this.player.skills).forEach(([skillKey,val])=>{
@@ -1669,9 +1729,10 @@ class GameState {
     // existing code…
     this.updateChapterUI();
     this.updateSkillsList();
+    // Update warning indicators if data is loaded
     if (this.dataLoaded) {
-        const psychState = this.getPsychologyState();
-        this.updateWarningUI(psychState);
+        const corruptState = this.getCorruptionState();
+        this.updateWarningUI(corruptState);
     }
     }
 
@@ -1790,7 +1851,7 @@ class GameState {
             choice: choiceIndex,
             choiceText: choice.text,
             impact: choice.impact,
-            psychState: this.getPsychologyState(),
+            corruptState: this.getCorruptionState(),
             isFallback: true
         });
 
@@ -1822,8 +1883,8 @@ class GameState {
             this.player.happiness = Math.max(0, Math.min(100, this.player.happiness + e.happiness));
         }
         
-        if (e.relationship) {
-            this.player.relationship = Math.max(0, Math.min(100, this.player.relationship + e.relationship));
+        if (e.corruptEssence) {
+            this.player.corruptEssence = Math.max(0, Math.min(100, this.player.corruptEssence + e.corruptEssence));
         }
         
         if (e.skills) {
@@ -1926,7 +1987,7 @@ class GameState {
         const totalEventsCompleted = this.player.completedEvents.length;
         document.getElementById('currentEventTitle').innerHTML = '🎉 Game Selesai!';
         document.getElementById('currentEventText').textContent = 
-            `Selamat! Lu udah menyelesaikan ${totalEventsCompleted} event dalam hidup anak Indonesia. Liat pencapaian lu di tab Skill dan main lagi kalau mau!`;
+            `Selamat! Lu udah menyelesaikan ${totalEventsCompleted} event dalam karir korupsi lu. Liat pencapaian lu di tab Skill dan main lagi kalau mau coba jadi koruptor yang lebih licik!`;
         
         document.getElementById('choicesContainer').innerHTML = `
             <button class="choice-btn" onclick="showScreen('skills')">
@@ -1957,7 +2018,7 @@ class GameState {
             events: this.player.completedEvents.length,
             finalMoney: this.player.money,
             finalHappiness: this.player.happiness,
-            psychState: this.getPsychologyState(),
+            corruptState: this.getCorruptionState(),
             timestamp: new Date().toISOString()
         });
     }
