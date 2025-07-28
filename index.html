@@ -194,7 +194,7 @@
             color: var(--text-secondary);
         }
 
-        /* NEW: Response text styling */
+        /* Response text styling */
         .response-text {
             line-height: 1.7;
             margin-bottom: 25px;
@@ -297,6 +297,12 @@
         .nav-label {
             font-size: 10px;
             font-weight: 500;
+        }
+
+        /* Debug navigation - HIDDEN BY DEFAULT */
+        #nav-debug {
+            display: none !important;
+            visibility: hidden;
         }
 
         .skills-list {
@@ -648,7 +654,7 @@
             box-shadow: 0 0 20px rgba(127, 29, 29, 0.8);
         }
 
-        /* NEW: Fallback choice styling */
+        /* Fallback choice styling */
         .fallback-choice {
             border: 2px solid #6b7280 !important;
             background: rgba(107, 114, 128, 0.15) !important;
@@ -660,7 +666,7 @@
             color: #9ca3af;
         }
 
-        /* NEW: Chain indicator styling */
+        /* Chain indicator styling */
         .chain-indicator {
             background: rgba(59, 130, 246, 0.2);
             color: #bfdbfe;
@@ -705,7 +711,7 @@
             color: #bfdbfe;
         }
 
-        /* NEW: Progress indicator for response text */
+        /* Progress indicator for response text */
         .response-progress {
             width: 100%;
             height: 3px;
@@ -726,6 +732,248 @@
         @keyframes responseProgress {
             from { width: 0%; }
             to { width: 100%; }
+        }
+
+        /* NEW: Narrative Ending Styles */
+        .ending-screen {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
+            border: 3px solid var(--secondary-color);
+            animation: ending-reveal 4s ease-in-out;
+            padding: 30px;
+            border-radius: 20px;
+            margin: 10px 0;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 20px 50px rgba(251, 191, 36, 0.3);
+        }
+
+        @keyframes ending-reveal {
+            0% { 
+                transform: scale(0.8) rotateY(-15deg); 
+                opacity: 0; 
+                filter: blur(10px);
+            }
+            30% { 
+                transform: scale(1.05) rotateY(5deg); 
+                opacity: 0.7; 
+            }
+            100% { 
+                transform: scale(1) rotateY(0deg); 
+                opacity: 1; 
+                filter: blur(0px);
+            }
+        }
+
+        .ending-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--secondary-color);
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            animation: text-glow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes text-glow {
+            from { text-shadow: 2px 2px 4px rgba(0,0,0,0.5), 0 0 10px rgba(251, 191, 36, 0.3); }
+            to { text-shadow: 2px 2px 4px rgba(0,0,0,0.5), 0 0 20px rgba(251, 191, 36, 0.6); }
+        }
+
+        .ending-description {
+            font-size: 15px;
+            line-height: 1.8;
+            color: var(--text-primary);
+            margin-bottom: 25px;
+            text-align: justify;
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .ending-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .ending-stat {
+            background: rgba(255,255,255,0.08);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .ending-stat:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(251, 191, 36, 0.2);
+        }
+
+        .ending-stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .ending-stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--secondary-color);
+        }
+
+        .ending-quote {
+            background: linear-gradient(45deg, rgba(251, 191, 36, 0.1), rgba(217, 119, 6, 0.1));
+            border: 2px solid var(--secondary-color);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: center;
+            font-style: italic;
+            font-size: 14px;
+            color: var(--text-primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ending-quote::before {
+            content: '"';
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            font-size: 60px;
+            color: var(--secondary-color);
+            opacity: 0.3;
+            font-family: serif;
+        }
+
+        .ending-quote::after {
+            content: '"';
+            position: absolute;
+            bottom: -30px;
+            right: 15px;
+            font-size: 60px;
+            color: var(--secondary-color);
+            opacity: 0.3;
+            font-family: serif;
+        }
+
+        .ending-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .ending-action-btn {
+            background: linear-gradient(45deg, var(--secondary-color), var(--warning-color));
+            border: none;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            box-shadow: 0 8px 25px rgba(251, 191, 36, 0.3);
+        }
+
+        .ending-action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(251, 191, 36, 0.4);
+        }
+
+        .ending-action-btn.secondary {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .ending-action-btn.secondary:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: var(--secondary-color);
+        }
+
+        .ending-priority {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: rgba(59, 130, 246, 0.2);
+            color: #bfdbfe;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            border: 1px solid #3b82f6;
+        }
+
+        /* Ending History Styles */
+        .ending-history {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+        }
+
+        .ending-history-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ending-history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .ending-history-item {
+            background: rgba(255,255,255,0.05);
+            padding: 12px;
+            border-radius: 10px;
+            border-left: 3px solid var(--secondary-color);
+            font-size: 12px;
+        }
+
+        .ending-history-item-title {
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 4px;
+        }
+
+        .ending-history-item-details {
+            color: var(--text-secondary);
+            font-size: 11px;
+        }
+
+        /* Ending specific backgrounds */
+        .ending-pure {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(21, 128, 61, 0.2) 100%);
+            border-color: #22c55e;
+        }
+
+        .ending-corrupt {
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.2) 0%, rgba(127, 29, 29, 0.2) 100%);
+            border-color: #dc2626;
+        }
+
+        .ending-balanced {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.2) 0%, rgba(217, 119, 6, 0.2) 100%);
+            border-color: #fbbf24;
+        }
+
+        .ending-tragic {
+            background: linear-gradient(135deg, rgba(107, 114, 128, 0.2) 0%, rgba(75, 85, 99, 0.2) 100%);
+            border-color: #6b7280;
         }
     </style>
 </head>
@@ -875,7 +1123,7 @@
                 Hidup lu baru dimulai! Pilih langkah pertama menuju kekuasaan dan kekayaan. 
                 Setiap keputusan akan menentukan seberapa korup lu nantinya.
             </div>
-            <!-- NEW: Response text area -->
+            <!-- Response text area -->
             <div class="response-text" id="responseText" style="display: none;">
                 <div class="response-progress">
                     <div class="response-progress-fill"></div>
@@ -913,6 +1161,20 @@
         </div>
     </div>
 
+    <!-- NEW: Ending History Screen -->
+    <div class="screen" id="endingHistory">
+        <div class="screen-title">Riwayat Ending</div>
+        
+        <div class="ending-history">
+            <div class="ending-history-title">
+                📚 Ending yang Pernah Dicapai
+            </div>
+            <div class="ending-history-list" id="endingHistoryList">
+                <!-- History will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <!-- Bottom Navigation -->
@@ -929,14 +1191,18 @@
         <div class="nav-icon">⚡</div>
         <div class="nav-label">Skill</div>
     </button>
-    <button class="nav-btn" onclick="showProfile()" id="nav-profile">
-        <div class="nav-icon">👤</div>
-        <div class="nav-label">Profil</div>
+    <button class="nav-btn" onclick="showScreen('endingHistory')" id="nav-endings">
+        <div class="nav-icon">🏆</div>
+        <div class="nav-label">Endings</div>
+    </button>
+    <button class="nav-btn" onclick="showScreen('debug')" id="nav-debug">
+        <div class="nav-icon">🔧</div>
+        <div class="nav-label">Debug</div>
     </button>
 </div>
 
 <script>
-// Enhanced Game State Management with CORRUPT ESSENCE SYSTEM + CHAIN EVENTS + RESPONSE TEXT
+// Enhanced Game State Management with NARRATIVE ENDING ENGINE
 class GameState {
     constructor() {
         this.player = {
@@ -963,7 +1229,7 @@ class GameState {
                 empathy: 0,
                 financialWisdom: 0
             },
-            corruptEssence: 0, // NEW: Corrupt Essence system
+            corruptEssence: 0,
             career: {
                 level: 0,
                 title: "Belum Kerja",
@@ -981,10 +1247,14 @@ class GameState {
             achievements: [],
             eventHistory: [],
             relationship: 0,
-            // NEW: Chain tracking
-            chainProgress: {}, // track chain completion
-            activeChain: null, // current active chain
-            chainSequence: 0 // current position in chain
+            chainProgress: {},
+            activeChain: null,
+            chainSequence: 0,
+            // NEW: Ending tracking
+            endingsUnlocked: [],
+            currentEnding: null,
+            gameStartTime: Date.now(),
+            totalPlayTime: 0
         };
         
         // Data containers
@@ -997,10 +1267,14 @@ class GameState {
         this.eventsByChapter = {};
         this.currentChapterEvents = [];
         
-        // NEW: Chain system
+        // Chain system
         this.eventsByChain = {};
-        this.eventChains = {}; // loaded from config sheet
-        this.chainPriority = []; // loaded from config sheet
+        this.eventChains = {};
+        this.chainPriority = [];
+        
+        // NEW: Narrative Ending System
+        this.allEndings = [];
+        this.endingHistory = this.loadEndingHistory();
         
         // State tracking
         this.dataLoaded = false;
@@ -1027,14 +1301,15 @@ class GameState {
             showNotification('Memuat data dari Mafia Boss...');
             console.log('Memuat semua data game...');
             
-            // Load all sheets concurrently
-            const [eventsData, choicesData, configData, crisisEventsData, crisisChoicesData, uiMessagesData] = await Promise.all([
+            // Load all sheets concurrently INCLUDING endings
+            const [eventsData, choicesData, configData, crisisEventsData, crisisChoicesData, uiMessagesData, endingsData] = await Promise.all([
                 this.fetchSheetData('events'),
                 this.fetchSheetData('choices'),
                 this.fetchSheetData('config'),
                 this.fetchSheetData('crisis_events'),
                 this.fetchSheetData('crisis_choices'),
-                this.fetchSheetData('ui_messages')
+                this.fetchSheetData('ui_messages'),
+                this.fetchSheetData('ending') // NEW: Load endings sheet
             ]);
             
             // Process all data
@@ -1044,15 +1319,22 @@ class GameState {
             this.processCrisisEventsData(crisisEventsData);
             this.processCrisisChoicesData(crisisChoicesData);
             this.processUIMessagesData(uiMessagesData);
+            this.processEndingsData(endingsData); // NEW: Process endings
             
             this.dataLoaded = true;
+            
+            // NEW: Force update debug panel visibility after config is loaded
+            setTimeout(() => {
+                updateDebugPanelVisibility();
+            }, 100);
             
             console.log('🎮 Koruptor Simulator berhasil dimuat!');
             console.log(`🎯 ${this.allEvents.length} events, ${this.crisisEvents.length} crisis events`);
             console.log(`📊 ${this.allChoices.length} choices, ${this.crisisChoices.length} crisis choices`);
             console.log(`🔗 ${Object.keys(this.eventChains).length} chains configured`);
+            console.log(`🏆 ${this.allEndings.length} endings available`); // NEW: Log endings
             
-            showNotification(`✅ ${this.allEvents.length} events siap dimainkan! 🎉`);
+            showNotification(`✅ ${this.allEvents.length} events + ${this.allEndings.length} endings siap dimainkan! 🎉`);
             
         } catch (error) {
             console.error('Error loading data dari Google Sheets:', error);
@@ -1068,18 +1350,486 @@ class GameState {
         return await response.json();
     }
 
-    // MODIFIED: Enhanced processEventsData to handle chain fields from events sheet
+    // NEW: Process endings data from Google Sheets
+    processEndingsData(endingsData) {
+        this.allEndings = endingsData.map(ending => ({
+            chapter: parseInt(ending.Chapter) || 0,
+            priority: parseInt(ending.Prioritas) || 999,
+            condition: ending.Kondisi || '',
+            title: ending.Ending_Title || 'Unknown Ending',
+            description: ending.Ending_Desc || 'No description available.',
+            // Parse condition as JavaScript-like expression
+            conditionFunc: this.parseEndingCondition(ending.Kondisi || ''),
+            // Generate ending metadata
+            type: this.determineEndingType(ending.Ending_Title, ending.Ending_Desc),
+            id: `ending_${ending.Chapter}_${ending.Prioritas}`
+        }));
+
+        // Sort by chapter then priority
+        this.allEndings.sort((a, b) => {
+            if (a.chapter !== b.chapter) return a.chapter - b.chapter;
+            return a.priority - b.priority;
+        });
+
+        console.log('🏆 Endings loaded:', this.allEndings.length);
+        console.log('📋 Ending conditions:', this.allEndings.map(e => `${e.id}: ${e.condition}`));
+    }
+
+    // NEW: Parse ending condition string into evaluatable function
+    parseEndingCondition(conditionStr) {
+        if (!conditionStr || conditionStr.trim() === '') {
+            return () => false;
+        }
+
+        // Clean and normalize the condition string
+        let cleanCondition = conditionStr.trim();
+        
+        // Handle common condition patterns and fix syntax issues
+        cleanCondition = this.normalizeEndingCondition(cleanCondition);
+
+        try {
+            // Create a safe evaluation function with better error handling
+            return new Function('player', 'game', `
+                try {
+                    const {
+                        money,
+                        happiness,
+                        corruptEssence,
+                        completedEvents,
+                        currentChapter,
+                        background,
+                        skills,
+                        psychology,
+                        career
+                    } = player;
+                    
+                    return ${cleanCondition};
+                } catch (e) {
+                    console.warn('Ending condition error:', e.message, 'for condition:', '${cleanCondition}');
+                    return false;
+                }
+            `);
+        } catch (error) {
+            console.error('Failed to parse ending condition:', conditionStr, '→', cleanCondition, error);
+            return () => false;
+        }
+    }
+
+    // NEW: Normalize ending conditions with comprehensive error handling
+    normalizeEndingCondition(condition) {
+        if (!condition) return 'false';
+        
+        let normalized = condition.toString().trim();
+        
+        // Handle completely empty conditions
+        if (normalized === '' || normalized === 'undefined' || normalized === 'null') {
+            return 'false';
+        }
+        
+        try {
+            // Fix common variable name issues from CSV
+            const variableMap = {
+                'corrupt_essence': 'corruptEssence',
+                'current_chapter': 'currentChapter', 
+                'completed_events': 'completedEvents',
+                'money': 'money',
+                'happiness': 'happiness'
+            };
+            
+            // Replace variable names
+            Object.entries(variableMap).forEach(([old, new_]) => {
+                const regex = new RegExp(`\\b${old}\\b`, 'g');
+                normalized = normalized.replace(regex, new_);
+            });
+            
+            // Handle array length checks
+            normalized = normalized.replace(/completedEvents\.length/g, 'completedEvents.length');
+            
+            // ENHANCED: Handle chain references with proper error checking
+            if (normalized.includes('chains')) {
+                // Pattern: "chain_name" in chains
+                normalized = normalized.replace(/"([^"]+)"\s+in\s+chains/g, (match, chainName) => {
+                    // More defensive chain checking
+                    return `(game && game.player && game.player.chainProgress && game.player.chainProgress["${chainName}"] && game.player.chainProgress["${chainName}"].completed === true)`;
+                });
+                
+                // Pattern: 'chain_name' in chains (single quotes)
+                normalized = normalized.replace(/'([^']+)'\s+in\s+chains/g, (match, chainName) => {
+                    return `(game && game.player && game.player.chainProgress && game.player.chainProgress["${chainName}"] && game.player.chainProgress["${chainName}"].completed === true)`;
+                });
+            }
+            
+            // Handle background checks
+            normalized = normalized.replace(/background\s*==?\s*"([^"]+)"/g, 'background === "$1"');
+            normalized = normalized.replace(/background\s*==?\s*'([^']+)'/g, 'background === "$1"');
+            
+            // Handle skill and psychology checks with better null safety
+            normalized = normalized.replace(/skills\.(\w+)/g, '(skills && skills.$1 ? skills.$1 : 0)');
+            normalized = normalized.replace(/psychology\.(\w+)/g, '(psychology && psychology.$1 ? psychology.$1 : 0)');
+            
+            // Fix boolean operators - handle both English and symbolic
+            normalized = normalized.replace(/\s+and\s+/gi, ' && ');
+            normalized = normalized.replace(/\s+or\s+/gi, ' || ');
+            normalized = normalized.replace(/\s+not\s+/gi, ' !');
+            
+            // Handle various equality operators
+            normalized = normalized.replace(/\s*=\s*=\s*=\s*/g, ' === ');
+            normalized = normalized.replace(/\s*=\s*=\s*/g, ' === ');
+            normalized = normalized.replace(/\s*!\s*=\s*/g, ' !== ');
+            
+            // Fix malformed operators like "- -" 
+            normalized = normalized.replace(/\s*-\s*-\s*/g, ' ');
+            normalized = normalized.replace(/\s*\+\s*\+\s*/g, ' ');
+            
+            // Clean up spaces and invalid patterns
+            normalized = normalized.replace(/\s+/g, ' ');
+            normalized = normalized.replace(/[^\w\s\(\)\[\]\.><=!&|\+\-\*\/\?:"']/g, '');
+            
+            // Final safety checks - detect obviously broken patterns
+            const dangerousPatterns = [
+                /^\s*[-=+*\/]\s*$/, // Just operators
+                /\(\s*\)/, // Empty parentheses
+                /&&\s*&&/, // Double operators
+                /\|\|\s*\|\|/, // Double operators
+                /[&|]{3,}/, // Triple operators
+            ];
+            
+            let hasDangerousPattern = false;
+            dangerousPatterns.forEach(pattern => {
+                if (pattern.test(normalized)) {
+                    console.warn(`⚠️  Dangerous pattern detected in condition: ${pattern} in "${normalized}"`);
+                    hasDangerousPattern = true;
+                }
+            });
+            
+            if (hasDangerousPattern) {
+                return 'false'; // Safe fallback
+            }
+            
+            // Wrap complex conditions in extra parentheses for safety
+            if ((normalized.includes('&&') && normalized.includes('||')) || 
+                (normalized.match(/[&|]/g) || []).length > 2) {
+                normalized = `(${normalized})`;
+            }
+            
+            console.log(`🔧 Condition normalized: "${condition}" → "${normalized}"`);
+            return normalized;
+            
+        } catch (error) {
+            console.error('Error normalizing condition:', condition, error);
+            return 'false'; // Safe fallback
+        }
+    }
+
+    // NEW: Determine ending type based on title/description keywords
+    determineEndingType(title, description) {
+        const text = (title + ' ' + description).toLowerCase();
+        
+        if (text.includes('pure') || text.includes('bersih') || text.includes('jujur') || text.includes('saint')) {
+            return 'pure';
+        } else if (text.includes('corrupt') || text.includes('korup') || text.includes('jahat') || text.includes('demon')) {
+            return 'corrupt';
+        } else if (text.includes('mati') || text.includes('kalah') || text.includes('gagal') || text.includes('hancur')) {
+            return 'tragic';
+        } else {
+            return 'balanced';
+        }
+    }
+
+    // NEW: Narrative Ending Engine - Check for applicable endings
+    checkForNarrativeEnding() {
+        // Only check for endings at chapter completion or game over scenarios
+        if (!this.dataLoaded || this.allEndings.length === 0) {
+            return null;
+        }
+
+        console.log('🔍 Checking for narrative endings...');
+        console.log('Player state:', {
+            chapter: this.player.currentChapter,
+            money: this.player.money,
+            happiness: this.player.happiness,
+            corruptEssence: this.player.corruptEssence,
+            completedEvents: this.player.completedEvents.length
+        });
+
+        // Filter endings by current chapter or universal (chapter 0)
+        const applicableEndings = this.allEndings.filter(ending => 
+            ending.chapter === 0 || ending.chapter === this.player.currentChapter
+        );
+
+        console.log(`📋 Found ${applicableEndings.length} applicable endings for chapter ${this.player.currentChapter}`);
+
+        // Test each ending condition in priority order
+        for (const ending of applicableEndings) {
+            try {
+                const meetsCondition = ending.conditionFunc(this.player, this);
+                console.log(`🧪 Testing ${ending.id}: ${ending.condition} = ${meetsCondition}`);
+                
+                if (meetsCondition) {
+                    console.log(`✅ Ending triggered: ${ending.title}`);
+                    return ending;
+                }
+            } catch (error) {
+                console.error(`❌ Error evaluating ending ${ending.id}:`, error);
+            }
+        }
+
+        console.log('🚫 No endings triggered');
+        return null;
+    }
+
+    // NEW: Trigger narrative ending
+    triggerNarrativeEnding(ending = null) {
+        if (!ending) {
+            ending = this.checkForNarrativeEnding();
+        }
+
+        if (!ending) {
+            // Fallback to original game over
+            this.triggerGameOver('default');
+            return;
+        }
+
+        this.player.currentEnding = ending;
+        this.player.totalPlayTime = Date.now() - this.player.gameStartTime;
+        
+        // Save to ending history
+        this.saveEndingToHistory(ending);
+        
+        // Show narrative ending screen
+        this.showNarrativeEnding(ending);
+        
+        showNotification(`🏆 Ending Unlocked: ${ending.title}`);
+    }
+
+    // NEW: Show narrative ending with rich presentation
+    showNarrativeEnding(ending) {
+        const endingTypeClass = `ending-${ending.type}`;
+        
+        // Generate custom quote based on corruption level and achievements
+        const customQuote = this.generateEndingQuote(ending);
+        
+        // Calculate play statistics
+        const playStats = {
+            playTime: this.formatPlayTime(this.player.totalPlayTime),
+            eventsCompleted: this.player.completedEvents.length,
+            chainsCompleted: Object.values(this.player.chainProgress).filter(p => p.completed).length,
+            finalCorruption: this.getCorruptionStateText(),
+            finalMoney: this.player.money,
+            finalHappiness: this.player.happiness
+        };
+
+        document.getElementById('currentEventTitle').innerHTML = ending.title;
+        document.getElementById('currentEventText').innerHTML = `
+            <div class="ending-screen ${endingTypeClass}">
+                <div class="ending-priority">Priority ${ending.priority}</div>
+                <div class="ending-title">${ending.title}</div>
+                <div class="ending-description">${ending.description}</div>
+                
+                <div class="ending-stats">
+                    <div class="ending-stat">
+                        <div class="ending-stat-label">⏱️ Waktu Bermain</div>
+                        <div class="ending-stat-value">${playStats.playTime}</div>
+                    </div>
+                    <div class="ending-stat">
+                        <div class="ending-stat-label">📚 Events Selesai</div>
+                        <div class="ending-stat-value">${playStats.eventsCompleted}</div>
+                    </div>
+                    <div class="ending-stat">
+                        <div class="ending-stat-label">💰 Final Money</div>
+                        <div class="ending-stat-value">Rp ${playStats.finalMoney.toLocaleString('id-ID')}</div>
+                    </div>
+                    <div class="ending-stat">
+                        <div class="ending-stat-label">🌑 Corruption State</div>
+                        <div class="ending-stat-value">${playStats.finalCorruption}</div>
+                    </div>
+                </div>
+                
+                <div class="ending-quote">${customQuote}</div>
+                
+                <div class="ending-actions">
+                    <button class="ending-action-btn" onclick="location.reload()">
+                        🔄 Mulai Petualangan Baru
+                    </button>
+                    <button class="ending-action-btn secondary" onclick="showScreen('endingHistory')">
+                        📚 Lihat Semua Ending
+                    </button>
+                    <button class="ending-action-btn secondary" onclick="showScreen('skills')">
+                        📊 Final Statistics
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('choicesContainer').innerHTML = '';
+    }
+
+    // NEW: Generate contextual ending quote
+    generateEndingQuote(ending) {
+        const corruptState = this.getCorruptionState();
+        const background = this.player.background;
+        
+        const quotes = {
+            pure: {
+                sultan: "Dalam kemewahan tanpa korupsi, lu buktikan bahwa privilege bisa digunakan untuk kebaikan.",
+                sandwich: "Dari keluarga PNS yang jujur, lu jadi bukti hidup bahwa sistem bisa bersih.",
+                kampung: "Dari rakyat kecil yang tetap jujur, lu jadi inspirasi bahwa kemiskinan bukan alasan untuk korup."
+            },
+            corrupt: {
+                sultan: "Power corrupts, absolute power corrupts absolutely. Lu udah jadi apa yang ditakutin rakyat.",
+                sandwich: "Sistem yang lu warisi dari keluarga, lu rusak dengan tangan lu sendiri.",
+                kampung: "Dari bawah naik ke atas dengan cara yang salah. Lu jadi penguasa baru yang sama busuknya."
+            },
+            balanced: {
+                sultan: "Lu main di grey area antara privilege dan tanggung jawab. Balanced, but at what cost?",
+                sandwich: "Hidup lu cermin sistem Indonesia: tidak murni hitam, tidak murni putih.",
+                kampung: "Lu naik kelas sosial dengan cara yang pragmatis. Survive, tapi dengan konsekuensi."
+            },
+            tragic: {
+                sultan: "Born with everything, lost it all. Privilege without wisdom is destruction.",
+                sandwich: "Dari keluarga sederhana, berakhir dengan tragis. Life isn't always fair.",
+                kampung: "Perjuangan dari bawah yang berakhir dengan kekalahan. But at least you tried."
+            }
+        };
+        
+        const typeQuotes = quotes[ending.type] || quotes.balanced;
+        return typeQuotes[background] || typeQuotes.kampung || "Every choice has consequences. This is yours.";
+    }
+
+    // NEW: Format play time into readable string
+    formatPlayTime(milliseconds) {
+        const minutes = Math.floor(milliseconds / 60000);
+        const seconds = Math.floor((milliseconds % 60000) / 1000);
+        
+        if (minutes > 60) {
+            const hours = Math.floor(minutes / 60);
+            const remainingMinutes = minutes % 60;
+            return `${hours}h ${remainingMinutes}m`;
+        } else if (minutes > 0) {
+            return `${minutes}m ${seconds}s`;
+        } else {
+            return `${seconds}s`;
+        }
+    }
+
+    // NEW: Save ending to localStorage history
+    saveEndingToHistory(ending) {
+        const endingRecord = {
+            id: ending.id,
+            title: ending.title,
+            type: ending.type,
+            chapter: ending.chapter,
+            priority: ending.priority,
+            background: this.player.background,
+            finalStats: {
+                money: this.player.money,
+                happiness: this.player.happiness,
+                corruptEssence: this.player.corruptEssence,
+                eventsCompleted: this.player.completedEvents.length,
+                corruptionState: this.getCorruptionState()
+            },
+            playTime: this.player.totalPlayTime,
+            timestamp: Date.now(),
+            gameSession: this.player.gameStartTime
+        };
+
+        // Add to history if not already present
+        if (!this.endingHistory.find(h => h.id === ending.id && h.gameSession === this.player.gameStartTime)) {
+            this.endingHistory.unshift(endingRecord); // Add to beginning
+            
+            // Keep only last 20 endings
+            if (this.endingHistory.length > 20) {
+                this.endingHistory = this.endingHistory.slice(0, 20);
+            }
+            
+            this.saveEndingHistory();
+        }
+
+        // Track unique endings unlocked
+        if (!this.player.endingsUnlocked.includes(ending.id)) {
+            this.player.endingsUnlocked.push(ending.id);
+        }
+    }
+
+    // NEW: Load ending history from localStorage
+    loadEndingHistory() {
+        try {
+            const saved = localStorage.getItem('koruptor_ending_history');
+            return saved ? JSON.parse(saved) : [];
+        } catch (error) {
+            console.error('Error loading ending history:', error);
+            return [];
+        }
+    }
+
+    // NEW: Save ending history to localStorage
+    saveEndingHistory() {
+        try {
+            localStorage.setItem('koruptor_ending_history', JSON.stringify(this.endingHistory));
+        } catch (error) {
+            console.error('Error saving ending history:', error);
+        }
+    }
+
+    // NEW: Update ending history UI
+    updateEndingHistoryUI() {
+        const historyList = document.getElementById('endingHistoryList');
+        
+        if (this.endingHistory.length === 0) {
+            historyList.innerHTML = `
+                <div class="ending-history-item">
+                    <div class="ending-history-item-title">Belum Ada Ending</div>
+                    <div class="ending-history-item-details">Selesaikan permainan untuk unlock ending pertama!</div>
+                </div>
+            `;
+            return;
+        }
+
+        historyList.innerHTML = this.endingHistory.map(record => {
+            const typeIcon = {
+                pure: '😇',
+                corrupt: '👹',
+                balanced: '⚖️',
+                tragic: '💀'
+            }[record.type] || '🎭';
+
+            const backgroundIcon = {
+                sultan: '👑',
+                sandwich: '😅',
+                kampung: '💪'
+            }[record.background] || '🤵';
+
+            return `
+                <div class="ending-history-item">
+                    <div class="ending-history-item-title">
+                        ${typeIcon} ${record.title} ${backgroundIcon}
+                    </div>
+                    <div class="ending-history-item-details">
+                        Chapter ${record.chapter} • Priority ${record.priority} • ${this.formatPlayTime(record.playTime)} • 
+                        ${record.finalStats.corruptionState} • 
+                        ${new Date(record.timestamp).toLocaleDateString('id-ID')}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // MODIFIED: Enhanced processEventsData to handle chain fields with robust fallback
     processEventsData(eventsData) {
         this.allEvents = eventsData.map(event => {
-            // SAFE: Handle missing or empty chain fields
-            const chainId = event.chain_id && event.chain_id.trim() ? event.chain_id.trim() : null;
-            const chainSequence = event.chain_sequence !== undefined && event.chain_sequence !== null && event.chain_sequence !== '' 
+            // SAFE: Handle missing or empty chain fields with comprehensive fallback
+            const chainId = event.chain_id && event.chain_id.toString().trim() !== '' 
+                ? event.chain_id.toString().trim() : null;
+            const chainSequence = event.chain_sequence !== undefined && 
+                event.chain_sequence !== null && event.chain_sequence !== '' 
                 ? (parseInt(event.chain_sequence) || 0) : 0;
-            const requiredEvents = event.required_events && event.required_events.trim() 
-                ? event.required_events.split(',').map(e => e.trim()).filter(e => e) : [];
-            const minCorruption = event.min_corruption !== undefined && event.min_corruption !== null && event.min_corruption !== ''
+            const requiredEvents = event.required_events && event.required_events.toString().trim() 
+                ? event.required_events.toString().split(',').map(e => e.trim()).filter(e => e) : [];
+            const minCorruption = event.min_corruption !== undefined && 
+                event.min_corruption !== null && event.min_corruption !== ''
                 ? (parseInt(event.min_corruption) || 0) : 0;
-            const maxCorruption = event.max_corruption !== undefined && event.max_corruption !== null && event.max_corruption !== ''
+            const maxCorruption = event.max_corruption !== undefined && 
+                event.max_corruption !== null && event.max_corruption !== ''
                 ? (parseInt(event.max_corruption) || 100) : 100;
                 
             return {
@@ -1088,7 +1838,7 @@ class GameState {
                 category: event.theme,
                 title: event.title,
                 text: event.text,
-                // NEW: Chain fields from events sheet (null-safe)
+                // Chain fields from events sheet (null-safe with fallback)
                 chainId,
                 chainSequence,
                 requiredEvents,
@@ -1100,6 +1850,9 @@ class GameState {
         // Organize by chapter AND chain
         this.eventsByChapter = {};
         this.eventsByChain = {};
+        
+        let chainEventCount = 0;
+        let regularEventCount = 0;
         
         this.allEvents.forEach(event => {
             // By chapter (existing logic)
@@ -1114,6 +1867,9 @@ class GameState {
                     this.eventsByChain[event.chainId] = [];
                 }
                 this.eventsByChain[event.chainId].push(event);
+                chainEventCount++;
+            } else {
+                regularEventCount++;
             }
         });
 
@@ -1129,8 +1885,95 @@ class GameState {
         this.setupCurrentChapter(1);
         document.getElementById('totalEvents').textContent = this.allEvents.length;
         
+        console.log('🔗 Chain system status:');
+        console.log(`📊 Total events: ${this.allEvents.length}`);
+        console.log(`🔗 Chain events: ${chainEventCount} (${Object.keys(this.eventsByChain).length} chains)`);
+        console.log(`📚 Regular events: ${regularEventCount}`);
         console.log('🔗 Chain events loaded from events sheet:', this.eventsByChain);
         console.log('📚 Regular events by chapter:', Object.keys(this.eventsByChapter).map(ch => `Ch${ch}: ${this.eventsByChapter[ch].length} events`));
+        
+        // FALLBACK: If no chains found, create virtual chains from regular events
+        if (Object.keys(this.eventsByChain).length === 0) {
+            console.log('⚠️  No chains found in events data, using regular event flow only');
+            this.createVirtualChains();
+        }
+    }
+
+    // NEW: Create virtual chains as fallback when no chain_id data exists
+    createVirtualChains() {
+        console.log('🔄 Creating virtual chains from regular events...');
+        
+        // Group regular events by theme and chapter to create virtual chains
+        const virtualChains = {};
+        
+        Object.keys(this.eventsByChapter).forEach(chapter => {
+            const chapterEvents = this.eventsByChapter[chapter];
+            const eventsByTheme = {};
+            
+            // Group by theme
+            chapterEvents.forEach(event => {
+                if (!event.chainId) { // Only non-chain events
+                    const theme = event.category || 'general';
+                    if (!eventsByTheme[theme]) {
+                        eventsByTheme[theme] = [];
+                    }
+                    eventsByTheme[theme].push(event);
+                }
+            });
+            
+            // Create virtual chains for themes with multiple events
+            Object.keys(eventsByTheme).forEach(theme => {
+                const themeEvents = eventsByTheme[theme];
+                if (themeEvents.length >= 2) {
+                    const virtualChainId = `virtual_${theme}_ch${chapter}`;
+                    
+                    // Add sequence numbers
+                    themeEvents.forEach((event, index) => {
+                        event.chainId = virtualChainId;
+                        event.chainSequence = index;
+                        event.isVirtualChain = true;
+                    });
+                    
+                    virtualChains[virtualChainId] = themeEvents;
+                    this.eventsByChain[virtualChainId] = themeEvents;
+                }
+            });
+        });
+        
+        if (Object.keys(virtualChains).length > 0) {
+            console.log(`✅ Created ${Object.keys(virtualChains).length} virtual chains:`, Object.keys(virtualChains));
+            
+            // Add virtual chain configs
+            Object.keys(virtualChains).forEach(chainId => {
+                if (!this.eventChains[chainId]) {
+                    this.eventChains[chainId] = {
+                        id: chainId,
+                        name: chainId.replace('virtual_', '').replace('_', ' ').toUpperCase(),
+                        description: `Auto-generated chain for ${chainId}`,
+                        events: virtualChains[chainId].map(e => e.id),
+                        required: false,
+                        requiredEvents: [],
+                        minCorruption: 0,
+                        maxCorruption: 100,
+                        priority: 500, // Lower priority than manual chains
+                        completionBonus: {
+                            money: 0,
+                            corruptEssence: 0,
+                            happiness: 0
+                        },
+                        isVirtual: true
+                    };
+                }
+            });
+            
+            // Update chain priority to include virtual chains
+            this.chainPriority = Object.keys(this.eventChains)
+                .sort((a, b) => this.eventChains[a].priority - this.eventChains[b].priority);
+                
+            console.log('🔗 Virtual chains added to priority list:', this.chainPriority);
+        } else {
+            console.log('⚠️  No virtual chains created - not enough themed events');
+        }
     }
 
     processChoicesData(choicesData) {
@@ -1462,7 +2305,16 @@ class GameState {
 
     // Enhanced Game Mechanics Functions
 
+    // MODIFIED: Check game over with narrative ending system
     checkGameOver() {
+        // Check for narrative ending first
+        const narrativeEnding = this.checkForNarrativeEnding();
+        if (narrativeEnding) {
+            this.triggerNarrativeEnding(narrativeEnding);
+            return true;
+        }
+
+        // Traditional game over conditions
         if (this.player.money <= this.gameConfig.game_over_money) {
             this.triggerGameOver('money');
             return true;
@@ -1476,7 +2328,16 @@ class GameState {
         return false;
     }
 
+    // MODIFIED: Enhanced triggerGameOver with narrative ending fallback
     triggerGameOver(reason) {
+        // Try narrative ending first
+        const narrativeEnding = this.checkForNarrativeEnding();
+        if (narrativeEnding) {
+            this.triggerNarrativeEnding(narrativeEnding);
+            return;
+        }
+
+        // Original game over logic as fallback
         const titleKey = `game_over_${reason}_title`;
         const textKey = `game_over_${reason}_text`;
         
@@ -2145,6 +3006,14 @@ class GameState {
         if (this.dataLoaded) {
             const corruptState = this.getCorruptionState();
             this.updateWarningUI(corruptState);
+            
+            // NEW: Update debug panel visibility based on config
+            updateDebugPanelVisibility();
+        }
+        
+        // NEW: Update ending history when screen is active
+        if (document.getElementById('endingHistory').classList.contains('active')) {
+            this.updateEndingHistoryUI();
         }
         
         // NEW: Show available chains in debug mode
@@ -2377,9 +3246,17 @@ class GameState {
         this.updateUI();
     }
 
+    // MODIFIED: Enhanced proceedToNextChapter with narrative ending checks
     proceedToNextChapter() {
         // Pastikan UI terkini
         this.updateUI();
+
+        // NEW: Check for chapter completion endings before proceeding
+        const chapterEnding = this.checkForNarrativeEnding();
+        if (chapterEnding) {
+            this.triggerNarrativeEnding(chapterEnding);
+            return;
+        }
 
         const curr = this.player.currentChapter;
 
@@ -2412,7 +3289,13 @@ class GameState {
         if (this.eventsByChapter[next]?.length) {
             this.showChapterTransition(next);
         } else {
-            this.showGameComplete();
+            // NEW: Show game completion ending instead of simple completion
+            const completionEnding = this.checkForNarrativeEnding();
+            if (completionEnding) {
+                this.triggerNarrativeEnding(completionEnding);
+            } else {
+                this.showGameComplete();
+            }
         }
     }
 
@@ -2477,6 +3360,226 @@ class GameState {
             corruptState: this.getCorruptionState(),
             timestamp: new Date().toISOString()
         });
+    }
+
+    // NEW: Debug methods for ending system
+    debugEndingSystem() {
+        console.log('🏆 ENDING SYSTEM DEBUG:');
+        console.log('Total endings loaded:', this.allEndings.length);
+        console.log('Current player state:', {
+            chapter: this.player.currentChapter,
+            money: this.player.money,
+            happiness: this.player.happiness,
+            corruptEssence: this.player.corruptEssence,
+            completedEvents: this.player.completedEvents.length,
+            corruptionState: this.getCorruptionState()
+        });
+        
+        console.log('\n📋 All Available Endings:');
+        this.allEndings.forEach(ending => {
+            try {
+                const meetsCondition = ending.conditionFunc(this.player, this);
+                console.log(`${meetsCondition ? '✅' : '❌'} ${ending.id}: ${ending.title}`);
+                console.log(`   Chapter: ${ending.chapter}, Priority: ${ending.priority}`);
+                console.log(`   Original: ${ending.condition}`);
+                console.log(`   Type: ${ending.type}`);
+                
+                // Test the condition parsing
+                if (!meetsCondition) {
+                    console.log(`   📝 Testing condition variables:`);
+                    const testResult = this.testEndingCondition(ending.condition);
+                    console.log(`   🧪 Test result:`, testResult);
+                }
+            } catch (error) {
+                console.log(`❌ ${ending.id}: ERROR - ${error.message}`);
+                console.log(`   Condition: ${ending.condition}`);
+            }
+        });
+        
+        console.log('\n🔍 Testing basic conditions:');
+        const basicTests = [
+            `money > 1000000`,
+            `happiness > 50`, 
+            `corruptEssence > 25`,
+            `completedEvents.length > 5`,
+            `currentChapter >= 2`,
+            `background === "kampung"`
+        ];
+        
+        basicTests.forEach(condition => {
+            try {
+                const normalized = this.normalizeEndingCondition(condition);
+                const func = new Function('player', 'game', `
+                    const {money, happiness, corruptEssence, completedEvents, currentChapter, background} = player;
+                    return ${normalized};
+                `);
+                const result = func(this.player, this);
+                console.log(`✅ ${condition} → ${result}`);
+            } catch (error) {
+                console.log(`❌ ${condition} → ERROR: ${error.message}`);
+            }
+        });
+        
+        console.log('\n📚 Ending History:');
+        console.log(`Total endings unlocked: ${this.player.endingsUnlocked.length}`);
+        console.log('History entries:', this.endingHistory.length);
+        
+        return {
+            totalEndings: this.allEndings.length,
+            endingsUnlocked: this.player.endingsUnlocked.length,
+            historyEntries: this.endingHistory.length,
+            currentlyApplicable: this.allEndings.filter(e => {
+                try {
+                    return e.conditionFunc(this.player, this);
+                } catch {
+                    return false;
+                }
+            }).length
+        };
+    }
+
+    // NEW: Test individual ending condition with comprehensive error reporting
+    testEndingCondition(conditionStr) {
+        console.log(`🧪 Testing condition: "${conditionStr}"`);
+        
+        try {
+            const normalized = this.normalizeEndingCondition(conditionStr);
+            console.log(`   ✅ Normalized: "${normalized}"`);
+            
+            // Test basic syntax by trying to create function
+            let testFunc;
+            try {
+                testFunc = new Function('player', 'game', `return ${normalized};`);
+                console.log(`   ✅ Function creation: SUCCESS`);
+            } catch (funcError) {
+                console.log(`   ❌ Function creation: FAILED - ${funcError.message}`);
+                return {
+                    success: false,
+                    error: 'Function creation failed',
+                    details: funcError.message,
+                    original: conditionStr,
+                    normalized: normalized
+                };
+            }
+            
+            // Test execution with current player state
+            const testPlayerState = {
+                money: this.player.money || 0,
+                happiness: this.player.happiness || 0,
+                corruptEssence: this.player.corruptEssence || 0,
+                completedEvents: this.player.completedEvents || [],
+                currentChapter: this.player.currentChapter || 1,
+                background: this.player.background || '',
+                skills: this.player.skills || {},
+                psychology: this.player.psychology || {},
+                career: this.player.career || {}
+            };
+            
+            let executionResult;
+            try {
+                executionResult = testFunc(testPlayerState, this);
+                console.log(`   ✅ Execution: SUCCESS - Result: ${executionResult}`);
+            } catch (execError) {
+                console.log(`   ❌ Execution: FAILED - ${execError.message}`);
+                return {
+                    success: false,
+                    error: 'Execution failed',
+                    details: execError.message,
+                    original: conditionStr,
+                    normalized: normalized,
+                    playerState: testPlayerState
+                };
+            }
+            
+            // Detailed variable analysis
+            console.log(`   📊 Variables used:`);
+            const variables = normalized.match(/\b(money|happiness|corruptEssence|completedEvents|currentChapter|background|skills|psychology)\b/g);
+            if (variables) {
+                [...new Set(variables)].forEach(varName => {
+                    const value = varName.includes('.') ? 'object' : testPlayerState[varName];
+                    console.log(`      ${varName}: ${JSON.stringify(value)}`);
+                });
+            }
+            
+            return {
+                success: true,
+                result: executionResult,
+                original: conditionStr,
+                normalized: normalized,
+                playerState: testPlayerState,
+                variablesUsed: variables || []
+            };
+            
+        } catch (error) {
+            console.log(`   ❌ FATAL ERROR: ${error.message}`);
+            return {
+                success: false,
+                error: 'Fatal parsing error',
+                details: error.message,
+                original: conditionStr
+            };
+        }
+    }
+
+    // NEW: Validate all ending conditions and report issues
+    validateAllEndingConditions() {
+        console.log('🔍 VALIDATING ALL ENDING CONDITIONS:');
+        
+        const results = {
+            total: this.allEndings.length,
+            successful: 0,
+            failed: 0,
+            errors: []
+        };
+        
+        this.allEndings.forEach((ending, index) => {
+            console.log(`\n📋 Ending ${index + 1}/${this.allEndings.length}: ${ending.id}`);
+            console.log(`   Title: ${ending.title}`);
+            console.log(`   Condition: ${ending.condition}`);
+            
+            const testResult = this.testEndingCondition(ending.condition);
+            
+            if (testResult.success) {
+                results.successful++;
+                console.log(`   ✅ STATUS: VALID`);
+            } else {
+                results.failed++;
+                results.errors.push({
+                    endingId: ending.id,
+                    title: ending.title,
+                    condition: ending.condition,
+                    error: testResult.error,
+                    details: testResult.details
+                });
+                console.log(`   ❌ STATUS: INVALID - ${testResult.error}`);
+            }
+        });
+        
+        console.log(`\n📊 VALIDATION SUMMARY:`);
+        console.log(`   Total endings: ${results.total}`);
+        console.log(`   Valid: ${results.successful}`);
+        console.log(`   Invalid: ${results.failed}`);
+        
+        if (results.errors.length > 0) {
+            console.log(`\n❌ FAILED ENDINGS:`);
+            results.errors.forEach(error => {
+                console.log(`   ${error.endingId}: ${error.error} - ${error.details}`);
+            });
+        }
+        
+        return results;
+    }
+
+    // NEW: Force trigger specific ending (for testing)
+    debugTriggerEnding(endingId) {
+        const ending = this.allEndings.find(e => e.id === endingId);
+        if (!ending) {
+            console.error(`Ending ${endingId} not found`);
+            return;
+        }
+        
+        console.log(`🎬 Force triggering ending: ${ending.title}`);
+        this.triggerNarrativeEnding(ending);
     }
 
     // NEW: Debug method for chain system
@@ -2568,19 +3671,91 @@ let gameState;
 
 // Utility Functions
 function showScreen(screenId) {
-    document.querySelectorAll('.screen').forEach(screen => {
-        screen.classList.remove('active');
+    // Safety check for elements
+    const screens = document.querySelectorAll('.screen');
+    const navBtns = document.querySelectorAll('.nav-btn');
+    const targetScreen = document.getElementById(screenId);
+    const targetNavBtn = document.getElementById(`nav-${screenId}`);
+    
+    if (!targetScreen) {
+        console.warn(`Screen ${screenId} not found`);
+        return;
+    }
+    
+    // Remove active class from all screens
+    screens.forEach(screen => {
+        if (screen && screen.classList) {
+            screen.classList.remove('active');
+        }
     });
     
-    document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.classList.remove('active');
+    // Remove active class from all nav buttons
+    navBtns.forEach(btn => {
+        if (btn && btn.classList) {
+            btn.classList.remove('active');
+        }
     });
     
-    document.getElementById(screenId).classList.add('active');
+    // Add active class to target screen
+    if (targetScreen.classList) {
+        targetScreen.classList.add('active');
+    }
     
-    const navBtn = document.getElementById(`nav-${screenId}`);
-    if (navBtn) {
-        navBtn.classList.add('active');
+    // Add active class to target nav button
+    if (targetNavBtn && targetNavBtn.classList) {
+        targetNavBtn.classList.add('active');
+    }
+
+    // Update ending history UI when endings screen is shown
+    if (screenId === 'endingHistory' && gameState) {
+        gameState.updateEndingHistoryUI();
+    }
+    
+    // Update debug panel visibility when debug screen is accessed
+    if (screenId === 'debug' && gameState) {
+        updateDebugPanelVisibility();
+    }
+}
+
+// NEW: Update debug panel and navigation visibility based on config
+function updateDebugPanelVisibility() {
+    if (!gameState || !gameState.dataLoaded) return;
+    
+    const debugMode = gameState.getConfigValue('debug_mode', false);
+    const debugNavBtn = document.getElementById('nav-debug');
+    const debugScreen = document.getElementById('debug');
+    
+    console.log(`🔧 Debug mode from config: ${debugMode}`);
+    
+    // Convert string values to boolean
+    const isDebugEnabled = debugMode === true || debugMode === 'true' || debugMode === 'TRUE' || debugMode === '1' || debugMode === 1;
+    
+    if (isDebugEnabled) {
+        // Show debug elements
+        if (debugNavBtn) {
+            debugNavBtn.style.display = 'flex';
+            debugNavBtn.style.visibility = 'visible';
+        }
+        if (debugScreen) {
+            debugScreen.style.display = 'block';
+        }
+        console.log('✅ Debug panel enabled');
+    } else {
+        // Hide debug elements
+        if (debugNavBtn) {
+            debugNavBtn.style.display = 'none';
+            debugNavBtn.style.visibility = 'hidden';
+        }
+        if (debugScreen) {
+            debugScreen.style.display = 'none';
+        }
+        
+        // If currently on debug screen, redirect to home
+        if (debugScreen && debugScreen.classList && debugScreen.classList.contains('active')) {
+            showScreen('home');
+        }
+        
+        console.log('❌ Debug panel disabled');
     }
 }
 
@@ -2615,11 +3790,178 @@ function resetGame() {
     }
 }
 
-function showProfile() {
-    showNotification('Fitur profil segera hadir! 🚧');
+// NEW: Debug UI Functions (No Console Required!)
+function debugLog(message) {
+    const debugOutput = document.getElementById('debugOutput');
+    if (debugOutput) {
+        debugOutput.style.display = 'block';
+        debugOutput.innerHTML += message + '<br>';
+        debugOutput.scrollTop = debugOutput.scrollHeight;
+    }
 }
 
-// Character Creation Logic
+function clearDebugOutput() {
+    const debugOutput = document.getElementById('debugOutput');
+    if (debugOutput) {
+        debugOutput.innerHTML = '';
+        debugOutput.style.display = 'none';
+    }
+}
+
+function runEndingValidation() {
+    clearDebugOutput();
+    debugLog('🔍 VALIDATING ALL ENDING CONDITIONS:');
+    debugLog('=====================================');
+    
+    if (!gameState.allEndings || gameState.allEndings.length === 0) {
+        debugLog('❌ No endings loaded!');
+        return;
+    }
+    
+    let successful = 0;
+    let failed = 0;
+    const errors = [];
+    
+    gameState.allEndings.forEach((ending, index) => {
+        debugLog(`\n📋 Ending ${index + 1}/${gameState.allEndings.length}: ${ending.id}`);
+        debugLog(`   Title: ${ending.title}`);
+        debugLog(`   Condition: ${ending.condition}`);
+        
+        const testResult = gameState.testEndingCondition(ending.condition);
+        
+        if (testResult.success) {
+            successful++;
+            debugLog(`   ✅ STATUS: VALID - Result: ${testResult.result}`);
+        } else {
+            failed++;
+            errors.push({
+                endingId: ending.id,
+                condition: ending.condition,
+                error: testResult.error
+            });
+            debugLog(`   ❌ STATUS: INVALID - ${testResult.error}`);
+            if (testResult.details) {
+                debugLog(`   Details: ${testResult.details}`);
+            }
+        }
+    });
+    
+    debugLog(`\n📊 VALIDATION SUMMARY:`);
+    debugLog(`   Total endings: ${gameState.allEndings.length}`);
+    debugLog(`   Valid: ${successful}`);
+    debugLog(`   Invalid: ${failed}`);
+    
+    if (errors.length > 0) {
+        debugLog(`\n❌ FAILED ENDINGS:`);
+        errors.forEach(error => {
+            debugLog(`   ${error.endingId}: ${error.error}`);
+        });
+    }
+}
+
+function showPlayerDebugInfo() {
+    clearDebugOutput();
+    debugLog('👤 PLAYER STATE:');
+    debugLog('================');
+    
+    const player = gameState.player;
+    debugLog(`💰 Money: ${player.money}`);
+    debugLog(`😊 Happiness: ${player.happiness}`);
+    debugLog(`🌑 Corruption: ${player.corruptEssence}`);
+    debugLog(`📚 Completed Events: ${player.completedEvents.length}`);
+    debugLog(`📖 Current Chapter: ${player.currentChapter}`);
+    debugLog(`👤 Background: ${player.background}`);
+    
+    debugLog(`\n🔗 Chain Progress:`);
+    Object.entries(player.chainProgress || {}).forEach(([chainId, progress]) => {
+        debugLog(`   ${chainId}: seq=${progress.sequence}, completed=${progress.completed}`);
+    });
+    
+    debugLog(`\n⚡ Skills:`);
+    Object.entries(player.skills || {}).forEach(([skill, level]) => {
+        debugLog(`   ${skill}: ${level}`);
+    });
+}
+
+function showChainDebugInfo() {
+    clearDebugOutput();
+    debugLog('🔗 CHAIN SYSTEM STATUS:');
+    debugLog('=======================');
+    
+    const chainCount = Object.keys(gameState.eventsByChain || {}).length;
+    debugLog(`Total chains: ${chainCount}`);
+    
+    if (chainCount === 0) {
+        debugLog('❌ No chains found!');
+        return;
+    }
+    
+    Object.entries(gameState.eventsByChain).forEach(([chainId, events]) => {
+        const config = gameState.eventChains[chainId];
+        const progress = gameState.player.chainProgress[chainId];
+        
+        debugLog(`\n🔗 ${chainId}:`);
+        debugLog(`   Name: ${config?.name || 'Unknown'}`);
+        debugLog(`   Events: ${events.length}`);
+        debugLog(`   Progress: ${progress ? `${progress.sequence}/${events.length}` : 'Not started'}`);
+        debugLog(`   Completed: ${progress?.completed || false}`);
+        debugLog(`   Can Access: ${gameState.canAccessChain ? gameState.canAccessChain(chainId) : 'Unknown'}`);
+    });
+}
+
+function testCustomCondition() {
+    const condition = prompt('Enter ending condition to test:', 'money > 1000000');
+    if (!condition) return;
+    
+    clearDebugOutput();
+    debugLog(`🧪 TESTING CUSTOM CONDITION:`);
+    debugLog(`============================`);
+    debugLog(`Condition: ${condition}`);
+    
+    const result = gameState.testEndingCondition(condition);
+    
+    if (result.success) {
+        debugLog(`✅ Result: ${result.result}`);
+        debugLog(`Normalized: ${result.normalized}`);
+    } else {
+        debugLog(`❌ Error: ${result.error}`);
+        if (result.details) {
+            debugLog(`Details: ${result.details}`);
+        }
+    }
+}
+
+function quickSetMoney() {
+    gameState.player.money = 5000000;
+    gameState.updateUI();
+    showNotification('💰 Money set to 5M!');
+}
+
+function quickSetCorruption() {
+    gameState.player.corruptEssence = 50;
+    gameState.updateUI();
+    showNotification('🌑 Corruption set to 50!');
+}
+
+function quickSetHappiness() {
+    gameState.player.happiness = 80;
+    gameState.updateUI();
+    showNotification('😊 Happiness set to 80!');
+}
+
+function completeAllChains() {
+    Object.keys(gameState.eventsByChain || {}).forEach(chainId => {
+        gameState.player.chainProgress[chainId] = {
+            sequence: 999,
+            completed: true,
+            completedAt: Date.now()
+        };
+    });
+    gameState.updateUI();
+    showNotification('🔗 All chains marked as completed!');
+}
+
+// Character Creation Logic + Debug Key Handler
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         document.getElementById('loading').style.display = 'none';
@@ -2674,14 +4016,58 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 500);
         }
     });
+
+    // NEW: Secret debug key combination (Ctrl+Shift+D+E+B+U+G)
+    let debugKeySequence = [];
+    const targetSequence = ['KeyD', 'KeyE', 'KeyB', 'KeyU', 'KeyG'];
+    let debugKeyTimeout;
+
+    document.addEventListener('keydown', function(e) {
+        // Only work when Ctrl+Shift are held
+        if (e.ctrlKey && e.shiftKey) {
+            debugKeySequence.push(e.code);
+            
+            // Clear timeout if exists
+            if (debugKeyTimeout) {
+                clearTimeout(debugKeyTimeout);
+            }
+            
+            // Reset sequence after 3 seconds
+            debugKeyTimeout = setTimeout(() => {
+                debugKeySequence = [];
+            }, 3000);
+            
+            // Check if sequence matches
+            if (debugKeySequence.length >= targetSequence.length) {
+                const lastKeys = debugKeySequence.slice(-targetSequence.length);
+                const matches = targetSequence.every((key, index) => key === lastKeys[index]);
+                
+                if (matches && gameState) {
+                    // Enable debug mode temporarily
+                    gameState.gameConfig.debug_mode = true;
+                    updateDebugPanelVisibility();
+                    showNotification('🔧 Debug mode activated! (Ctrl+Shift+DEBUG)');
+                    showScreen('debug');
+                    debugKeySequence = [];
+                }
+            }
+        } else {
+            // Reset sequence if modifiers not held
+            debugKeySequence = [];
+        }
+    });
 });
 
-// NEW: Global debug functions for console
+// NEW: Enhanced global debug functions for console
 window.debugChains = () => gameState.debugChains();
 window.debugChapter1 = () => gameState.debugChapter1();
 window.debugPlayer = () => console.log('Player state:', gameState.player);
 window.debugConfig = () => console.log('Game config:', gameState.gameConfig);
 window.debugEvents = () => console.log('All events:', gameState.allEvents);
+window.debugEndings = () => gameState.debugEndingSystem(); // NEW: Debug ending system
+window.triggerEnding = (endingId) => gameState.debugTriggerEnding(endingId); // NEW: Force trigger ending
+window.testCondition = (condition) => gameState.testEndingCondition(condition); // NEW: Test ending condition
+window.validateEndings = () => gameState.validateAllEndingConditions(); // NEW: Validate all endings
 window.resetCorruption = () => {
     gameState.player.corruptEssence = 0;
     gameState.updateUI();
@@ -2700,15 +4086,38 @@ window.completeEvent = (eventId) => {
         console.log(`Event ${eventId} already completed`);
     }
 };
+window.addMoney = (amount = 1000000) => {
+    gameState.player.money += amount;
+    gameState.updateUI();
+    console.log(`Added ${amount} money. Current: ${gameState.player.money}`);
+};
+window.setHappiness = (value = 100) => {
+    gameState.player.happiness = Math.max(0, Math.min(100, value));
+    gameState.updateUI();
+    console.log(`Set happiness to ${gameState.player.happiness}`);
+};
+window.clearEndingHistory = () => {
+    gameState.endingHistory = [];
+    gameState.saveEndingHistory();
+    gameState.updateEndingHistoryUI();
+    console.log('Ending history cleared');
+};
 
 // Console Helper - Show available debug commands
 console.log(`
-🎮 KORUPTOR SIMULATOR DEBUG COMMANDS:
+🎮 KORUPTOR SIMULATOR DEBUG COMMANDS (Enhanced with Robust Chain System):
 
 📊 Chain System:
-  debugChains()           - Show all chain info & progress
+  debugChains()           - Show all chain info & progress (including virtual chains)
   debugChapter1()         - Debug current chapter events
   
+🏆 Ending System (Enhanced Error Handling):
+  debugEndings()          - Show all ending conditions & status
+  validateEndings()       - Validate ALL ending conditions & report errors
+  triggerEnding('ending_1_1') - Force trigger specific ending
+  testCondition("money > 1000000") - Test individual ending condition
+  clearEndingHistory()    - Clear ending history
+
 🎯 Player State:
   debugPlayer()           - Show player stats
   debugConfig()           - Show game config
@@ -2717,16 +4126,32 @@ console.log(`
 🔧 Quick Actions:
   resetCorruption()       - Reset corruption to 0
   addCorruption(10)       - Add corruption (default 10)
+  addMoney(1000000)       - Add money (default 1M)
+  setHappiness(100)       - Set happiness level
   completeEvent('E110')   - Mark event as completed
   
 🌐 Direct Access:
   gameState.player        - Player object
-  gameState.eventChains   - Chain configurations
-  gameState.currentChapterEvents - Current events
+  gameState.eventChains   - Chain configurations (including virtual)
+  gameState.eventsByChain - Events organized by chain
+  gameState.allEndings    - All ending configurations
+  gameState.endingHistory - Player's ending history
   
 Type any command above in console to debug! 🚀
+
+🔗 CHAIN SYSTEM STATUS:
+- Real chains: Found in events sheet (chain_id column) 
+- Virtual chains: Auto-created from regular events when no chains exist
+- Fallback system: Handles missing/empty chain_id gracefully
+- Ending conditions: Support both real and virtual chains
+
+📊 Current Status:
+- Real chains detected: ${Object.keys(gameState?.eventsByChain || {}).filter(id => !gameState?.eventChains?.[id]?.isVirtual).length}
+- Virtual chains: ${Object.keys(gameState?.eventChains || {}).filter(id => gameState?.eventChains?.[id]?.isVirtual).length}
+- Total events: ${gameState?.allEvents?.length || 'Loading...'}
 `);
 </script>
 
 </body>
 </html>
+            
