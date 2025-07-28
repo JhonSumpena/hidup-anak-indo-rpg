@@ -194,6 +194,25 @@
             color: var(--text-secondary);
         }
 
+        /* NEW: Response text styling */
+        .response-text {
+            line-height: 1.7;
+            margin-bottom: 25px;
+            font-size: 14px;
+            color: var(--secondary-color);
+            background: rgba(251, 191, 36, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid var(--secondary-color);
+            display: none;
+            animation: slideInResponse 0.5s ease;
+        }
+
+        @keyframes slideInResponse {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .choices-container {
             display: flex;
             flex-direction: column;
@@ -685,6 +704,29 @@
             font-size: 11px;
             color: #bfdbfe;
         }
+
+        /* NEW: Progress indicator for response text */
+        .response-progress {
+            width: 100%;
+            height: 3px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .response-progress-fill {
+            height: 100%;
+            background: var(--secondary-color);
+            border-radius: 3px;
+            width: 0%;
+            animation: responseProgress 3s linear;
+        }
+
+        @keyframes responseProgress {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
     </style>
 </head>
 <body>
@@ -833,6 +875,12 @@
                 Hidup lu baru dimulai! Pilih langkah pertama menuju kekuasaan dan kekayaan. 
                 Setiap keputusan akan menentukan seberapa korup lu nantinya.
             </div>
+            <!-- NEW: Response text area -->
+            <div class="response-text" id="responseText" style="display: none;">
+                <div class="response-progress">
+                    <div class="response-progress-fill"></div>
+                </div>
+            </div>
             <div class="choices-container" id="choicesContainer">
                 <button class="choice-btn" onclick="startFirstEvent()">
                     💰 Mulai Karir Korupsi!
@@ -888,7 +936,7 @@
 </div>
 
 <script>
-// Enhanced Game State Management with CORRUPT ESSENCE SYSTEM + CHAIN EVENTS
+// Enhanced Game State Management with CORRUPT ESSENCE SYSTEM + CHAIN EVENTS + RESPONSE TEXT
 class GameState {
     constructor() {
         this.player = {
@@ -1231,7 +1279,8 @@ class GameState {
                 const choiceData = {
                     text: choice.text,
                     impact: choice.impact,
-                    effects: choice.effects
+                    effects: choice.effects,
+                    responseText: choice.response_text || null // NEW: Include response text
                 };
                 
                 if (eventChoices[choice.background]) {
@@ -1277,17 +1326,20 @@ class GameState {
             {
                 text: `${info.icon} Hadapi situasi ${info.context}`,
                 impact: `Pendekatan khas ${background} - efek standar`,
-                effects: { happiness: 1, psychology: { confidence: 1 } }
+                effects: { happiness: 1, psychology: { confidence: 1 } },
+                responseText: `Lu handle situasi ini dengan gaya khas ${background}. Nothing fancy, tapi at least lu gak panic.`
             },
             {
                 text: `${info.icon} Cari solusi kreatif dengan background ${background}`,
                 impact: `Manfaatkan keunggulan ${background} - risiko sedang`,
-                effects: { happiness: 2, psychology: { confidence: 2, adaptability: 1 } }
+                effects: { happiness: 2, psychology: { confidence: 2, adaptability: 1 } },
+                responseText: `Lu mikir out of the box dan nemu solusi yang lumayan clever. Background ${background} lu emang berguna.`
             },
             {
                 text: `${info.icon} Main aman dan hindari masalah`,
                 impact: `Pilihan konservatif - pertumbuhan minimal`,
-                effects: { happiness: -1, psychology: { resilience: -1 } }
+                effects: { happiness: -1, psychology: { resilience: -1 } },
+                responseText: `Lu pilih main safe. Gak ada masalah besar, tapi juga gak ada growth berarti. Hidup flat-flat aja.`
             }
         ];
     }
@@ -1379,6 +1431,33 @@ class GameState {
         
         console.log('🔗 No chain events available');
         return null;
+    }
+
+    // NEW: Show response text with progress bar (durasi waktu mucul response_text)
+    showResponseText(responseText, duration = 5000) {
+        const responseEl = document.getElementById('responseText');
+        const storyTextEl = document.getElementById('currentEventText');
+        const choicesEl = document.getElementById('choicesContainer');
+        
+        // Hide story text and choices temporarily
+        storyTextEl.style.display = 'none';
+        choicesEl.style.display = 'none';
+        
+        // Show response text
+        responseEl.innerHTML = `
+            ${responseText}
+            <div class="response-progress">
+                <div class="response-progress-fill"></div>
+            </div>
+        `;
+        responseEl.style.display = 'block';
+        
+        // Hide response text after duration and continue game
+        setTimeout(() => {
+            responseEl.style.display = 'none';
+            storyTextEl.style.display = 'block';
+            choicesEl.style.display = 'flex';
+        }, duration);
     }
 
     // Enhanced Game Mechanics Functions
@@ -1719,7 +1798,7 @@ class GameState {
         this.player.chainSequence = 0;
     }
 
-    // MODIFIED: Enhanced processChoice to handle chain progression
+    // MODIFIED: Enhanced processChoice to handle chain progression + response text
     processChoice(choiceIndex) {
         if (!this.dataLoaded) {
             showNotification('Data masih dimuat, tunggu sebentar...');
@@ -1780,9 +1859,17 @@ class GameState {
             btn.style.opacity = '0.5';
         });
 
-        setTimeout(() => {
-            this.proceedAfterChoice();
-        }, 2000);
+        // NEW: Show response text if available, then continue
+        if (choice.responseText && choice.responseText.trim()) {
+            this.showResponseText(choice.responseText, 3000);
+            setTimeout(() => {
+                this.proceedAfterChoice();
+            }, 3200); // Slightly longer than response text duration
+        } else {
+            setTimeout(() => {
+                this.proceedAfterChoice();
+            }, 2000);
+        }
     }
 
     // NEW: Proceed after choice with chain logic
@@ -2147,6 +2234,11 @@ class GameState {
         document.getElementById('currentEventTitle').innerHTML = event.title;
         document.getElementById('currentEventText').textContent = event.text;
         
+        // Hide response text when loading new event
+        document.getElementById('responseText').style.display = 'none';
+        document.getElementById('currentEventText').style.display = 'block';
+        document.getElementById('choicesContainer').style.display = 'flex';
+        
         const choicesContainer = document.getElementById('choicesContainer');
         const backgroundChoices = event.choices[this.player.background];
         
@@ -2175,7 +2267,7 @@ class GameState {
         `).join('');
     }
 
-    // NEW: Process fallback choices
+    // MODIFIED: Process fallback choices with response text
     processFallbackChoice(choiceIndex) {
         const event = this.currentChapterEvents[this.player.currentChapterEvent];
         const fallbackChoices = this.generateFallbackChoices(event, this.player.background);
@@ -2205,14 +2297,33 @@ class GameState {
         this.player.currentChapterEvent++;
         this.updateUI();
 
-        // Continue
-        setTimeout(() => {
-            if (this.player.currentChapterEvent < this.currentChapterEvents.length) {
-                this.loadCurrentEvent();
-            } else {
-                this.proceedToNextChapter();
-            }
-        }, 2000);
+        // Disable buttons
+        const choicesContainer = document.getElementById('choicesContainer');
+        const buttons = choicesContainer.querySelectorAll('.choice-btn');
+        buttons.forEach(btn => {
+            btn.disabled = true;
+            btn.style.opacity = '0.5';
+        });
+
+        // Show response text if available, then continue
+        if (choice.responseText && choice.responseText.trim()) {
+            this.showResponseText(choice.responseText, 3000);
+            setTimeout(() => {
+                if (this.player.currentChapterEvent < this.currentChapterEvents.length) {
+                    this.loadCurrentEvent();
+                } else {
+                    this.proceedToNextChapter();
+                }
+            }, 3200);
+        } else {
+            setTimeout(() => {
+                if (this.player.currentChapterEvent < this.currentChapterEvents.length) {
+                    this.loadCurrentEvent();
+                } else {
+                    this.proceedToNextChapter();
+                }
+            }, 2000);
+        }
     }
 
     applyChoiceEffects(choice) {
