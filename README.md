@@ -1,6 +1,6 @@
-# 🎮 Hidup Anak Indonesia RPG
+# 🎮 Simulator RPG Text Based
 
-Text-based RPG tentang kehidupan nyata anak Indonesia dengan humor dan challenge yang relatable.
+Text-based RPG dengan humor dan challenge yang relatable.
 
 ## 📱 Play Now
 [Mainkan di Browser](https://jhonsumpena.github.io/hidup-anak-indo-rpg/)
@@ -12,5 +12,5 @@ Text-based RPG tentang kehidupan nyata anak Indonesia dengan humor dan challenge
 - Mobile-friendly interface
 - Auto-save progress
 
-## 🤝 Feedback
-Kirim feedback ke [email/contact](udin666epil@gmail.com)
+## disclaimer
+“Game ini fiksi. Semua karakter dan kejadian hanyalah parodi dan tidak bermaksud menyerang pihak manapun.”
