@@ -990,30 +990,6 @@
     <!-- Notification -->
     <div class="notification" id="notification"></div>
 
-    <!-- NEW: Disclaimer Popup -->
-    <div class="disclaimer-overlay" id="disclaimerOverlay">
-        <div class="disclaimer-popup">
-            <div class="disclaimer-title">⚠️ Disclaimer Penting</div>
-            <div class="disclaimer-text">
-                <strong>Game ini adalah karya FIKSI dan dimaksudkan untuk HIBURAN semata.</strong>
-                <br><br>
-                Semua karakter, kejadian, situasi, dan skenario dalam game ini adalah hasil imajinasi dan tidak mewakili, menggambarkan, atau merujuk pada individu, institusi, organisasi, atau kejadian nyata manapun.
-                <br><br>
-                Game ini TIDAK bermaksud menyerang, menghina, atau merugikan pihak manapun. Segala kemiripan dengan orang, tempat, atau kejadian nyata adalah kebetulan belaka.
-                <br><br>
-                <em>Dengan melanjutkan, Anda memahami dan menyetujui bahwa ini adalah permainan fiksi parodi.</em>
-            </div>
-            <div class="disclaimer-buttons">
-                <button class="disclaimer-btn cancel" onclick="closeDisclaimerPopup()">
-                    ❌ Batal
-                </button>
-                <button class="disclaimer-btn" onclick="acceptDisclaimer()">
-                    ✅ Saya Mengerti & Lanjutkan
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- Character Creation Screen -->
     <div class="screen active" id="characterCreation">
         <div class="character-creation">
@@ -1706,7 +1682,7 @@ class GameState {
             },
             balanced: {
                 sultan: "Lu main di grey area antara privilege dan tanggung jawab. Balanced, but at what cost?",
-                sandwich: "Hidup lu cermin sistem Indonesia: tidak murni hitam, tidak murni putih.",
+                sandwich: "Hidup lu cermin sistem Konoha: tidak murni hitam, tidak murni putih.",
                 kampung: "Lu naik kelas sosial dengan cara yang pragmatis. Survive, tapi dengan konsekuensi."
             },
             tragic: {
@@ -3693,35 +3669,6 @@ class GameState {
 // Initialize game
 let gameState;
 
-// NEW: Disclaimer popup functions
-let disclaimerCallback = null;
-
-function showDisclaimerPopup(callback) {
-    disclaimerCallback = callback;
-    const overlay = document.getElementById('disclaimerOverlay');
-    if (overlay) {
-        overlay.style.display = 'flex';
-        // Prevent scrolling when popup is open
-        document.body.style.overflow = 'hidden';
-    }
-}
-
-function closeDisclaimerPopup() {
-    const overlay = document.getElementById('disclaimerOverlay');
-    if (overlay) {
-        overlay.style.display = 'none';
-        document.body.style.overflow = 'auto';
-    }
-    disclaimerCallback = null;
-}
-
-function acceptDisclaimer() {
-    closeDisclaimerPopup();
-    if (disclaimerCallback) {
-        disclaimerCallback();
-    }
-}
-
 // Utility Functions
 function showScreen(screenId) {
     // Safety check for elements
@@ -4046,19 +3993,16 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // NEW: Show disclaimer popup before starting game
-        showDisclaimerPopup(() => {
-            gameState.setBackground(selectedBackground);
-            
-            document.getElementById('loading').style.display = 'flex';
-            document.querySelector('.loading-text').textContent = 'Memulai petualangan...';
-            
-            setTimeout(() => {
-                document.getElementById('loading').style.display = 'none';
-                showScreen('home');
-                showNotification(`Selamat datang, ${gameState.player.name}! 🎉`);
-            }, 2000);
-        });
+        gameState.setBackground(selectedBackground);
+        
+        document.getElementById('loading').style.display = 'flex';
+        document.querySelector('.loading-text').textContent = 'Memulai petualangan...';
+        
+        setTimeout(() => {
+            document.getElementById('loading').style.display = 'none';
+            showScreen('home');
+            showNotification(`Selamat datang, ${gameState.player.name}! 🎉`);
+        }, 2000);
     });
 
     document.addEventListener('click', function(e) {
@@ -4163,8 +4107,6 @@ window.clearEndingHistory = () => {
 console.log(`
 🎮 KORUPTOR SIMULATOR DEBUG COMMANDS (Enhanced with Robust Chain System):
 
-⚠️  DISCLAIMER: Game ini fiksi dan parodi. Tidak mewakili kejadian nyata.
-
 📊 Chain System:
   debugChains()           - Show all chain info & progress (including virtual chains)
   debugChapter1()         - Debug current chapter events
@@ -4207,11 +4149,6 @@ Type any command above in console to debug! 🚀
 - Real chains detected: ${Object.keys(gameState?.eventsByChain || {}).filter(id => !gameState?.eventChains?.[id]?.isVirtual).length}
 - Virtual chains: ${Object.keys(gameState?.eventChains || {}).filter(id => gameState?.eventChains?.[id]?.isVirtual).length}
 - Total events: ${gameState?.allEvents?.length || 'Loading...'}
-
-🔒 CONTENT GUIDELINES:
-- Avoid explicit national symbols (logos, flags, etc.)
-- Keep content as fictional parody
-- No real person/institution references
 `);
 </script>
 
